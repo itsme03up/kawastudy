@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Virtual env
+venv/
+ENV/
+env/
+.venv/
+
+# Django
+*.sqlite3
+db.sqlite3
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.pot
+*.mo
+
+# VSCode
+.vscode/
+
+# JetBrains (PyCharm)
+.idea/
+
+# Mac
+.DS_Store
+
+# Static files (generated)
+staticfiles/
+media/
+
+# Node / frontend (if used for Tailwindなど)
+node_modules/
+package-lock.json
+yarn.lock
+
+# dotenv
+.env
+
+# Others
+*.bak
+*.swp
