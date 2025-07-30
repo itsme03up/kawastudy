@@ -48,10 +48,11 @@ html, body {
 
 .character-image img {
     width: 150px; /* 画像の幅を大きくする */
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
+    height: auto; /* 高さを自動調整して縦横比を保持 */
     margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .character-info h4 {
