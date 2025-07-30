@@ -8,31 +8,70 @@
         <div class="col-lg-10">
             <!-- ステージヘッダー -->
             <div class="card shadow-lg mb-4">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-0">Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》</h2>
-                        </div>
-                        <div>
-                            <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-light btn-sm">
-                                ← ステージ選択に戻る
-                            </a>
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h2 class="mb-0">🧪 Kawada SQL クイズ：Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》</h2>
+                    <div class="mt-2">
+                        <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-light btn-sm">
+                            ← ステージ選択に戻る
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ストーリーセクション -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">🍱 ストーリー</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <div class="story-text p-3" style="font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8;">
+                        <div id="story-content-{{ stage.stage_number }}">
+                            <!-- ストーリーはJavaScriptで動的に表示 -->
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- サンプルテーブル表示 -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📋 <span id="table-name">sample_table</span> テーブル（表示専用）</h5>
+                </div>
                 <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="sample-data-table">
+                            <!-- テーブルデータはJavaScriptで動的に表示 -->
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SQL入力エリア -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">💬 あなたへの課題</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p class="lead" id="challenge-text">{{ stage.description }}</p>
+                    </div>
+                    
                     <div class="row">
-                        <div class="col-md-8">
-                            <h5>🎯 ミッション</h5>
-                            <p class="lead">{{ stage.description }}</p>
-                            
-                            <h6 class="mt-4">📝 問題</h6>
-                            <div class="p-3 bg-light rounded">
-                                {{ stage.question|linebreaks }}
+                        <div class="col-lg-8">
+                            <label for="sql-input" class="form-label fw-bold">SQLを入力：</label>
+                            <textarea id="sql-input" class="form-control font-monospace" 
+                                      rows="4" placeholder="SELECT ... FROM ... WHERE ..."></textarea>
+                            <div class="mt-3">
+                                <button id="submit-sql" class="btn btn-primary btn-lg me-2">
+                                    🚀 実行ボタン
+                                </button>
+                                <button id="clear-sql" class="btn btn-secondary">
+                                    🗑️ クリア
+                                </button>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card bg-info text-white">
+                        <div class="col-lg-4">
+                            <div class="card bg-info text-white mt-3 mt-lg-0">
                                 <div class="card-body text-center">
                                     <h6>🤖 川田のヒント</h6>
                                     <div id="hint-area" style="display: none;">
@@ -48,31 +87,33 @@
                 </div>
             </div>
 
-            <!-- SQL入力エリア -->
-            <div class="card shadow-lg">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">💻 SQLを入力してください</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <div class="mb-3">
-                                <textarea id="sql-input" class="form-control font-monospace" 
-                                          rows="8" placeholder="SELECT * FROM ..."></textarea>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <button id="submit-sql" class="btn btn-primary">
-                                    🚀 実行する
-                                </button>
-                                <button id="clear-sql" class="btn btn-secondary">
-                                    🗑️ クリア
-                                </button>
-                            </div>
+            <!-- 結果表示エリア -->
+            <div id="result-section" style="display: none;">
+                <!-- 川田のリアクション -->
+                <div class="card shadow mb-4">
+                    <div class="card-header" id="reaction-header">
+                        <h5 class="mb-0" id="reaction-title"></h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="kawada-reaction" class="p-3" style="font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8;">
+                            <!-- 川田のリアクションテキスト -->
                         </div>
-                        <div class="col-lg-4">
-                            <div id="result-area" class="mt-3 mt-lg-0">
-                                <!-- 結果がここに表示される -->
-                            </div>
+                    </div>
+                </div>
+
+                <!-- 実行結果テーブル -->
+                <div class="card shadow">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">📊 実行結果（テーブル形式）</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" id="result-table-container">
+                            <!-- 実行結果テーブル -->
+                        </div>
+                        <div class="text-center mt-3" id="next-stage-area" style="display: none;">
+                            <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-success btn-lg">
+                                次のステージへ →
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -83,10 +124,98 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const stageNumber = parseInt('{{ stage.stage_number }}');
+    
+    // ステージ別のデータとストーリーを定義
+    const stageData = {
+        1: {
+            tableName: 'lunch_menu',
+            story: `……川田、今日は給料日でした。<br>
+                   少し贅沢したいですが、高すぎるのも気が引けます。<br>
+                   1000円以上、でも2000円以下のメニューが欲しいですね……`,
+            sampleData: [
+                {id: 1, name: 'ハンバーグ定食', category: '洋食', price: 980, available: 'TRUE'},
+                {id: 2, name: '鰻重', category: '和食', price: 1980, available: 'TRUE'},
+                {id: 3, name: '牛丼', category: '和食', price: 590, available: 'FALSE'},
+                {id: 4, name: '天ぷらそば', category: '和食', price: 1050, available: 'TRUE'},
+                {id: 5, name: 'カレーライス', category: '洋食', price: 850, available: 'TRUE'}
+            ],
+            successReaction: `それ……まさに理想的な昼食でした。<br>
+                            鰻重も、天ぷらそばも……ちょっと贅沢で、でもちゃんと現実的で。<br>
+                            川田、こういうの、大事にしたいと思ってました。`,
+            failureReaction: `うーん……そのクエリだと、ちょっと違う結果になってしまいますね。<br>
+                            価格の条件をもう一度確認してみてください。<br>
+                            1000円以上2000円以下、という範囲が大切です。`
+        },
+        2: {
+            tableName: 'menu',
+            story: `川田、最近健康を意識するようになりました。<br>
+                   特にカロリーを気にして、600kcal未満のメニューを探しています。<br>
+                   体に優しい選択肢が見つかればいいのですが……`,
+            sampleData: [
+                {id: 1, name: 'サラダボウル', category: 'ヘルシー', calories: 320, price: 890},
+                {id: 2, name: 'チキンカツ定食', category: '揚げ物', calories: 850, price: 1200},
+                {id: 3, name: '野菜炒め', category: '炒め物', calories: 450, price: 780},
+                {id: 4, name: 'うどん', category: '麺類', calories: 580, price: 650},
+                {id: 5, name: 'ステーキ', category: '肉料理', calories: 720, price: 2500}
+            ],
+            successReaction: `完璧です！これらのメニューなら安心ですね。<br>
+                            カロリーを抑えつつ、美味しそうなものばかり。<br>
+                            健康的な食生活、続けていけそうです。`,
+            failureReaction: `惜しいですね……カロリーの条件をもう一度見直してみてください。<br>
+                            600kcal未満、というのがポイントです。<br>
+                            ORDER BYも忘れずに。`
+        }
+        // 他のステージも必要に応じて追加
+    };
+
+    // ページ初期化
+    initializePage();
+
+    function initializePage() {
+        const data = stageData[stageNumber] || stageData[1];
+        
+        // ストーリー表示
+        document.getElementById(`story-content-${stageNumber}`).innerHTML = data.story;
+        
+        // テーブル名設定
+        document.getElementById('table-name').textContent = data.tableName;
+        
+        // サンプルデータテーブル作成
+        createSampleTable(data.sampleData);
+    }
+
+    function createSampleTable(data) {
+        if (!data || data.length === 0) return;
+        
+        const table = document.getElementById('sample-data-table');
+        const headers = Object.keys(data[0]);
+        
+        // ヘッダー作成
+        let headerHtml = '<thead class="table-dark"><tr>';
+        headers.forEach(header => {
+            headerHtml += `<th>${header}</th>`;
+        });
+        headerHtml += '</tr></thead>';
+        
+        // データ行作成
+        let bodyHtml = '<tbody>';
+        data.forEach(row => {
+            bodyHtml += '<tr>';
+            headers.forEach(header => {
+                bodyHtml += `<td>${row[header]}</td>`;
+            });
+            bodyHtml += '</tr>';
+        });
+        bodyHtml += '</tbody>';
+        
+        table.innerHTML = headerHtml + bodyHtml;
+    }
+
+    // SQL実行処理
     const sqlInput = document.getElementById('sql-input');
     const submitBtn = document.getElementById('submit-sql');
     const clearBtn = document.getElementById('clear-sql');
-    const resultArea = document.getElementById('result-area');
     const showHintBtn = document.getElementById('show-hint-btn');
     const hintArea = document.getElementById('hint-area');
 
@@ -100,14 +229,14 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.addEventListener('click', function() {
         const sql = sqlInput.value.trim();
         if (!sql) {
-            showResult('error', 'SQLを入力してください');
+            alert('SQLを入力してください');
             return;
         }
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '⏳ 実行中...';
 
-        fetch(`{% url 'sqlquiz:check_answer' stage.stage_number %}`, {
+        fetch('{% url "sqlquiz:check_answer" stage.stage_number %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,55 +245,93 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.correct) {
-                showResult('success', '🎉 正解です！素晴らしい！', data);
-            } else {
-                showResult('error', '❌ 惜しい！もう一度挑戦してみましょう', data);
-            }
+            showResult(data.correct, data);
         })
         .catch(error => {
-            showResult('error', 'エラーが発生しました');
             console.error('Error:', error);
+            alert('エラーが発生しました');
         })
         .finally(() => {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '🚀 実行する';
+            submitBtn.innerHTML = '🚀 実行ボタン';
         });
     });
 
     // クリア
     clearBtn.addEventListener('click', function() {
         sqlInput.value = '';
-        resultArea.innerHTML = '';
+        document.getElementById('result-section').style.display = 'none';
     });
 
-    function showResult(type, message, data = null) {
-        let html = `
-            <div class="alert alert-${type === 'success' ? 'success' : 'danger'}" role="alert">
-                <h6>${message}</h6>
-        `;
+    function showResult(isCorrect, data) {
+        const resultSection = document.getElementById('result-section');
+        const stageInfo = stageData[stageNumber] || stageData[1];
         
-        if (data && !data.correct && data.correct_sql) {
-            html += `
-                <hr>
-                <small><strong>正解例:</strong></small><br>
-                <code class="small">${data.correct_sql}</code>
-            `;
+        // 川田のリアクション表示
+        const reactionHeader = document.getElementById('reaction-header');
+        const reactionTitle = document.getElementById('reaction-title');
+        const kawadaReaction = document.getElementById('kawada-reaction');
+        
+        if (isCorrect) {
+            reactionHeader.className = 'card-header bg-success text-white';
+            reactionTitle.innerHTML = '✅ 成功 - 川田の反応';
+            kawadaReaction.innerHTML = stageInfo.successReaction;
+            
+            // 模擬実行結果を表示
+            showMockResult(stageNumber);
+            document.getElementById('next-stage-area').style.display = 'block';
+        } else {
+            reactionHeader.className = 'card-header bg-danger text-white';
+            reactionTitle.innerHTML = '❌ 失敗 - 川田の反応';
+            kawadaReaction.innerHTML = stageInfo.failureReaction;
+            
+            if (data.correct_sql) {
+                kawadaReaction.innerHTML += `<br><br><strong>正解例：</strong><br><code>${data.correct_sql}</code>`;
+            }
         }
         
-        if (type === 'success') {
-            html += `
-                <hr>
-                <div class="text-center">
-                    <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-success btn-sm">
-                        次のステージへ →
-                    </a>
-                </div>
-            `;
-        }
+        resultSection.style.display = 'block';
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showMockResult(stageNumber) {
+        const container = document.getElementById('result-table-container');
         
-        html += '</div>';
-        resultArea.innerHTML = html;
+        // ステージ別の模擬実行結果
+        const mockResults = {
+            1: [
+                {name: '鰻重'},
+                {name: '天ぷらそば'}
+            ],
+            2: [
+                {name: 'サラダボウル', calories: 320},
+                {name: '野菜炒め', calories: 450},
+                {name: 'うどん', calories: 580}
+            ]
+        };
+        
+        const result = mockResults[stageNumber] || mockResults[1];
+        if (!result || result.length === 0) return;
+        
+        const headers = Object.keys(result[0]);
+        
+        let tableHtml = '<table class="table table-striped table-bordered">';
+        tableHtml += '<thead class="table-success"><tr>';
+        headers.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+        
+        result.forEach(row => {
+            tableHtml += '<tr>';
+            headers.forEach(header => {
+                tableHtml += `<td>${row[header]}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+        
+        tableHtml += '</tbody></table>';
+        container.innerHTML = tableHtml;
     }
 });
 </script>
@@ -177,6 +344,24 @@ document.addEventListener('DOMContentLoaded', function() {
 #sql-input {
     font-size: 14px;
     line-height: 1.4;
+}
+
+.story-text {
+    background-color: #f8f9fa;
+    border-left: 4px solid #007bff;
+    font-size: 1.1rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,.1);
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
 }
 </style>
 {% endblock %}
