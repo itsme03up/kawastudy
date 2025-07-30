@@ -67,6 +67,8 @@ html, body {
 .character-area {
     padding: 20px;
     text-align: center;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1rem;
 }
 
 .character-image img {
@@ -81,6 +83,31 @@ html, body {
 .character-info h4 {
     font-size: 1.5rem; /* 文字を大きくする */
     font-weight: bold;
+}
+
+/* サイドバーのメニュー */
+.sidebar-heading {
+    padding: 0 1rem;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.nav-link {
+    color: #495057;
+    padding: 0.5rem 1rem;
+    display: block;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    margin: 0 0.5rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #007bff;
+    color: white;
 }
 
 /* サイドバーの幅を明確に指定 */
