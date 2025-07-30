@@ -50,7 +50,7 @@ body {
   line-height: 1.8rem;
   margin-bottom: 20px;
   color: #888;
-  font-style: italic;
+  font-family: "Consolas", "Monaco", monospace;
 }
 
 .typing-input {
