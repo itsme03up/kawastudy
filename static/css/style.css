@@ -33,3 +33,21 @@ body {
 .sidebar-bottom {
     margin-top: auto;
 }
+
+.character-area {
+    padding: 20px;
+    text-align: center;
+}
+
+.character-image img {
+    width: 150px; /* 画像の幅を大きくする */
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.character-info h4 {
+    font-size: 1.5rem; /* 文字を大きくする */
+    font-weight: bold;
+}
