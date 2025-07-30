@@ -53,3 +53,4 @@ def check_answer(request, stage_number):
         })
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+# sqlquiz/urls.py
