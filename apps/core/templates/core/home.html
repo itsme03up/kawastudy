@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}ホーム - Kawada Study{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h1 class="card-title">🧑‍🏫 Kawada Study へようこそ！</h1>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4">あなたの学習をサポートする総合プラットフォーム</p>
+                    <div class="row">
+                        <div class="col-6 col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>🐟</h3>
+                                    <h4>かわ打</h4>
+                                    <p>タイピングゲームで楽しく練習</p>
+                                    <a href="{% url 'typing:index' %}" class="btn btn-primary">始める</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>📖</h3>
+                                    <h4>勉強</h4>
+                                    <p>AIとチャットしながら学習</p>
+                                    <a href="{% url 'chat:index' %}" class="btn btn-primary">始める</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>💾</h3>
+                                    <h4>SQL</h4>
+                                    <p>SQLクイズで実力アップ</p>
+                                    <a href="{% url 'quiz:index' %}" class="btn btn-primary">始める</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>🐧</h3>
+                                    <h4>Linux</h4>
+                                    <p>Linuxコマンドを楽しく学習</p>
+                                    <a href="{% url 'linux:index' %}" class="btn btn-primary">始める</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📈 学習進捗</h3>
+                </div>
+                <div class="card-body">
+                    <p>今日も頑張りましょう！</p>
+                    <div class="progress-item mb-3">
+                        <span>タイピング練習</span>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px; margin-top: 4px;">
+                            <div style="background: var(--success-color); height: 100%; width: 75%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item mb-3">
+                        <span>SQL問題</span>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px; margin-top: 4px;">
+                            <div style="background: var(--accent-color); height: 100%; width: 50%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <span>Linux学習</span>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px; margin-top: 4px;">
+                            <div style="background: var(--warning-color); height: 100%; width: 25%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🎯 今日の目標</h3>
+                </div>
+                <div class="card-body">
+                    <ul style="list-style: none; padding: 0;">
+                        <li class="mb-2">✅ タイピング速度向上（目標: 60WPM）</li>
+                        <li class="mb-2">📚 SQL基礎問題 5問完了</li>
+                        <li class="mb-2">🐧 Linuxコマンド 3つ習得</li>
+                        <li class="mb-2">💬 AIとの学習セッション 1回</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

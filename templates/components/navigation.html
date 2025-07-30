@@ -1,18 +1,42 @@
 <header class="kawada-nav">
-    <span class="kawada-logo">🧑‍🏫 Kawada</span>
+    <a href="{% url 'home' %}" class="kawada-logo">🧑‍🏫 Kawada</a>
     <nav class="kawada-menu">
-        <a href="{% url 'typing:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'typinggame' %}active{% endif %}">
-            🐟 かわ打
-        </a>
-        <a href="{% url 'chat:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'chatlesson' %}active{% endif %}">
-            📖 勉強
-        </a>
-        <a href="{% url 'quiz:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'sqlquiz' %}active{% endif %}">
-            💾 SQL
-        </a>
-        <a href="{% url 'linux:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'linuxfun' %}active{% endif %}">
-            🐧 Linux
-        </a>
+        {% url 'typing:index' as typing_url %}
+        {% if typing_url %}
+            <a href="{{ typing_url }}" class="nav-btn {% if request.resolver_match.app_name == 'typing' %}active{% endif %}">
+                🐟 かわ打
+            </a>
+        {% else %}
+            <a href="/typing/" class="nav-btn">🐟 かわ打</a>
+        {% endif %}
+        
+        {% url 'chat:index' as chat_url %}
+        {% if chat_url %}
+            <a href="{{ chat_url }}" class="nav-btn {% if request.resolver_match.app_name == 'chat' %}active{% endif %}">
+                📖 勉強
+            </a>
+        {% else %}
+            <a href="/chat/" class="nav-btn">📖 勉強</a>
+        {% endif %}
+        
+        {% url 'quiz:index' as quiz_url %}
+        {% if quiz_url %}
+            <a href="{{ quiz_url }}" class="nav-btn {% if request.resolver_match.app_name == 'quiz' %}active{% endif %}">
+                💾 SQL
+            </a>
+        {% else %}
+            <a href="/quiz/" class="nav-btn">💾 SQL</a>
+        {% endif %}
+        
+        {% url 'linux:index' as linux_url %}
+        {% if linux_url %}
+            <a href="{{ linux_url }}" class="nav-btn {% if request.resolver_match.app_name == 'linux' %}active{% endif %}">
+                🐧 Linux
+            </a>
+        {% else %}
+            <a href="/linux/" class="nav-btn">🐧 Linux</a>
+        {% endif %}
+        
         <button class="nav-btn settings" onclick="toggleSettings()">⚙️</button>
     </nav>
 </header>
