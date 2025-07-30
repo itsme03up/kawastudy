@@ -1,145 +1,234 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const quoteText = document.getElementById('quote-text');
-    const romajiText = document.getElementById('romaji-text');
-    const typingInput = document.getElementById('typing-input');
-    
-    const quotes = [
-        {
-            japanese: '君の未来に、我々の願いを重ねることが……許されるのなら',
-            romaji: 'kimi no mirai ni, wareware no negai wo kasaneru koto ga... yurusareru no nara'
-        },
-        {
-            japanese: '知識は力なり、されど智慧こそ真の宝である',
-            romaji: 'chishiki ha chikara nari, saredo chie koso shin no takara de aru'
-        },
-        {
-            japanese: '困難は成長の階段である。一歩ずつ上がっていこう',
-            romaji: 'konnan ha seichou no kaidan de aru. ippozutsu agatte ikou'
-        },
-        {
-            japanese: '努力は必ず報われる。諦めない心が勝利への道筋だ',
-            romaji: 'doryoku ha kanarazu mukuwareru. akiramenai kokoro ga shouri e no michisuji da'
-        },
-        {
-            japanese: 'プログラミングとは、論理的思考を形にする芸術である',
-            romaji: 'puroguramingu to ha, ronriteki shikou wo katachi ni suru geijutsu de aru'
-        }
-    ];
-    
-    let currentQuote = null;
-    let currentPosition = 0;
-    let startTime = null;
-    let errors = 0;
-    let isComposing = false;
+// ----------------------------------------
+// DOM要素の取得
+// ----------------------------------------
+const panel = document.getElementById('panel');
+const header = document.getElementById('header');
+const questionNumberEl = document.getElementById('question-number');
+const totalQuestionsEl = document.getElementById('total-questions');
+const timeEl = document.getElementById('time');
+const wpmEl = document.getElementById('wpm');
+const accuracyEl = document.getElementById('accuracy');
+const textDisplay = document.getElementById('text-display');
+const doneEl = document.getElementById('done');
+const typeEl = document.getElementById('type');
+const romajiDoneEl = document.getElementById('romaji-done');
+const romajiTypeEl = document.getElementById('romaji-type');
+const overlay = document.getElementById('overlay');
+const message = document.getElementById('message');
 
-    function initGame() {
-        currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        currentPosition = 0;
-        errors = 0;
-        startTime = null;
-        isComposing = false;
-        
-        updateDisplay();
-        typingInput.value = '';
-        typingInput.disabled = false;
-        typingInput.focus();
+// ----------------------------------------
+// グローバル変数
+// ----------------------------------------
+let currentQuestionIndex = 0;
+let typedRomaji = '';
+let totalTypedCount = 0;
+let totalMissCount = 0;
+let startTime;
+let timerId;
+let isPlaying = false;
+const GAME_TIME_LIMIT = 60; // 制限時間（秒）
+
+// ----------------------------------------
+// 初期化処理
+// ----------------------------------------
+document.addEventListener('DOMContentLoaded', init);
+
+function init() {
+    // 状態変数をリセット
+    currentQuestionIndex = 0;
+    typedRomaji = '';
+    totalTypedCount = 0;
+    totalMissCount = 0;
+    isPlaying = false;
+    clearInterval(timerId);
+
+    // UIを初期状態に設定
+    totalQuestionsEl.textContent = questions.length;
+    timeEl.textContent = GAME_TIME_LIMIT.toFixed(1);
+    wpmEl.textContent = '0';
+    accuracyEl.textContent = '0.00';
+    message.textContent = '';
+    overlay.style.display = 'block';
+    
+    setQuestion(currentQuestionIndex);
+}
+
+// ----------------------------------------
+// 問題設定
+// ----------------------------------------
+function setQuestion(index) {
+    if (index >= questions.length) {
+        endGame();
+        return;
     }
+    const q = questions[index];
     
-    function updateDisplay() {
-        let japaneseHTML = '';
-        for (let i = 0; i < currentQuote.japanese.length; i++) {
-            const char = currentQuote.japanese[i];
-            if (i < currentPosition) {
-                japaneseHTML += `<span class="correct">${char}</span>`;
-            } else if (i === currentPosition) {
-                japaneseHTML += `<span class="current">${char}</span>`;
-            } else {
-                japaneseHTML += `<span class="pending">${char}</span>`;
-            }
-        }
-        quoteText.innerHTML = japaneseHTML;
-        romajiText.innerHTML = currentQuote.romaji;
+    // 日本語表示
+    doneEl.textContent = '';
+    typeEl.textContent = q.japanese;
+
+    // ローマ字表示
+    romajiDoneEl.textContent = '';
+    romajiTypeEl.textContent = q.romaji;
+
+    // 問題番号更新
+    questionNumberEl.textContent = index + 1;
+
+    // 入力済みローマ字をリセット
+    typedRomaji = '';
+}
+
+// ----------------------------------------
+// イベントリスナー
+// ----------------------------------------
+document.addEventListener('keydown', handleKeyDown);
+
+function handleKeyDown(e) {
+    if (e.isComposing) return;
+
+    // ゲーム開始 (スペースキー)
+    if (!isPlaying && e.code === 'Space') {
+        e.preventDefault();
+        startGame();
+        return;
     }
 
-    // 入力処理をこの関数に集約
-    function processInput(inputValue) {
-        if (!inputValue) return;
+    if (!isPlaying) return;
 
-        if (startTime === null) {
-            startTime = new Date().getTime();
-        }
+    // アルファベットキーのみを処理
+    if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
+        e.preventDefault();
+        checkInput(e.key);
+    }
+}
 
-        for (const char of inputValue) {
-            const expectedChar = currentQuote.japanese[currentPosition];
-            if (char === expectedChar) {
-                currentPosition++;
-            } else {
-                errors++;
-                typingInput.style.backgroundColor = '#ff4444';
-                setTimeout(() => {
-                    typingInput.style.backgroundColor = '';
-                }, 300);
-                break; 
-            }
-        }
-        
-        typingInput.value = '';
+// ----------------------------------------
+// ゲームロジック
+// ----------------------------------------
+function startGame() {
+    isPlaying = true;
+    startTime = Date.now();
+    overlay.style.display = 'none';
+    startTimer();
+}
 
-        if (currentPosition >= currentQuote.japanese.length) {
-            finishGame();
+function startTimer() {
+    timerId = setInterval(() => {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const remainingTime = GAME_TIME_LIMIT - elapsedTime;
+
+        if (remainingTime <= 0) {
+            timeEl.textContent = '0.0';
+            endGame();
         } else {
-            updateDisplay();
+            timeEl.textContent = remainingTime.toFixed(1);
+            updateStats();
         }
-    }
+    }, 100);
+}
 
-    // IME変換開始
-    typingInput.addEventListener('compositionstart', () => {
-        isComposing = true;
-    });
+function checkInput(key) {
+    const currentQuestion = questions[currentQuestionIndex];
+    const targetRomaji = currentQuestion.romaji;
+    const expectedChar = targetRomaji[typedRomaji.length];
 
-    // IME変換確定
-    typingInput.addEventListener('compositionend', (e) => {
-        isComposing = false;
-        processInput(e.data); // 確定した文字で判定
-    });
+    if (key === expectedChar) {
+        // 正解
+        typedRomaji += key;
+        totalTypedCount++;
 
-    // 直接入力（ローマ字など）
-    typingInput.addEventListener('input', (e) => {
-        if (isComposing) {
-            return; // 変換中は無視
-        }
-        processInput(e.target.value);
-    });
+        // 表示を更新
+        romajiDoneEl.textContent = typedRomaji;
+        romajiTypeEl.textContent = targetRomaji.substring(typedRomaji.length);
 
-    function finishGame() {
-        typingInput.disabled = true;
-        const endTime = new Date().getTime();
-        const timeElapsed = (endTime - startTime) / 1000;
-        const japaneseWPM = Math.round(currentQuote.japanese.length / (timeElapsed / 60));
-        const accuracy = Math.max(0, Math.round(((currentQuote.japanese.length - errors) / currentQuote.japanese.length) * 100));
+        // 対応する日本語部分を移動
+        // ローマ字と日本語の文字数が違うため、単純な文字数での比較はできない
+        // ここでは、ローマ字の進捗率に合わせて日本語表示を更新する簡易的な方法をとる
+        const progress = typedRomaji.length / targetRomaji.length;
+        const jpLen = currentQuestion.japanese.length;
+        const jpDoneLen = Math.floor(jpLen * progress);
         
-        quoteText.innerHTML = `
-            <div style="text-align: center; color: #4CAF50;">
-                <h2>完了！</h2>
-                <p>時間: ${timeElapsed.toFixed(1)}秒</p>
-                <p>文字/分: ${japaneseWPM}</p>
-                <p>正確性: ${accuracy}%</p>
-                <p>エラー数: ${errors}</p>
-                <button onclick="location.reload()" style="
-                    padding: 10px 20px; 
-                    font-size: 1.2rem; 
-                    background: #4CAF50; 
-                    color: white; 
-                    border: none; 
-                    border-radius: 5px; 
-                    cursor: pointer;
-                    margin-top: 20px;
-                ">もう一度</button>
-            </div>
-        `;
-        romajiText.innerHTML = '';
-        typingInput.style.display = 'none';
+        doneEl.textContent = currentQuestion.japanese.substring(0, jpDoneLen);
+        typeEl.textContent = currentQuestion.japanese.substring(jpDoneLen);
+
+        // 問題をクリアした場合
+        if (typedRomaji === targetRomaji) {
+            nextQuestion();
+        }
+    } else {
+        // 不正解
+        totalMissCount++;
+        panel.classList.add('shake');
+        setTimeout(() => panel.classList.remove('shake'), 100);
     }
+    updateStats();
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex >= questions.length) {
+        endGame();
+    } else {
+        setQuestion(currentQuestionIndex);
+    }
+}
+
+function endGame() {
+    if (!isPlaying) return; // 既に終了している場合は何もしない
     
-    initGame();
-});
+    isPlaying = false;
+    clearInterval(timerId);
+    
+    const elapsedTime = (Date.now() - startTime) / 1000;
+    const finalWpm = calculateWPM(totalTypedCount, elapsedTime);
+    const finalAccuracy = calculateAccuracy(totalTypedCount, totalMissCount);
+
+    wpmEl.textContent = finalWpm;
+    accuracyEl.textContent = finalAccuracy.toFixed(2);
+
+    message.innerHTML = `終了！ WPM: ${finalWpm}, 正解率: ${finalAccuracy.toFixed(2)}% <br> スペースキーでリトライ`;
+    overlay.style.display = 'block';
+    
+    // リトライのためにkeydownイベントを再度リッスンするが、
+    // init()を呼ぶことでリセットされるので、ここでは何もしなくて良い。
+    // 次のスペースキー押下でinit()が呼ばれ、再度ゲームが開始される準備が整う。
+    document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', restartHandler);
+}
+
+function restartHandler(e) {
+    if (e.code === 'Space') {
+        e.preventDefault();
+        document.removeEventListener('keydown', restartHandler);
+        init(); // ゲームをリセットして初期化
+        document.addEventListener('keydown', handleKeyDown); // 元のハンドラを再設定
+    }
+}
+
+// ----------------------------------------
+// 統計計算
+// ----------------------------------------
+function updateStats() {
+    const elapsedTime = (Date.now() - startTime) / 1000;
+    if (elapsedTime === 0) return;
+
+    // WPMの計算
+    const wpm = calculateWPM(totalTypedCount, elapsedTime);
+    wpmEl.textContent = wpm;
+
+    // 正解率の計算
+    const accuracy = calculateAccuracy(totalTypedCount, totalMissCount);
+    accuracyEl.textContent = accuracy.toFixed(2);
+}
+
+function calculateWPM(typed, timeInSeconds) {
+    if (timeInSeconds === 0) return 0;
+    // 1文字1ワードと見なす
+    return Math.round((typed / timeInSeconds) * 60);
+}
+
+function calculateAccuracy(typed, missed) {
+    const total = typed + missed;
+    if (total === 0) return 0.00;
+    return (typed / total) * 100;
+}
