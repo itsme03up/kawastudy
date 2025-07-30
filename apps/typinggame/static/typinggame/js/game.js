@@ -67,16 +67,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle typing input
     typingInput.addEventListener('input', function(e) {
+        // Skip processing during composition (e.g., Japanese IME is active)
+        if (e.isComposing) {
+            return;
+        }
+
         if (startTime === null) {
             startTime = new Date().getTime();
         }
         
         const inputValue = e.target.value;
-        
-        // Skip processing during composition (Japanese input)
-        if (isComposing) {
-            return;
-        }
         
         if (inputValue.length === 0) {
             return;
@@ -92,13 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.value = '';
             e.target.style.backgroundColor = '';
             
-            // Check if we've completed the quote
             if (currentPosition >= currentQuote.japanese.length) {
                 finishGame();
-                return;
+            } else {
+                updateDisplay();
             }
-            
-            updateDisplay();
         } else {
             // Wrong character
             errors++;
@@ -108,28 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 e.target.style.backgroundColor = '';
             }, 300);
-        }
-    });
-    
-    // Handle composition events for Japanese input
-    let isComposing = false;
-    
-    typingInput.addEventListener('compositionstart', function(e) {
-        isComposing = true;
-    });
-    
-    typingInput.addEventListener('compositionend', function(e) {
-        isComposing = false;
-        // Process the finalized Japanese input
-        const event = new Event('input', { bubbles: true });
-        event.isComposing = false;
-        e.target.dispatchEvent(event);
-    });
-    
-    // Update input event to check composition state
-    typingInput.addEventListener('beforeinput', function(e) {
-        if (isComposing) {
-            return;
         }
     });
     
