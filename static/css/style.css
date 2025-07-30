@@ -16,9 +16,32 @@ html, body {
     padding: 0;
 }
 
-.main-container {
+/* メインレイアウト */
+.main-layout {
     display: flex;
-    min-height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
+    height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
+}
+
+/* サイドバーの固定レイアウト */
+.sidebar-fixed {
+    width: 250px;
+    height: calc(100vh - 56px); /* ナビゲーションバーの高さを引く */
+    position: fixed;
+    top: 56px;
+    left: 0;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+/* メインコンテンツ */
+.main-content {
+    flex: 1;
+    margin-left: 250px; /* サイドバーの幅と同じ */
+    padding: 2rem;
+    overflow-y: auto;
+    height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
 }
 
 .sidebar-container {

@@ -13,15 +13,13 @@
 <body>
     {% include 'components/navigation.html' %}
     
-    <div class="container-fluid main-container">
-        <div class="row h-100">
-            {% include 'components/sidebar.html' %}
-            
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content-with-sidebar">
-                {% block content %}
-                {% endblock %}
-            </main>
-        </div>
+    <div class="main-layout">
+        {% include 'components/sidebar.html' %}
+        
+        <main class="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
     </div>
     
     {% include 'components/footer.html' %}
