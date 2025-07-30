@@ -3,98 +3,92 @@
 {% block title %}ホーム - Kawada Study{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">ようこそ！</h1>
-            </div>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">ようこそ！</h1>
+</div>
 
-            <div class="row">
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">🐟 かわ打</h5>
-                            <p class="card-text">タイピングゲームで楽しく練習</p>
-                            <a href="{% url 'typing:index' %}" class="btn btn-primary">始める</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">📖 勉強</h5>
-                            <p class="card-text">AIとチャットしながら学習</p>
-                            <a href="{% url 'chat:index' %}" class="btn btn-primary">始める</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">💾 SQL</h5>
-                            <p class="card-text">SQLクイズで実力アップ</p>
-                            <a href="{% url 'quiz:index' %}" class="btn btn-primary">始める</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">🐧 Linux</h5>
-                            <p class="card-text">Linuxコマンドを楽しく学習</p>
-                            <a href="{% url 'linux:index' %}" class="btn btn-primary">始める</a>
-                        </div>
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">🐟 かわ打</h5>
+                <p class="card-text">タイピングゲームで楽しく練習</p>
+                <a href="{% url 'typing:index' %}" class="btn btn-primary">始める</a>
             </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">📖 勉強</h5>
+                <p class="card-text">AIとチャットしながら学習</p>
+                <a href="{% url 'chat:index' %}" class="btn btn-primary">始める</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">💾 SQL</h5>
+                <p class="card-text">SQLクイズで実力アップ</p>
+                <a href="{% url 'quiz:index' %}" class="btn btn-primary">始める</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">🐧 Linux</h5>
+                <p class="card-text">Linuxコマンドを楽しく学習</p>
+                <a href="{% url 'linux:index' %}" class="btn btn-primary">始める</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            📈 学習進捗
-                        </div>
-                        <div class="card-body">
-                            <p>今日も頑張りましょう！</p>
-                            <div class="mb-3">
-                                <span>タイピング練習</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <span>SQL問題</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
-                                </div>
-                            </div>
-                            <div>
-                                <span>Linux学習</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                </div>
-                            </div>
-                        </div>
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                📈 学習進捗
+            </div>
+            <div class="card-body">
+                <p>今日も頑張りましょう！</p>
+                <div class="mb-3">
+                    <span>タイピング練習</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
                     </div>
                 </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            🎯 今日の目標
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">✅ タイピング速度向上（目標: 60WPM）</li>
-                                <li class="list-group-item">📚 SQL基礎問題 5問完了</li>
-                                <li class="list-group-item">🐧 Linuxコマンド 3つ習得</li>
-                                <li class="list-group-item">💬 AIとの学習セッション 1回</li>
-                            </ul>
-                        </div>
+                <div class="mb-3">
+                    <span>SQL問題</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                    </div>
+                </div>
+                <div>
+                    <span>Linux学習</span>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                🎯 今日の目標
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">✅ タイピング速度向上（目標: 60WPM）</li>
+                    <li class="list-group-item">📚 SQL基礎問題 5問完了</li>
+                    <li class="list-group-item">🐧 Linuxコマンド 3つ習得</li>
+                    <li class="list-group-item">💬 AIとの学習セッション 1回</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
