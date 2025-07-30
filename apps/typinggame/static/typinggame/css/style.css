@@ -45,7 +45,7 @@ body {
 /* ゲーム中のメッセージ */
 #message {
   position: absolute;
-  bottom: -60px;
+  bottom: -45px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 1.1rem;
@@ -61,8 +61,8 @@ body {
   font-size: 1.8rem;
   line-height: 1.5;
   background-color: #222;
-  padding: 30px;
-  min-height: 120px;
+  padding: 20px;
+  min-height: 100px;
   border-radius: 8px;
   border: 1px solid #444;
   text-align: left;
@@ -86,7 +86,7 @@ body {
 #header {
   font-size: 1.1rem;
   position: absolute;
-  top: -60px;
+  top: -55px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
