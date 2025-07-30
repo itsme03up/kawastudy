@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const romajiText = document.getElementById('romaji-text');
     const typingInput = document.getElementById('typing-input');
     
-    // Array of Japanese quotes with their romaji
     const quotes = [
         {
             japanese: '君の未来に、我々の願いを重ねることが……許されるのなら',
@@ -31,26 +30,25 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPosition = 0;
     let startTime = null;
     let errors = 0;
-    
-    // Initialize game
+    let isComposing = false;
+
     function initGame() {
         currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
         currentPosition = 0;
         errors = 0;
         startTime = null;
+        isComposing = false;
         
         updateDisplay();
         typingInput.value = '';
+        typingInput.disabled = false;
         typingInput.focus();
     }
     
-    // Update the display with highlighted characters
     function updateDisplay() {
-        // Update Japanese text with highlighting
         let japaneseHTML = '';
         for (let i = 0; i < currentQuote.japanese.length; i++) {
             const char = currentQuote.japanese[i];
-            
             if (i < currentPosition) {
                 japaneseHTML += `<span class="correct">${char}</span>`;
             } else if (i === currentPosition) {
@@ -60,65 +58,64 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         quoteText.innerHTML = japaneseHTML;
-        
-        // Update romaji text (for reference only)
         romajiText.innerHTML = currentQuote.romaji;
     }
-    
-    // Handle typing input
-    typingInput.addEventListener('input', function(e) {
-        // Skip processing during composition (e.g., Japanese IME is active)
-        if (e.isComposing) {
-            return;
-        }
+
+    // 入力処理をこの関数に集約
+    function processInput(inputValue) {
+        if (!inputValue) return;
 
         if (startTime === null) {
             startTime = new Date().getTime();
         }
-        
-        const inputValue = e.target.value;
-        
-        if (inputValue.length === 0) {
-            return;
-        }
-        
-        // Get the last character typed
-        const lastChar = inputValue[inputValue.length - 1];
-        const expectedChar = currentQuote.japanese[currentPosition];
-        
-        if (lastChar === expectedChar) {
-            // Correct character
-            currentPosition++;
-            e.target.value = '';
-            e.target.style.backgroundColor = '';
-            
-            if (currentPosition >= currentQuote.japanese.length) {
-                finishGame();
+
+        for (const char of inputValue) {
+            const expectedChar = currentQuote.japanese[currentPosition];
+            if (char === expectedChar) {
+                currentPosition++;
             } else {
-                updateDisplay();
+                errors++;
+                typingInput.style.backgroundColor = '#ff4444';
+                setTimeout(() => {
+                    typingInput.style.backgroundColor = '';
+                }, 300);
+                break; 
             }
-        } else {
-            // Wrong character
-            errors++;
-            e.target.style.backgroundColor = '#ff4444';
-            e.target.value = '';
-            
-            setTimeout(() => {
-                e.target.style.backgroundColor = '';
-            }, 300);
         }
+        
+        typingInput.value = '';
+
+        if (currentPosition >= currentQuote.japanese.length) {
+            finishGame();
+        } else {
+            updateDisplay();
+        }
+    }
+
+    // IME変換開始
+    typingInput.addEventListener('compositionstart', () => {
+        isComposing = true;
     });
-    
-    // Finish game and show results
+
+    // IME変換確定
+    typingInput.addEventListener('compositionend', (e) => {
+        isComposing = false;
+        processInput(e.data); // 確定した文字で判定
+    });
+
+    // 直接入力（ローマ字など）
+    typingInput.addEventListener('input', (e) => {
+        if (isComposing) {
+            return; // 変換中は無視
+        }
+        processInput(e.target.value);
+    });
+
     function finishGame() {
+        typingInput.disabled = true;
         const endTime = new Date().getTime();
         const timeElapsed = (endTime - startTime) / 1000;
-        
-        // 日本語向けWPM計算：1文字 = 1語として計算
-        // 英語の標準的な1語=5文字の概念を日本語では1文字=1語に変更
         const japaneseWPM = Math.round(currentQuote.japanese.length / (timeElapsed / 60));
-        
-        // 正確性計算：負の値にならないように修正
         const accuracy = Math.max(0, Math.round(((currentQuote.japanese.length - errors) / currentQuote.japanese.length) * 100));
         
         quoteText.innerHTML = `
@@ -140,11 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 ">もう一度</button>
             </div>
         `;
-        
         romajiText.innerHTML = '';
         typingInput.style.display = 'none';
     }
     
-    // Start the game
     initGame();
 });

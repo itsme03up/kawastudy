@@ -2,26 +2,25 @@
 {% load static %}
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>かわ打：タイピングゲーム</title>
-  <link rel="stylesheet" href="{% static 'typinggame/css/style.css' %}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>かわ打：タイピングゲーム</title>
+    <link rel="stylesheet" href="{% static 'typinggame/css/style.css' %}">
 </head>
-<body>
-  <div class="container">
-    <div class="character-area">
-      <img src="{% static 'typinggame/img/kawada.png' %}" alt="川田先生" class="character-img">
+<body class="outer">
+    <div id="panel" class="inner">
+        <div id="header">
+			残り時間: <span id="time">0.0</span> 秒 | 
+			記録: <span id="hist"></span>
+		</div>
+
+        <!-- #textにタイピングする文字を入れる。 #done, #typeは、それぞれ打ち終わったもの、これから打つものが入る。 -->
+        <pre id="text-container"><span id="done"></span><span id="type"></span></pre>
+
+        <div id="overlay">スペースキーで開始</div>
+        <div id="message"></div>
     </div>
-    <div class="typing-area">
-      <div id="quote-text" class="quote-text">
-        「君の未来に、我々の願いを重ねることが……許されるのなら」
-      </div>
-      <div id="romaji-text" class="romaji-text">
-        kimi no mirai ni, wareware no negai wo kasaneru koto ga... yurusareru no nara
-      </div>
-      <input type="text" id="typing-input" class="typing-input" placeholder="ここに入力…" autofocus>
-    </div>
-  </div>
-  <script src="{% static 'typinggame/js/game.js' %}"></script>
+
+    <script src="{% static 'typinggame/js/game.js' %}"></script>
 </body>
 </html>

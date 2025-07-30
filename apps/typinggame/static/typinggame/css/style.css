@@ -1,96 +1,106 @@
+/* 基本レイアウト */
 body {
+  font-family: "游ゴシック体", "Yu Gothic", sans-serif;
   background: #111;
   color: #fff;
-  font-family: "游ゴシック体", "Yu Gothic", sans-serif;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
+
+.outer {
+  position: relative;
   height: 100vh;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 90%;
-  max-width: 1200px;
-}
-
-.character-area {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.character-img {
-  width: 240px;
-  height: auto;
-  border-radius: 12px;
+.inner {
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  text-align: center;
 }
 
-.typing-area {
-  flex: 2;
-  padding-left: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.quote-text {
-  font-size: 1.6rem;
-  line-height: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.romaji-text {
+/* ゲーム開始前のオーバーレイ */
+#overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 218, 185, 0.9);
+  color: #333;
   font-size: 1.2rem;
-  line-height: 1.8rem;
-  margin-bottom: 20px;
-  color: #888;
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* 要素の非表示 */
+.none {
+  display: none;
+}
+
+/* ゲーム中のメッセージ */
+#message {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
+  color: #ffc107;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+/* タイピングテキストのコンテナ */
+#text-container {
   font-family: "Consolas", "Monaco", monospace;
-}
-
-.typing-input {
-  font-size: 1.4rem;
-  padding: 12px;
-  border: none;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  background-color: #222;
+  padding: 20px;
   border-radius: 8px;
+  border: 1px solid #444;
+  text-align: left;
+  white-space: pre-wrap; /* 折り返しを有効に */
+  word-break: break-all;
+}
+
+/* 打ち終わった文字 */
+#done {
+  color: #888;
+  background-color: rgba(136, 136, 136, 0.1);
+}
+
+/* これから打つ文字 */
+#type {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ヘッダー情報 */
+#header {
+  font-size: 1.1rem;
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
-  background: #222;
-  color: #fff;
-  transition: background-color 0.2s;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.typing-input:focus {
-  outline: none;
-  background: #333;
-}
-
-/* Character states */
-.correct {
+#time {
+  font-size: 1.3rem;
+  font-weight: bold;
   color: #4CAF50;
-  background-color: rgba(76, 175, 80, 0.1);
 }
 
-.incorrect {
-  color: #f44336;
-  background-color: rgba(244, 67, 54, 0.2);
-}
-
-.current {
-  background-color: #2196F3;
-  color: white;
-  animation: blink 1s infinite;
-}
-
-.pending {
-  color: #fff;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.3; }
+#hist {
+  color: #aaa;
 }
