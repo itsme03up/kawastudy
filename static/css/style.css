@@ -6,12 +6,13 @@
 }
 
 body {
-    padding-bottom: 60px; /* フッターの高さに応じて調整 */
+    margin: 0;
+    padding: 0;
 }
 
 .main-container {
     display: flex;
-    min-height: calc(100vh - 56px - 60px); /* navとfooterの高さを引く */
+    min-height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
 }
 
 .sidebar-container {
