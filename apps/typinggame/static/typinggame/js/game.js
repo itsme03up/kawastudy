@@ -6,23 +6,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Array of Japanese quotes with their romaji
     const quotes = [
         {
-            japanese: '「君の未来に、我々の願いを重ねることが……許されるのなら」',
+            japanese: '君の未来に、我々の願いを重ねることが……許されるのなら',
             romaji: 'kimi no mirai ni, wareware no negai wo kasaneru koto ga... yurusareru no nara'
         },
         {
-            japanese: '「知識は力なり、されど智慧こそ真の宝である」',
+            japanese: '知識は力なり、されど智慧こそ真の宝である',
             romaji: 'chishiki ha chikara nari, saredo chie koso shin no takara de aru'
         },
         {
-            japanese: '「困難は成長の階段である。一歩ずつ上がっていこう」',
+            japanese: '困難は成長の階段である。一歩ずつ上がっていこう',
             romaji: 'konnan ha seichou no kaidan de aru. ippozutsu agatte ikou'
         },
         {
-            japanese: '「努力は必ず報われる。諦めない心が勝利への道筋だ」',
+            japanese: '努力は必ず報われる。諦めない心が勝利への道筋だ',
             romaji: 'doryoku ha kanarazu mukuwareru. akiramenai kokoro ga shouri e no michisuji da'
         },
         {
-            japanese: '「プログラミングとは、論理的思考を形にする芸術である」',
+            japanese: 'プログラミングとは、論理的思考を形にする芸術である',
             romaji: 'puroguramingu to ha, ronriteki shikou wo katachi ni suru geijutsu de aru'
         }
     ];
@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPosition = 0;
     let startTime = null;
     let errors = 0;
-    let inputBuffer = '';
     
     // Initialize game
     function initGame() {
@@ -39,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPosition = 0;
         errors = 0;
         startTime = null;
-        inputBuffer = '';
         
         updateDisplay();
         typingInput.value = '';
@@ -48,28 +46,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update the display with highlighted characters
     function updateDisplay() {
-        // Update Japanese text
+        // Update Japanese text with highlighting
         let japaneseHTML = '';
         for (let i = 0; i < currentQuote.japanese.length; i++) {
             const char = currentQuote.japanese[i];
-            japaneseHTML += `<span class="pending">${char}</span>`;
+            
+            if (i < currentPosition) {
+                japaneseHTML += `<span class="correct">${char}</span>`;
+            } else if (i === currentPosition) {
+                japaneseHTML += `<span class="current">${char}</span>`;
+            } else {
+                japaneseHTML += `<span class="pending">${char}</span>`;
+            }
         }
         quoteText.innerHTML = japaneseHTML;
         
-        // Update romaji text with highlighting
-        let romajiHTML = '';
-        for (let i = 0; i < currentQuote.romaji.length; i++) {
-            const char = currentQuote.romaji[i];
-            
-            if (i < currentPosition) {
-                romajiHTML += `<span class="correct">${char}</span>`;
-            } else if (i === currentPosition) {
-                romajiHTML += `<span class="current">${char}</span>`;
-            } else {
-                romajiHTML += `<span class="pending">${char}</span>`;
-            }
-        }
-        romajiText.innerHTML = romajiHTML;
+        // Update romaji text (for reference only)
+        romajiText.innerHTML = currentQuote.romaji;
     }
     
     // Handle typing input
@@ -78,13 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
             startTime = new Date().getTime();
         }
         
-        const inputValue = e.target.value.toLowerCase();
+        const inputValue = e.target.value;
         
-        // Check if input matches the expected text at current position
+        // Check if input matches the expected Japanese text
         let matches = true;
         for (let i = 0; i < inputValue.length; i++) {
-            if (currentPosition + i >= currentQuote.romaji.length || 
-                inputValue[i] !== currentQuote.romaji[currentPosition + i]) {
+            if (currentPosition + i >= currentQuote.japanese.length || 
+                inputValue[i] !== currentQuote.japanese[currentPosition + i]) {
                 matches = false;
                 break;
             }
@@ -94,29 +87,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Input is correct so far
             e.target.style.backgroundColor = '';
             
-            // Check if we should advance (space or punctuation triggers advancement)
-            const nextChar = currentQuote.romaji[currentPosition + inputValue.length];
-            if (inputValue.endsWith(' ') || inputValue.endsWith('.') || inputValue.endsWith(',') || 
-                inputValue.endsWith('!') || inputValue.endsWith('?') || inputValue.endsWith('...')) {
-                
-                // Advance position
-                currentPosition += inputValue.length;
-                e.target.value = '';
-                
-                if (currentPosition >= currentQuote.romaji.length) {
-                    finishGame();
-                } else {
-                    updateDisplay();
-                }
-            } else if (nextChar === ' ' || nextChar === '.' || nextChar === ',' || 
-                      nextChar === '!' || nextChar === '?' || !nextChar) {
-                // Auto-advance when we've typed a complete word
-                currentPosition += inputValue.length;
-                e.target.value = '';
-                
-                if (currentPosition >= currentQuote.romaji.length) {
-                    finishGame();
-                } else {
+            // Update position based on current input length
+            const newPosition = currentPosition + inputValue.length;
+            
+            // Check if we've completed the quote
+            if (newPosition >= currentQuote.japanese.length) {
+                currentPosition = newPosition;
+                finishGame();
+                return;
+            }
+            
+            // For Japanese input, we advance character by character as user types
+            if (inputValue.length > 0) {
+                // Clear input and advance position for each character
+                const lastChar = inputValue[inputValue.length - 1];
+                if (lastChar === currentQuote.japanese[currentPosition]) {
+                    currentPosition++;
+                    e.target.value = '';
                     updateDisplay();
                 }
             }
@@ -125,37 +112,33 @@ document.addEventListener('DOMContentLoaded', function() {
             errors++;
             e.target.style.backgroundColor = '#ff4444';
             setTimeout(() => {
-                if (matches || e.target.value === '') {
-                    e.target.style.backgroundColor = '';
-                }
+                e.target.style.backgroundColor = '';
             }, 200);
+            
+            // Clear the input field on error
+            e.target.value = '';
         }
     });
     
-    // Handle backspace to allow corrections
-    typingInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && e.target.value === '' && currentPosition > 0) {
-            // Allow backspace to previous word
-            let newPosition = currentPosition - 1;
-            while (newPosition > 0 && currentQuote.romaji[newPosition] !== ' ') {
-                newPosition--;
-            }
-            if (currentQuote.romaji[newPosition] === ' ') {
-                newPosition++;
-            }
-            currentPosition = newPosition;
-            updateDisplay();
-        }
+    // Handle composition events for Japanese input
+    typingInput.addEventListener('compositionstart', function(e) {
+        // Japanese input started
+    });
+    
+    typingInput.addEventListener('compositionend', function(e) {
+        // Japanese input finished, trigger input event
+        const event = new Event('input', { bubbles: true });
+        e.target.dispatchEvent(event);
     });
     
     // Finish game and show results
     function finishGame() {
         const endTime = new Date().getTime();
-        const timeElapsed = (endTime - startTime) / 1000; // in seconds
-        const wpm = Math.round((currentQuote.romaji.length / 5) / (timeElapsed / 60));
-        const accuracy = Math.round(((currentQuote.romaji.length - errors) / currentQuote.romaji.length) * 100);
+        const timeElapsed = (endTime - startTime) / 1000;
+        const wpm = Math.round((currentQuote.japanese.length / 5) / (timeElapsed / 60));
+        const accuracy = Math.round(((currentQuote.japanese.length - errors) / currentQuote.japanese.length) * 100);
         
-        romajiText.innerHTML = `
+        quoteText.innerHTML = `
             <div style="text-align: center; color: #4CAF50;">
                 <h2>完了！</h2>
                 <p>時間: ${timeElapsed.toFixed(1)}秒</p>
@@ -175,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
+        romajiText.innerHTML = '';
         typingInput.style.display = 'none';
     }
     
