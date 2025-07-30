@@ -21,14 +21,28 @@ def create_sample_stages():
             'stage_number': 1,
             'title': '給料日ランチ',
             'description': '今日は給料日！1000円〜2000円の予算で美味しいランチを探そう！',
-            'question': '''川田レストランのメニューテーブル（menu）から、価格が1000円以上2000円以下のメニューを全て選択してください。
-
-テーブル構造：
-- menu(id, name, price, category, calories)
-
-例：「ハンバーグセット」1500円、「パスタランチ」1200円など''',
-            'correct_sql': 'SELECT * FROM menu WHERE price >= 1000 AND price <= 2000;',
-            'hint': 'WHERE句でprice >= 1000 AND price <= 2000 を使いましょう！'
+            'question': '「1000円以上2000円以下」のメニューを取得してください',
+            'correct_sql': 'SELECT name FROM lunch_menu WHERE price >= 1000 AND price <= 2000;',
+            'hint': 'WHERE句でprice >= 1000 AND price <= 2000 を使いましょう！',
+            'story_text': '……川田、今日は給料日でした。\n少し贅沢したいですが、高すぎるのも気が引けます。\n1000円以上、でも2000円以下のメニューが食いたいですね……',
+            'table_name': 'lunch_menu',
+            'sample_data_json': """
+[
+  {"id": 1, "name": "ハンバーグ定食", "category": "洋食", "price": 980, "available": true},
+  {"id": 2, "name": "鰻重", "category": "和食", "price": 1980, "available": true},
+  {"id": 3, "name": "牛丼", "category": "和食", "price": 590, "available": false},
+  {"id": 4, "name": "天ぷらそば", "category": "和食", "price": 1050, "available": true},
+  {"id": 5, "name": "カレーライス", "category": "洋食", "price": 850, "available": true}
+]
+            """,
+            'success_reaction': 'それ……まさに理想的な昼食でした。\n鰻重も、天ぷらそばも……ちょっと贅沢で、でもちゃんと現実的で。\n川田、こういうの、大事にしたいと思ってました。',
+            'failure_reaction': 'それは惜しかったです……もう一度一緒にやってみましょうか？',
+            'mock_result_json': """
+[
+    {"name": "鰻重"},
+    {"name": "天ぷらそば"}
+]
+            """
         },
         {
             'stage_number': 2,
