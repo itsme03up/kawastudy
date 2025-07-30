@@ -135,14 +135,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function finishGame() {
         const endTime = new Date().getTime();
         const timeElapsed = (endTime - startTime) / 1000;
-        const wpm = Math.round((currentQuote.japanese.length / 5) / (timeElapsed / 60));
-        const accuracy = Math.round(((currentQuote.japanese.length - errors) / currentQuote.japanese.length) * 100);
+        
+        // 日本語向けWPM計算：1文字 = 1語として計算
+        // 英語の標準的な1語=5文字の概念を日本語では1文字=1語に変更
+        const japaneseWPM = Math.round(currentQuote.japanese.length / (timeElapsed / 60));
+        
+        // 正確性計算：負の値にならないように修正
+        const accuracy = Math.max(0, Math.round(((currentQuote.japanese.length - errors) / currentQuote.japanese.length) * 100));
         
         quoteText.innerHTML = `
             <div style="text-align: center; color: #4CAF50;">
                 <h2>完了！</h2>
                 <p>時間: ${timeElapsed.toFixed(1)}秒</p>
-                <p>WPM: ${wpm}</p>
+                <p>文字/分: ${japaneseWPM}</p>
                 <p>正確性: ${accuracy}%</p>
                 <p>エラー数: ${errors}</p>
                 <button onclick="location.reload()" style="
