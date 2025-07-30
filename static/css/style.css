@@ -72,7 +72,7 @@ html, body {
 }
 
 .character-image img {
-    width: 200px; /* 画像の幅をさらに大きくする */
+    width: 230px; /* 画像の幅をさらに大きくする */
     height: auto; /* 高さを自動調整して縦横比を保持 */
     margin-bottom: 15px;
     display: block;
