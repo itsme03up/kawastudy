@@ -52,4 +52,38 @@ body {
   border: none;
   border-radius: 8px;
   width: 100%;
+  background: #222;
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.typing-input:focus {
+  outline: none;
+  background: #333;
+}
+
+/* Character states */
+.correct {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.incorrect {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.current {
+  background-color: #2196F3;
+  color: white;
+  animation: blink 1s infinite;
+}
+
+.pending {
+  color: #fff;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
 }
