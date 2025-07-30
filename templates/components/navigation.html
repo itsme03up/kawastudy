@@ -1,0 +1,37 @@
+<header class="kawada-nav">
+    <span class="kawada-logo">🧑‍🏫 Kawada</span>
+    <nav class="kawada-menu">
+        <a href="{% url 'typing:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'typinggame' %}active{% endif %}">
+            🐟 かわ打
+        </a>
+        <a href="{% url 'chat:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'chatlesson' %}active{% endif %}">
+            📖 勉強
+        </a>
+        <a href="{% url 'quiz:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'sqlquiz' %}active{% endif %}">
+            💾 SQL
+        </a>
+        <a href="{% url 'linux:index' %}" class="nav-btn {% if request.resolver_match.app_name == 'linuxfun' %}active{% endif %}">
+            🐧 Linux
+        </a>
+        <button class="nav-btn settings" onclick="toggleSettings()">⚙️</button>
+    </nav>
+</header>
+
+<!-- Settings dropdown -->
+<div id="settings-dropdown" class="settings-dropdown">
+    <div class="settings-content">
+        <h3>設定</h3>
+        <div class="setting-item">
+            <label for="theme-toggle">ダークモード</label>
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+        </div>
+        <div class="setting-item">
+            <label for="font-size">フォントサイズ</label>
+            <select id="font-size" onchange="changeFontSize()">
+                <option value="small">小</option>
+                <option value="medium" selected>中</option>
+                <option value="large">大</option>
+            </select>
+        </div>
+    </div>
+</div>
