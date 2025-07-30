@@ -75,7 +75,7 @@ kawastudy/
 │   │   ├── templates/core/
 │   │   └── static/core/
 │   │
-│   ├── typinggame/           # 寿司打風かわ打
+│   ├── typinggame/           # 寿司打のパロディ。かわ打。タイピング
 │   │   ├── views.py
 │   │   ├── static/typinggame/
 │   │   └── templates/typinggame/
