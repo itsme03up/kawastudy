@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Kawada SQLクイズ - ステージ選択{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h1 class="mb-0">🎮 Kawada SQLクイズ - ステージ選択画面</h1>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-center mb-4 fs-5">今日はどのステージに挑戦しますか？</p>
+                    
+                    {% if stages %}
+                        <div class="stage-list">
+                            {% for stage in stages %}
+                                <div class="stage-item mb-3 p-3 border rounded-3 hover-shadow">
+                                    <div class="d-flex align-items-center">
+                                        <div class="stage-icon me-3">
+                                            {% if forloop.counter0|divisibleby:2 %}
+                                                🔹
+                                            {% else %}
+                                                🔸
+                                            {% endif %}
+                                        </div>
+                                        <div class="stage-content flex-grow-1">
+                                            <h5 class="mb-1">
+                                                <a href="{% url 'sqlquiz:quiz_play' stage.stage_number %}" 
+                                                   class="text-decoration-none fw-bold">
+                                                    Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》
+                                                </a>
+                                            </h5>
+                                            <p class="text-muted mb-0 small">
+                                                {{ stage.description|truncatechars:60 }}
+                                            </p>
+                                        </div>
+                                        <div class="stage-action">
+                                            <a href="{% url 'sqlquiz:quiz_play' stage.stage_number %}" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                挑戦する →
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3">😅</div>
+                            <h5 class="text-muted">まだステージが準備されていません</h5>
+                            <p class="text-muted">管理者にステージの追加をお知らせください</p>
+                        </div>
+                    {% endif %}
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <div class="p-3 bg-light rounded-3">
+                            <h6 class="mb-2">📝 自分でステージを作る</h6>
+                            <p class="text-muted mb-2 small">Coming Soon...</p>
+                            <button class="btn btn-secondary btn-sm" disabled>
+                                準備中
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-shadow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.stage-item {
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.stage-item:hover {
+    background-color: #f0f8ff;
+    transform: translateY(-2px);
+}
+
+.stage-icon {
+    font-size: 1.5rem;
+}
+</style>
+{% endblock %}
