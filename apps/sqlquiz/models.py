@@ -11,12 +11,12 @@ class QuizStage(models.Model):
     hint = models.TextField(blank=True)
     
     # 新しいフィールド：ストーリーとデータ
-    story_text = models.TextField(help_text="ステージのストーリー・背景")
-    table_name = models.CharField(max_length=100, help_text="サンプルテーブル名")
-    sample_data_json = models.TextField(help_text="サンプルデータ（JSON形式）")
-    success_reaction = models.TextField(help_text="成功時の川田の反応")
-    failure_reaction = models.TextField(help_text="失敗時の川田の反応")
-    mock_result_json = models.TextField(help_text="模擬実行結果（JSON形式）", blank=True)
+    story_text = models.TextField(help_text="ステージのストーリー・背景", default="")
+    table_name = models.CharField(max_length=100, help_text="サンプルテーブル名", default="")
+    sample_data_json = models.TextField(help_text="サンプルデータ（JSON形式）", default="[]")
+    success_reaction = models.TextField(help_text="成功時の川田の反応", default="")
+    failure_reaction = models.TextField(help_text="失敗時の川田の反応", default="")
+    mock_result_json = models.TextField(help_text="模擬実行結果（JSON形式）", blank=True, default="{}")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
