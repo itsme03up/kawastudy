@@ -9,10 +9,7 @@ const timeEl = document.getElementById('time');
 const wpmEl = document.getElementById('wpm');
 const accuracyEl = document.getElementById('accuracy');
 const textDisplay = document.getElementById('text-display');
-const doneEl = document.getElementById('done');
-const typeEl = document.getElementById('type');
-const romajiDoneEl = document.getElementById('romaji-done');
-const romajiTypeEl = document.getElementById('romaji-type');
+const romajiDisplay = document.getElementById('romaji-display');
 const overlay = document.getElementById('overlay');
 const message = document.getElementById('message');
 
@@ -63,13 +60,12 @@ function setQuestion(index) {
     }
     const q = questions[index];
     
-    // 日本語表示
-    doneEl.textContent = '';
-    typeEl.textContent = q.japanese;
+    // 日本語表示を初期化
+    const textDisplay = document.getElementById('text-display');
+    textDisplay.innerHTML = `<span>${q.japanese}</span>`;
 
-    // ローマ字表示
-    romajiDoneEl.textContent = '';
-    romajiTypeEl.textContent = q.romaji;
+    // ローマ字表示を初期化
+    romajiDisplay.innerHTML = `<span>${q.romaji}</span>`;
 
     // 問題番号更新
     questionNumberEl.textContent = index + 1;
@@ -137,19 +133,15 @@ function checkInput(key) {
         typedRomaji += key;
         totalTypedCount++;
 
-        // 表示を更新
-        romajiDoneEl.textContent = typedRomaji;
-        romajiTypeEl.textContent = targetRomaji.substring(typedRomaji.length);
+        // ローマ字表示を更新（文字ごとに色分け）
+        updateRomajiDisplay(targetRomaji, typedRomaji);
 
-        // 対応する日本語部分を移動
-        // ローマ字と日本語の文字数が違うため、単純な文字数での比較はできない
-        // ここでは、ローマ字の進捗率に合わせて日本語表示を更新する簡易的な方法をとる
+        // 対応する日本語部分を移動（色分けも追加）
         const progress = typedRomaji.length / targetRomaji.length;
         const jpLen = currentQuestion.japanese.length;
         const jpDoneLen = Math.floor(jpLen * progress);
         
-        doneEl.textContent = currentQuestion.japanese.substring(0, jpDoneLen);
-        typeEl.textContent = currentQuestion.japanese.substring(jpDoneLen);
+        updateJapaneseDisplay(currentQuestion.japanese, jpDoneLen);
 
         // 問題をクリアした場合
         if (typedRomaji === targetRomaji) {
@@ -162,6 +154,43 @@ function checkInput(key) {
         setTimeout(() => panel.classList.remove('shake'), 100);
     }
     updateStats();
+}
+
+// ローマ字表示を更新する関数（正しく入力された文字を緑色で表示）
+function updateRomajiDisplay(targetRomaji, typedRomaji) {
+    let html = '';
+    
+    // 入力済みの文字を緑色で表示
+    for (let i = 0; i < typedRomaji.length; i++) {
+        html += `<span style="color: #28a745;">${typedRomaji[i]}</span>`;
+    }
+    
+    // 未入力の文字を通常色で表示
+    const remaining = targetRomaji.substring(typedRomaji.length);
+    html += `<span>${remaining}</span>`;
+    
+    // romajiDisplayに表示
+    romajiDisplay.innerHTML = html;
+}
+
+// 日本語表示を更新する関数（正しく入力された部分を緑色で表示）
+function updateJapaneseDisplay(japanese, doneLength) {
+    const textDisplay = document.getElementById('text-display');
+    let html = '';
+    
+    // 入力済みの文字を緑色で表示
+    const donePart = japanese.substring(0, doneLength);
+    if (donePart) {
+        html += `<span style="color: #28a745;">${donePart}</span>`;
+    }
+    
+    // 未入力の文字を通常色で表示
+    const remainingPart = japanese.substring(doneLength);
+    if (remainingPart) {
+        html += `<span>${remainingPart}</span>`;
+    }
+    
+    textDisplay.innerHTML = html;
 }
 
 function nextQuestion() {
