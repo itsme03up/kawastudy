@@ -61,44 +61,43 @@ Issue・PR・アイデア大歓迎です。
 MIT License
 
 
-kawastudy/
-├── manage.py
-├── kawastudy/                # プロジェクト設定ディレクトリ
+kawastudy/                    ← リポジトリのルート（git initここ）
+├── .gitignore                ← ← Git除外設定
+├── manage.py                 ← Django管理コマンド入口
+├── requirements.txt          ← Python依存関係
+├── kawastudy/                ← プロジェクト設定ディレクトリ
 │   ├── __init__.py
 │   ├── settings.py
-│   ├── urls.py               # ルーティング統合
-│   └── asgi.py
+│   ├── urls.py               ← ルートURLルーティング
+│   ├── asgi.py
+│   └── wsgi.py
 │
-├── apps/
-│   ├── core/                 # 共通UI／ホーム画面
-│   │   ├── views.py
-│   │   ├── templates/core/
-│   │   └── static/core/
+├── templates/                ← 全体共通テンプレート
+│   └── base.html             ← 共通UI（ナビ・ヘッダ）を定義
+│
+├── static/                   ← 静的ファイル（CSS, JS, 画像など）
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── main.js
+│
+├── media/                    ← アップロード用（任意）
+│
+├── apps/                     ← Djangoアプリをまとめるディレクトリ
+│   ├── typing/               ← かわ打（寿司打パロディ）
+│   │   ├── templates/typing/
+│   │   │   └── typing.html
+│   │   ├── static/typing/
+│   │   └── views.py
 │   │
-│   ├── typinggame/           # 寿司打のパロディ。かわ打。タイピング
-│   │   ├── views.py
-│   │   ├── static/typinggame/
-│   │   └── templates/typinggame/
-│   │
-│   ├── chatlesson/           # ChatGPTとの対話勉強
-│   │   ├── views.py
-│   │   ├── prompts/          # 川田語などのプリセット
-│   │   ├── templates/chatlesson/
-│   │   └── static/chatlesson/
-│   │
-│   ├── sqlquiz/              # SQLクイズ（川田恋愛編）
-│   │   ├── views.py
-│   │   ├── models.py         # 問題データ
+│   ├── sqlquiz/              ← SQLクイズ
 │   │   ├── templates/sqlquiz/
-│   │   └── static/sqlquiz/
+│   │   └── views.py
 │   │
-│   └── linuxfun/             # 楽しいLinux学習
-│       ├── views.py
-│       ├── templates/linuxfun/
-│       └── static/linuxfun/
+│   ├── studychat/            ← ChatGPTと勉強
+│   │   └── views.py
+│   │
+│   └── linuxfun/             ← 楽しいLinux
+│       └── views.py
 │
-├── static/                   # 共通アセット（chibi川田など）
-├── templates/                # ベーステンプレート群
-│   └── base.html             # 共通UI（ヘッダー・フッター）
-│
-└── README.md
+└── .env                      ← （必要なら）環境変数ファイル
