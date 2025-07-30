@@ -243,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showResult(isCorrect, data) {
         const resultSection = document.getElementById('result-section');
-        const stageInfo = stageData[stageNumber] || stageData[1];
         
         // 川田のリアクション表示
         const reactionHeader = document.getElementById('reaction-header');
@@ -253,15 +252,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isCorrect) {
             reactionHeader.className = 'card-header bg-success text-white';
             reactionTitle.innerHTML = '✅ 成功 - 川田の反応';
-            kawadaReaction.innerHTML = stageInfo.successReaction;
+            kawadaReaction.innerHTML = stageData.successReaction;
             
             // 模擬実行結果を表示
-            showMockResult(stageNumber);
+            showMockResult();
             document.getElementById('next-stage-area').style.display = 'block';
         } else {
             reactionHeader.className = 'card-header bg-danger text-white';
             reactionTitle.innerHTML = '❌ 失敗 - 川田の反応';
-            kawadaReaction.innerHTML = stageInfo.failureReaction;
+            kawadaReaction.innerHTML = stageData.failureReaction;
             
             if (data.correct_sql) {
                 kawadaReaction.innerHTML += `<br><br><strong>正解例：</strong><br><code>${data.correct_sql}</code>`;
@@ -272,23 +271,10 @@ document.addEventListener('DOMContentLoaded', function() {
         resultSection.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function showMockResult(stageNumber) {
+    function showMockResult() {
         const container = document.getElementById('result-table-container');
         
-        // ステージ別の模擬実行結果
-        const mockResults = {
-            1: [
-                {name: '鰻重'},
-                {name: '天ぷらそば'}
-            ],
-            2: [
-                {name: 'サラダボウル', calories: 320},
-                {name: '野菜炒め', calories: 450},
-                {name: 'うどん', calories: 580}
-            ]
-        };
-        
-        const result = mockResults[stageNumber] || mockResults[1];
+        const result = stageData.mockResult;
         if (!result || result.length === 0) return;
         
         const headers = Object.keys(result[0]);
