@@ -23,6 +23,6 @@ urlpatterns = [
     path('', core_views.home, name='home'),
     path('typing/', include('apps.typinggame.urls')),
     path('chat/', include('apps.chatlesson.urls')),
-    path('quiz/', include('apps.sqlquiz.urls')),
+    path('sqlquiz/', include('apps.sqlquiz.urls')),
     path('linux/', include('apps.linuxfun.urls')),
 ]
