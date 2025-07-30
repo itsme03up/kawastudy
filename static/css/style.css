@@ -1,0 +1,10 @@
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1030; /* Bootstrapのnavbarのz-indexより小さい値 */
+}
+
+body {
+    padding-bottom: 60px; /* フッターの高さに応じて調整 */
+}
