@@ -60,12 +60,13 @@ html, body {
     font-weight: bold;
 }
 
-/* サイドバーの高さを画面いっぱいに設定 */
+/* サイドバーの幅を明確に指定 */
 .sidebar-full-height {
     height: calc(100vh - 56px); /* ナビゲーションバーの高さを引く */
     position: fixed;
     top: 56px; /* ナビゲーションバーの下に配置 */
     left: 0;
+    width: 250px; /* 固定幅に変更 */
     z-index: 1000;
     overflow-y: auto;
 }
@@ -79,7 +80,7 @@ html, body {
 
 /* メインコンテンツの左マージンを調整 */
 .main-content-with-sidebar {
-    margin-left: 25%; /* col-md-3相当 + 少し余裕を持たせる */
+    margin-left: 270px; /* サイドバーの幅 + 余白 */
     padding-left: 1rem;
 }
 
