@@ -73,62 +73,64 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const inputValue = e.target.value;
         
-        // Check if input matches the expected Japanese text
-        let matches = true;
-        for (let i = 0; i < inputValue.length; i++) {
-            if (currentPosition + i >= currentQuote.japanese.length || 
-                inputValue[i] !== currentQuote.japanese[currentPosition + i]) {
-                matches = false;
-                break;
-            }
+        // Skip processing during composition (Japanese input)
+        if (isComposing) {
+            return;
         }
         
-        if (matches) {
-            // Input is correct so far
+        if (inputValue.length === 0) {
+            return;
+        }
+        
+        // Get the last character typed
+        const lastChar = inputValue[inputValue.length - 1];
+        const expectedChar = currentQuote.japanese[currentPosition];
+        
+        if (lastChar === expectedChar) {
+            // Correct character
+            currentPosition++;
+            e.target.value = '';
             e.target.style.backgroundColor = '';
             
-            // Update position based on current input length
-            const newPosition = currentPosition + inputValue.length;
-            
             // Check if we've completed the quote
-            if (newPosition >= currentQuote.japanese.length) {
-                currentPosition = newPosition;
+            if (currentPosition >= currentQuote.japanese.length) {
                 finishGame();
                 return;
             }
             
-            // For Japanese input, we advance character by character as user types
-            if (inputValue.length > 0) {
-                // Clear input and advance position for each character
-                const lastChar = inputValue[inputValue.length - 1];
-                if (lastChar === currentQuote.japanese[currentPosition]) {
-                    currentPosition++;
-                    e.target.value = '';
-                    updateDisplay();
-                }
-            }
+            updateDisplay();
         } else {
-            // Wrong input
+            // Wrong character
             errors++;
             e.target.style.backgroundColor = '#ff4444';
+            e.target.value = '';
+            
             setTimeout(() => {
                 e.target.style.backgroundColor = '';
-            }, 200);
-            
-            // Clear the input field on error
-            e.target.value = '';
+            }, 300);
         }
     });
     
     // Handle composition events for Japanese input
+    let isComposing = false;
+    
     typingInput.addEventListener('compositionstart', function(e) {
-        // Japanese input started
+        isComposing = true;
     });
     
     typingInput.addEventListener('compositionend', function(e) {
-        // Japanese input finished, trigger input event
+        isComposing = false;
+        // Process the finalized Japanese input
         const event = new Event('input', { bubbles: true });
+        event.isComposing = false;
         e.target.dispatchEvent(event);
+    });
+    
+    // Update input event to check composition state
+    typingInput.addEventListener('beforeinput', function(e) {
+        if (isComposing) {
+            return;
+        }
     });
     
     // Finish game and show results
