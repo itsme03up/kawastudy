@@ -11,10 +11,14 @@
 <body>
     {% include 'components/navigation.html' %}
     
-    <main class="main-content">
-        {% block content %}
-        {% endblock %}
-    </main>
+    <div class="container">
+        {% include 'components/sidebar.html' %}
+        
+        <main class="content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
     
     {% include 'components/footer.html' %}
     

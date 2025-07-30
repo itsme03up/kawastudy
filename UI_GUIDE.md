@@ -238,5 +238,3 @@ const isValid = validateForm(document.getElementById('my-form'));
 2. `kawastudy/urls.py` に新しいアプリのURLを追加
 3. テンプレートで `{% extends 'base.html' %}` を使用
 4. 必要に応じて `templates/components/navigation.html` にリンクを追加
-
-これで統一されたUIでアプリを開発できます！

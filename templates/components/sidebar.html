@@ -1,0 +1,64 @@
+<aside class="sidebar">
+    <div class="character-area">
+        <div class="character-image">
+            <img src="{% static 'img/kawada.png' %}" alt="川田アイコン" id="kawada-character">
+        </div>
+        <div class="character-info">
+            <h4>川田先生</h4>
+            <p class="character-mood" id="character-mood">😊 元気</p>
+        </div>
+    </div>
+    
+    <div class="quick-nav">
+        <h5>クイックメニュー</h5>
+        <nav class="sidebar-menu">
+            {% url 'typing:index' as typing_url %}
+            {% if typing_url %}
+                <a href="{{ typing_url }}" class="menu-item {% if request.resolver_match.app_name == 'typing' %}active{% endif %}">
+                    🐟 かわ打
+                </a>
+            {% else %}
+                <a href="/typing/" class="menu-item">🐟 かわ打</a>
+            {% endif %}
+            
+            {% url 'chat:index' as chat_url %}
+            {% if chat_url %}
+                <a href="{{ chat_url }}" class="menu-item {% if request.resolver_match.app_name == 'chat' %}active{% endif %}">
+                    📖 勉強
+                </a>
+            {% else %}
+                <a href="/chat/" class="menu-item">📖 勉強</a>
+            {% endif %}
+            
+            {% url 'quiz:index' as quiz_url %}
+            {% if quiz_url %}
+                <a href="{{ quiz_url }}" class="menu-item {% if request.resolver_match.app_name == 'quiz' %}active{% endif %}">
+                    💾 SQL
+                </a>
+            {% else %}
+                <a href="/quiz/" class="menu-item">💾 SQL</a>
+            {% endif %}
+            
+            {% url 'linux:index' as linux_url %}
+            {% if linux_url %}
+                <a href="{{ linux_url }}" class="menu-item {% if request.resolver_match.app_name == 'linux' %}active{% endif %}">
+                    🐧 Linux
+                </a>
+            {% else %}
+                <a href="/linux/" class="menu-item">🐧 Linux</a>
+            {% endif %}
+        </nav>
+    </div>
+    
+    <div class="stats-area">
+        <h5>今日の学習</h5>
+        <div class="stat-item">
+            <span class="stat-label">学習時間</span>
+            <span class="stat-value" id="study-time">25分</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">経験値</span>
+            <span class="stat-value" id="experience">+120 EXP</span>
+        </div>
+    </div>
+</aside>
