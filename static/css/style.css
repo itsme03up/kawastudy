@@ -8,3 +8,28 @@
 body {
     padding-bottom: 60px; /* フッターの高さに応じて調整 */
 }
+
+.main-container {
+    display: flex;
+    min-height: calc(100vh - 56px - 60px); /* navとfooterの高さを引く */
+}
+
+.sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 56px; /* navbarの高さ */
+    height: calc(100vh - 56px); /* navbarの高さを引いたビューポートの高さ */
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* スクロールが必要な場合に備える */
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+}
