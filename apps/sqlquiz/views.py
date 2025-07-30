@@ -20,6 +20,22 @@ def quiz_play(request, stage_number):
     return render(request, 'sqlquiz/quiz_play.html', {'stage': stage})
 
 @csrf_exempt
+def get_stage_data(request, stage_number):
+    """ステージのデータをJSONで返すAPI"""
+    stage = get_object_or_404(QuizStage, stage_number=stage_number)
+    
+    stage_data = {
+        'tableName': stage.table_name,
+        'story': stage.story_text,
+        'sampleData': stage.get_sample_data(),
+        'successReaction': stage.success_reaction,
+        'failureReaction': stage.failure_reaction,
+        'mockResult': stage.get_mock_result()
+    }
+    
+    return JsonResponse(stage_data)
+
+@csrf_exempt
 def check_answer(request, stage_number):
     """回答チェック（AJAX）"""
     if request.method == 'POST':

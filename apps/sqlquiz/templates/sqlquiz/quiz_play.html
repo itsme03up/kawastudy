@@ -125,64 +125,42 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const stageNumber = parseInt('{{ stage.stage_number }}');
+    let stageData = null;
     
-    // ステージ別のデータとストーリーを定義
-    const stageData = {
-        1: {
-            tableName: 'lunch_menu',
-            story: `……川田、今日は給料日でした。<br>
-                   少し贅沢したいですが、高すぎるのも気が引けます。<br>
-                   1000円以上、でも2000円以下のメニューが欲しいですね……`,
-            sampleData: [
-                {id: 1, name: 'ハンバーグ定食', category: '洋食', price: 980, available: 'TRUE'},
-                {id: 2, name: '鰻重', category: '和食', price: 1980, available: 'TRUE'},
-                {id: 3, name: '牛丼', category: '和食', price: 590, available: 'FALSE'},
-                {id: 4, name: '天ぷらそば', category: '和食', price: 1050, available: 'TRUE'},
-                {id: 5, name: 'カレーライス', category: '洋食', price: 850, available: 'TRUE'}
-            ],
-            successReaction: `それ……まさに理想的な昼食でした。<br>
-                            鰻重も、天ぷらそばも……ちょっと贅沢で、でもちゃんと現実的で。<br>
-                            川田、こういうの、大事にしたいと思ってました。`,
-            failureReaction: `うーん……そのクエリだと、ちょっと違う結果になってしまいますね。<br>
-                            価格の条件をもう一度確認してみてください。<br>
-                            1000円以上2000円以下、という範囲が大切です。`
-        },
-        2: {
-            tableName: 'menu',
-            story: `川田、最近健康を意識するようになりました。<br>
-                   特にカロリーを気にして、600kcal未満のメニューを探しています。<br>
-                   体に優しい選択肢が見つかればいいのですが……`,
-            sampleData: [
-                {id: 1, name: 'サラダボウル', category: 'ヘルシー', calories: 320, price: 890},
-                {id: 2, name: 'チキンカツ定食', category: '揚げ物', calories: 850, price: 1200},
-                {id: 3, name: '野菜炒め', category: '炒め物', calories: 450, price: 780},
-                {id: 4, name: 'うどん', category: '麺類', calories: 580, price: 650},
-                {id: 5, name: 'ステーキ', category: '肉料理', calories: 720, price: 2500}
-            ],
-            successReaction: `完璧です！これらのメニューなら安心ですね。<br>
-                            カロリーを抑えつつ、美味しそうなものばかり。<br>
-                            健康的な食生活、続けていけそうです。`,
-            failureReaction: `惜しいですね……カロリーの条件をもう一度見直してみてください。<br>
-                            600kcal未満、というのがポイントです。<br>
-                            ORDER BYも忘れずに。`
+    // サーバーからステージデータを取得
+    fetchStageData();
+    
+    async function fetchStageData() {
+        try {
+            const response = await fetch(`{% url 'sqlquiz:get_stage_data' stage.stage_number %}`);
+            stageData = await response.json();
+            initializePage();
+        } catch (error) {
+            console.error('ステージデータの取得に失敗しました:', error);
+            // フォールバック用のデフォルトデータ
+            stageData = {
+                tableName: 'sample_table',
+                story: 'データを読み込み中...',
+                sampleData: [],
+                successReaction: '成功しました！',
+                failureReaction: 'もう一度挑戦してみてください。',
+                mockResult: []
+            };
+            initializePage();
         }
-        // 他のステージも必要に応じて追加
-    };
-
-    // ページ初期化
-    initializePage();
+    }
 
     function initializePage() {
-        const data = stageData[stageNumber] || stageData[1];
+        if (!stageData) return;
         
         // ストーリー表示
-        document.getElementById(`story-content-${stageNumber}`).innerHTML = data.story;
+        document.getElementById(`story-content-${stageNumber}`).innerHTML = stageData.story;
         
         // テーブル名設定
-        document.getElementById('table-name').textContent = data.tableName;
+        document.getElementById('table-name').textContent = stageData.tableName;
         
         // サンプルデータテーブル作成
-        createSampleTable(data.sampleData);
+        createSampleTable(stageData.sampleData);
     }
 
     function createSampleTable(data) {
