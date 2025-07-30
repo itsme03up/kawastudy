@@ -1,9 +1,13 @@
 {% load static %}
-<aside class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-    <div class="position-sticky pt-3">
-        <div class="text-center">
-            <img src="{% static 'img/kawada.png' %}" alt="川田先生" id="kawada-character" class="img-fluid rounded-circle mb-3" style="width: 100px;">
-            <h4>川田先生</h4>
+<aside class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse sidebar-full-height">
+    <div class="sidebar-content">
+        <div class="character-area">
+            <div class="character-image">
+                <img src="{% static 'img/kawada.png' %}" alt="川田先生" id="kawada-character">
+            </div>
+            <div class="character-info">
+                <h4>川田先生</h4>
+            </div>
         </div>
         
         <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
