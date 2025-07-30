@@ -18,18 +18,21 @@ document.addEventListener('DOMContentLoaded', function() {
         fontSizeSelect.value = savedFontSize;
     }
 
+    // Initialize dashboard
+    initializeDashboard();
+
     // Close settings dropdown when clicking outside
     document.addEventListener('click', function(event) {
         const settingsDropdown = document.getElementById('settings-dropdown');
-        const settingsButton = document.querySelector('.settings');
+        const settingsButton = document.querySelector('.settings-btn');
         
-        if (settingsDropdown && !settingsDropdown.contains(event.target) && !settingsButton.contains(event.target)) {
+        if (settingsDropdown && settingsButton && !settingsDropdown.contains(event.target) && !settingsButton.contains(event.target)) {
             settingsDropdown.classList.remove('show');
         }
     });
 
     // Add fade-in animation to main content
-    const mainContent = document.querySelector('.main-content');
+    const mainContent = document.querySelector('.content');
     if (mainContent) {
         mainContent.classList.add('fade-in');
     }
@@ -184,5 +187,72 @@ function loadFromLocalStorage(key, defaultValue = null) {
     } catch (error) {
         console.error('Error loading from localStorage:', error);
         return defaultValue;
+    }
+}
+
+// Currency management
+function updateCurrency(amount) {
+    const currencyElement = document.getElementById('currency-amount');
+    if (currencyElement) {
+        currencyElement.textContent = amount.toLocaleString();
+    }
+}
+
+function addCurrency(amount) {
+    const currentAmount = loadFromLocalStorage('kawada-currency', 1000);
+    const newAmount = currentAmount + amount;
+    saveToLocalStorage('kawada-currency', newAmount);
+    updateCurrency(newAmount);
+    
+    // Show notification for currency earned
+    if (amount > 0) {
+        showNotification(`¥${amount} を獲得しました！`, 'success');
+    }
+}
+
+// Character mood management
+function updateCharacterMood(mood = '😊 元気') {
+    const moodElement = document.getElementById('character-mood');
+    if (moodElement) {
+        moodElement.textContent = mood;
+    }
+}
+
+// Study time tracking
+function updateStudyTime() {
+    const studyTimeElement = document.getElementById('study-time');
+    const experienceElement = document.getElementById('experience');
+    
+    if (studyTimeElement && experienceElement) {
+        const totalMinutes = loadFromLocalStorage('total-study-time', 25);
+        const totalExp = loadFromLocalStorage('total-experience', 120);
+        
+        studyTimeElement.textContent = `${totalMinutes}分`;
+        experienceElement.textContent = `+${totalExp} EXP`;
+    }
+}
+
+// Initialize dashboard
+function initializeDashboard() {
+    // Load and display currency
+    const savedCurrency = loadFromLocalStorage('kawada-currency', 1000);
+    updateCurrency(savedCurrency);
+    
+    // Update study stats
+    updateStudyTime();
+    
+    // Set character mood based on recent activity
+    const lastActivity = loadFromLocalStorage('last-activity-time');
+    if (lastActivity) {
+        const timeDiff = Date.now() - lastActivity;
+        const hoursDiff = timeDiff / (1000 * 60 * 60);
+        
+        if (hoursDiff < 1) {
+            updateCharacterMood('😊 やる気満々');
+        } else if (hoursDiff < 24) {
+            updateCharacterMood('😌 お疲れ様');
+        } else {
+            updateCharacterMood('😴 お久しぶり');
+        }
     }
 }
