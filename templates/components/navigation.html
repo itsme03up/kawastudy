@@ -1,27 +1,38 @@
-<header>
-    <div class="navbar">
-        <a href="{% url 'home' %}" class="title">KawadaStudy</a>
-        <div class="nav-right">
-            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">KawadaStudy</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        ⚙️
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="settingsDropdown">
+                        <li><h6 class="dropdown-header">設定</h6></li>
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+                                    <label class="form-check-label" for="theme-toggle">ダークモード</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <label for="font-size" class="form-label">フォントサイズ</label>
+                                <select id="font-size" class="form-select form-select-sm" onchange="changeFontSize()">
+                                    <option value="small">小</option>
+                                    <option value="medium" selected>中</option>
+                                    <option value="large">大</option>
+                                </select>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
-</header>
-
-<!-- Settings dropdown -->
-<div id="settings-dropdown" class="settings-dropdown">
-    <div class="settings-content">
-        <h3>設定</h3>
-        <div class="setting-item">
-            <label for="theme-toggle">ダークモード</label>
-            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
-        </div>
-        <div class="setting-item">
-            <label for="font-size">フォントサイズ</label>
-            <select id="font-size" onchange="changeFontSize()">
-                <option value="small">小</option>
-                <option value="medium" selected>中</option>
-                <option value="large">大</option>
-            </select>
-        </div>
-    </div>
-</div>
+</nav>
