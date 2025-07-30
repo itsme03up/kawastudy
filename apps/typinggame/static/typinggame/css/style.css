@@ -57,17 +57,20 @@ body {
 
 /* タイピングテキストのコンテナ */
 #text-container {
-  font-family: "Consolas", "Monaco", monospace;
-  font-size: 1.8rem;
-  line-height: 1.5;
-  background-color: #222;
-  padding: 20px;
-  min-height: 100px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  text-align: left;
-  white-space: pre-wrap; /* 折り返しを有効に */
-  word-break: break-all;
+    max-width: none;
+    width: 100%;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 1.8rem;
+    line-height: 1.5;
+    background-color: #222;
+    padding: 20px;
+    min-height: 100px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    text-align: left;
+    white-space: pre-wrap;
+    /* 折り返しを有効に */
+    word-break: break-all;
 }
 
 /* 打ち終わった文字 */
