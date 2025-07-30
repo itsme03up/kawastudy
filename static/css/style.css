@@ -79,12 +79,13 @@ html, body {
 
 /* メインコンテンツの左マージンを調整 */
 .main-content-with-sidebar {
-    margin-left: 16.666667%; /* col-lg-2相当 */
+    margin-left: 25%; /* col-md-3相当 + 少し余裕を持たせる */
+    padding-left: 1rem;
 }
 
-@media (max-width: 991.98px) {
+@media (min-width: 992px) {
     .main-content-with-sidebar {
-        margin-left: 25%; /* col-md-3相当 */
+        margin-left: 20%; /* col-lg-2相当 + 少し余裕を持たせる */
     }
 }
 
