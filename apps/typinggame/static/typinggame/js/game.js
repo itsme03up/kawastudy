@@ -1,29 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
     const quoteText = document.getElementById('quote-text');
+    const romajiText = document.getElementById('romaji-text');
     const typingInput = document.getElementById('typing-input');
     
-    // Array of Japanese quotes (can be expanded)
+    // Array of Japanese quotes with their romaji
     const quotes = [
-        '君に出来ないことを僕は出来るかもしれない。でも、僕に出来ないことを 、君は出来るんだ',
-        '俺がガンダムだ！',
-        '君はどうしたいんだい。しなければならない事じゃなくて、君がやりたい事を。君自身がやりたい事を教えてよ',
-        '見せてもらおうか。新しいガンダムの性能とやらを！',
-        '当たらなければ、どうという事はない！',
-        'あなたは私の光。もう一度、私を生んでくれた光でした',
-        '命なんて安いものだ。特に俺のはな',
-        'エンタープライズ、発進！',
-        'もしもし聞こえる？ミンフィリアよ',
-        'やはりお前は笑顔が、イイ',
-        '当たらなければ、どうという事はない！',
-        '貴様が余輩のナーマか？',
-        'ならば、覚えていろ。私たちは確かに生きていたんだ',
-        '狩りとはそういうものだよ。じきに慣れる',
-        'どこもかしこも獣ばかりだ。どうせ貴様もそうなるのだろう？',
-        'エビ好きに悪人はいねえ',
-        'ご照覧あれい！',
+        {
+            japanese: '君に出来ないことを僕は出来るかもしれない。',
+            romaji: 'kimi ni dekinai koto wo boku ha dekiru kamo shirenai.'
+        },
+        {
+            japanese: '俺がガンダムだ！',
+            romaji: 'ore ga gandamu da!'
+        },
+        {
+            japanese: '君はどうしたいんだい。',
+            romaji: 'kimi ha dou shitain dai.'
+        },
+        {
+            japanese: '見せてもらおうか。',
+            romaji: 'misete moraou ka.'
+        },
+        {
+            japanese: '当たらなければ、どうという事はない！',
+            romaji: 'ataranakereha, dou to iu koto ha nai!'
+        },
+        {
+            japanese: 'あなたは私の光。',
+            romaji: 'anata ha watashi no hikari.'
+        },
+        {
+            japanese: '命なんて安いものだ。',
+            romaji: 'inochi nante yasui mono da.'
+        }
     ];
     
-    let currentQuote = '';
+    let currentQuote = null;
     let currentPosition = 0;
     let startTime = null;
     let errors = 0;
@@ -42,12 +54,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update the display with highlighted characters
     function updateDisplay() {
-        let displayHTML = '';
+        // Update Japanese text
+        let japaneseHTML = '';
+        for (let i = 0; i < currentQuote.japanese.length; i++) {
+            const char = currentQuote.japanese[i];
+            japaneseHTML += `<span class="pending">${char}</span>`;
+        }
+        quoteText.innerHTML = japaneseHTML;
         
-        for (let i = 0; i < currentQuote.length; i++) {
-            const char = currentQuote[i];
+        // Update romaji text with highlighting
+        let romajiHTML = '';
+        for (let i = 0; i < currentQuote.romaji.length; i++) {
+            const char = currentQuote.romaji[i];
             
             if (i < currentPosition) {
+                // Already typed correctly
+                romajiHTML += `<span class="correct">${char}</span>`;
+            } else if (i === currentPosition) {
+                // Current character to type
+                romajiHTML += `<span class="current">${char}</span>`;
+            } else {
+                // Not yet typed
+                romajiHTML += `<span class="pending">${char}</span>`;
+            }
+        }
+        
+        romajiText.innerHTML = romajiHTML;
+    }
                 // Already typed correctly
                 displayHTML += `<span class="correct">${char}</span>`;
             } else if (i === currentPosition) {

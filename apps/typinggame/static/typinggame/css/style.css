@@ -42,7 +42,15 @@ body {
 .quote-text {
   font-size: 1.6rem;
   line-height: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.romaji-text {
+  font-size: 1.2rem;
+  line-height: 1.8rem;
   margin-bottom: 20px;
+  color: #888;
+  font-style: italic;
 }
 
 .typing-input {
