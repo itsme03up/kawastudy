@@ -1,26 +1,46 @@
 <!DOCTYPE html>
+{% extends "base.html" %}
 {% load static %}
-<html lang="ja">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>かわ打：タイピングゲーム</title>
+
+{% block title %}タイピングゲーム{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'typinggame/css/style.css' %}">
-</head>
-<body class="outer">
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
     <div id="panel" class="inner">
         <div id="header">
-			残り時間: <span id="time">0.0</span> 秒 | 
-			記録: <span id="hist"></span>
-		</div>
+            <div class="stats-container">
+                <span>問題: <span id="question-number">1</span>/<span id="total-questions">10</span></span>
+                <span>残り時間: <span id="time">60.0</span></span>
+                <span>WPM: <span id="wpm">0</span></span>
+                <span>正解率: <span id="accuracy">0.00</span>%</span>
+            </div>
+        </div>
 
-        <!-- #textにタイピングする文字を入れる。 #done, #typeは、それぞれ打ち終わったもの、これから打つものが入る。 -->
-        <pre id="text-container"><span id="done"></span><span id="type"></span></pre>
+        <div id="text-container">
+            <div id="text-display" class="fs-2">
+                <span id="done"></span><span id="type">{{ question.japanese }}</span>
+            </div>
+            <div id="romaji-display" class="fs-4 text-muted">
+                <span id="romaji-done"></span><span id="romaji-type">{{ question.romaji }}</span>
+            </div>
+        </div>
 
-        <div id="overlay">スペースキーで開始</div>
+        <div id="overlay">
+            <div class="fs-4">スペースキーで開始</div>
+            <div class="mt-2 text-muted">（日本語入力モードはオフにしてください）</div>
+        </div>
         <div id="message"></div>
     </div>
+</div>
 
-    <script src="{% static 'typinggame/js/game.js' %}"></script>
-</body>
-</html>
+<script>
+    // Djangoからテンプレートに渡されたデータをJavaScript変数に設定
+    const questions = JSON.parse('{{ questions_json|safe }}');
+    const initialQuestion = JSON.parse('{{ initial_question_json|safe }}');
+</script>
+<script src="{% static 'typinggame/js/game.js' %}"></script>
+{% endblock %}
