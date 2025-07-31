@@ -230,15 +230,40 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentUtterance = null;
     let isPlaying = false;
 
-    // 日本語音声の設定
+    // 日本語男性音声の設定
     function getJapaneseVoice() {
         const voices = speechSynthesis.getVoices();
-        // 日本語音声を優先して選択
-        return voices.find(voice => 
+        
+        // 1. 日本語男性音声を最優先
+        const japaneseMaleVoice = voices.find(voice => 
+            voice.lang.includes('ja') && 
+            (voice.name.includes('Male') || 
+             voice.name.includes('男') ||
+             voice.name.includes('Otoya') ||
+             voice.name.includes('Ichiro') ||
+             voice.name.includes('Kenji'))
+        );
+        
+        if (japaneseMaleVoice) {
+            console.log('Selected Japanese male voice:', japaneseMaleVoice.name);
+            return japaneseMaleVoice;
+        }
+        
+        // 2. 日本語音声（性別問わず）
+        const japaneseVoice = voices.find(voice => 
             voice.lang.includes('ja') || 
             voice.name.includes('Japanese') ||
             voice.name.includes('日本')
-        ) || voices[0];
+        );
+        
+        if (japaneseVoice) {
+            console.log('Selected Japanese voice:', japaneseVoice.name);
+            return japaneseVoice;
+        }
+        
+        // 3. フォールバック（デフォルト音声）
+        console.log('Using default voice:', voices[0]?.name || 'None');
+        return voices[0];
     }
 
     // TTSで音声読み上げ
