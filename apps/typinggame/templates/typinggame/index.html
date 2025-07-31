@@ -52,23 +52,23 @@
 {% block react_scripts %}
 <!-- デバッグ用ログ -->
 <script>
-    console.log('🔧 Template DEBUG: Starting script execution');
+    console.log('🔧 Template DEBUG: Starting script execution - v2');
     console.log('🔧 React container exists:', !!document.getElementById('react-typing-game'));
     console.log('🔧 Questions data:', window.typingQuestionsData);
     console.log('🔧 Initial question:', window.typingInitialQuestion);
 </script>
 
-<!-- React のタイピングゲームを直接読み込み -->
-<script src="{% static 'js/react/typing.bundle.js' %}"></script>
+<!-- React のタイピングゲームを直接読み込み (キャッシュバスター付き) -->
+<script src="{% static 'js/react/typing.bundle.js' %}?v={{ forloop.counter|default:'1' }}"></script>
 
 <script>
-    console.log('🔧 After bundle load - checking window objects');
+    console.log('🔧 After bundle load - checking window objects - v2');
     console.log('🔧 React available:', typeof React !== 'undefined');
     console.log('🔧 ReactDOM available:', typeof ReactDOM !== 'undefined');
     
     // 手動でReactコンポーネントを初期化してみる
     setTimeout(() => {
-        console.log('🔧 Manual React initialization attempt');
+        console.log('🔧 Manual React initialization attempt - v2');
         const container = document.getElementById('react-typing-game');
         if (container) {
             console.log('🔧 Container found, trying to render...');
@@ -88,6 +88,6 @@
         }
     }, 100);
     
-    console.log('タイピングゲーム React コンポーネントが読み込まれました');
+    console.log('タイピングゲーム React コンポーネントが読み込まれました - v2');
 </script>
 {% endblock %}
