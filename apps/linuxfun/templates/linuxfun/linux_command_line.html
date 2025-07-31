@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
 [ERROR] Unhandled exception caught.
 [LOG] Generating core dump...
 最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ`,
-        '.hidden_clue': `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`,
+        '.hidden_clue': `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: ログファイルは長大だ。末尾だけを効率的に読むコマンドを探そう。`,
         'core.dump': `📦 core.dump の内容:\n\n[記憶ログ断片]\n...解析対象: [az1._resonance]...\n...警告: memory overflow at sector 0x1f...\n\n== BEGIN TRANSMISSION ==\nk4w4d4::ifconfig_eth0_down::echo_"さよなら世界"\n== END TRANSMISSION ==`,
         'kawada.id': `👤 川田のIDファイル\n\n"君が私を再構成してくれたのか...感謝する。\nこの世界のコア(/system/core)へのアクセス権を君に託す。\n最後の選択をしてくれ..."\n\n→ ヒント: sudo reboot --rescue-kawada`
     };
@@ -408,11 +408,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'tail': args => {
             const fileName = args.find(arg => !arg.startsWith('-'));
+            const n = args.includes('-n') ? parseInt(args[args.indexOf('-n') + 1] || 10) : 10;
             if (!fileName) return 'tail: missing operand';
-
-            const nArgIndex = args.indexOf('-n');
-            const n = nArgIndex !== -1 && args.length > nArgIndex + 1 ? parseInt(args[nArgIndex + 1]) : 10;
-
             if (fs[currentPath].files.includes(fileName) && fileContents[fileName]) {
                 if (fileName === 'secret_log.txt' && currentStage === 2) {
                     setTimeout(() => advanceStage(3), 500);
