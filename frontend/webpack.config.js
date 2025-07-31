@@ -3,15 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './src/index.js',
-    typing: './src/apps/typing/index.js',
-    chatlesson: './src/apps/chatlesson/index.js',
-    sqlquiz: './src/apps/sqlquiz/index.js'
+    typing: './src/apps/typing/index.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/react/'),
     filename: '[name].bundle.js',
-    clean: true,
+    clean: false,
   },
   module: {
     rules: [
