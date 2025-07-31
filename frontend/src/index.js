@@ -3,10 +3,13 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
+// Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 // メインアプリケーション用
-const mainContainer = document.getElementById('react-main');
-if (mainContainer) {
-  const root = createRoot(mainContainer);
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
   root.render(<App />);
 }
 
