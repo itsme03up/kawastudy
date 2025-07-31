@@ -157,7 +157,7 @@ def create_sample_stages():
             'correct_sql': 'SELECT name FROM date_spots WHERE origin = \'荻窪\' AND distance_km <= 10;',
             'alternative_solutions_json': '[]',
             'hint': '条件を満たす距離の範囲を `WHERE` でしっかり絞るのがポイントでした。',
-            'story_text': '少しだけでもいいから会いたい人っていますよね。\n自宅からあまり遠くなくて、でも少しだけ特別で。\n荻窪から、10km以内の場所で……一緒に過ごせたらって、思ってました。',
+            'story_text': '少しだけでもいいから会いたい人っていますよね。\n自宅からあまり遠くなくて、でも少しだけ特別で。\n荻窪駅から、10km以内の場所で……一緒に過ごせたらって、思ってました。',
             'table_name': 'date_spots',
             'sample_data_json': '[{"id": 1, "name": "井の頭公園", "origin": "荻窪", "distance_km": 6.2}, {"id": 2, "name": "葛西臨海公園", "origin": "荻窪", "distance_km": 18.5}, {"id": 3, "name": "ジブリ美術館", "origin": "荻窪", "distance_km": 4.7}, {"id": 4, "name": "等々力渓谷", "origin": "荻窪", "distance_km": 9.8}, {"id": 5, "name": "箱根彫刻の森", "origin": "荻窪", "distance_km": 75.0}]',
             'success_reaction': '川田、それくらいの距離が……ちょうどいいって、思ってました。\n近すぎず、遠すぎず。誰かと行くには、ちょうどいいくらいの。',
