@@ -166,18 +166,18 @@ def create_sample_stages():
         },
         {
             'stage_number': 10,
-            'title': '今日は静かな場所で（岩吉さんを避けて）',
-            'description': '特定の駅から20km以上離れていて、かつ静かな場所を選ぶ問題です。フラグと数値条件のAND指定が必要です。',
-            'question': '岩吉さんが今日は「新宿駅」付近に営業に行っています。\nそこで、新宿駅から20km以上離れていて、かつ「静か（quiet = TRUE）」な場所を探してください。',
-            'correct_sql': 'SELECT name FROM spots WHERE quiet = TRUE AND distance_from_shinjuku >= 20;',
-            'alternative_solutions_json': '["SELECT name FROM spots WHERE quiet = 1 AND distance_from_shinjuku >= 20"]',
-            'hint': '`quiet`フラグと距離の条件、2つを両立させる必要がありました。',
-            'story_text': '……川田、今日は静かに過ごしたかったんです。\n新宿には岩吉さんがいるので、少し離れた場所を選びました。\n騒がしいライブハウスとかじゃなくて、もっと落ち着いた場所が、今はいいと思ってました。',
-            'table_name': 'spots',
-            'sample_data_json': '[{"id": 1, "name": "水族館（しながわ）", "quiet": true, "distance_from_shinjuku": 24}, {"id": 2, "name": "ライブハウス・ブレイズ", "quiet": false, "distance_from_shinjuku": 2}, {"id": 3, "name": "温泉センター（八王子）", "quiet": true, "distance_from_shinjuku": 35}, {"id": 4, "name": "映画館（中野）", "quiet": false, "distance_from_shinjuku": 5}, {"id": 5, "name": "カフェ・ユグドラシル", "quiet": true, "distance_from_shinjuku": 12}]',
-            'success_reaction': '川田、それが……今の自分にはちょうど良い距離でした。\n静かで、少し遠くて。安心できる場所があるって、思えました。',
-            'failure_reaction': '川田、それだと近すぎたかもしれません。\n距離と静けさ、両方を満たす選び方を、もう一度だけ見直してみてください。',
-            'mock_result_json': '[{"name": "水族館（しながわ）"}, {"name": "温泉センター（八王子）"}]'
+            'title': 'デートプランを立てよう！',
+            'description': 'SUM関数を使って合計金額を計算する問題です。卵不使用メニューがあるレストランとカフェの組み合わせで予算を確認しましょう。',
+            'question': '今度のデートで、卵アレルギーの相手のことを考えて「卵不使用メニューがある（egg_free = TRUE）」レストランとカフェの合計予算を計算してください。',
+            'correct_sql': 'SELECT SUM(price) FROM date_plan WHERE egg_free = TRUE;',
+            'alternative_solutions_json': '["SELECT SUM(price) FROM date_plan WHERE egg_free = 1"]',
+            'hint': 'SUM関数を使って、条件に合う店舗の価格を合計してみましょう。',
+            'story_text': '川田、今度一緒に行く人のことを考えて……\n卵アレルギーがあるって聞いたので、安心して食べられるお店を選びたいと思ってました。\nレストランとカフェ、両方で卵不使用メニューがあるところの予算を、計算してみたくて。',
+            'table_name': 'date_plan',
+            'sample_data_json': '[{"id": 1, "type": "レストラン", "name": "イタリアン・ベラヴィスタ", "price": 3500, "egg_free": true}, {"id": 2, "type": "カフェ", "name": "カフェ・ノンアレルゲン", "price": 1200, "egg_free": true}, {"id": 3, "type": "レストラン", "name": "洋食屋・クラシック", "price": 2800, "egg_free": false}, {"id": 4, "type": "カフェ", "name": "スイーツパラダイス", "price": 1500, "egg_free": false}, {"id": 5, "type": "レストラン", "name": "和食処・さくら", "price": 4200, "egg_free": true}]',
+            'success_reaction': '川田、その予算なら……安心してお誘いできそうです。\n相手のことを考えた選択ができて、良かったと思ってました。',
+            'failure_reaction': '川田、卵アレルギーの条件を忘れていませんか？\n安心して食べられるお店だけを選んで、合計を計算してみてください。',
+            'mock_result_json': '[{"SUM(price)": 8900}]'
         }
     ]
     
