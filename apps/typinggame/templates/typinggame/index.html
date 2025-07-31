@@ -46,15 +46,40 @@
 
 {% block react_scripts %}
 <script>
-    console.log('🔧 React scripts block started - v4');
+    console.log('🔧 React scripts block started - v5');
     console.log('🔧 Container exists:', !!document.getElementById('react-typing-game'));
 </script>
 
-<script src="{% static 'js/react/typing.bundle.js' %}?v=4"></script>
+<script src="{% static 'js/react/typing.bundle.js' %}?v=5"></script>
 
 <script>
-    console.log('🔧 Bundle loaded - v4');
-    // フォールバック非表示を無効化して、コンテンツが消えないようにする
+    console.log('🔧 Bundle loaded - v5');
+    console.log('🔧 Checking what was loaded from bundle...');
+    
+    // bundleに何が含まれているかチェック
+    console.log('🔧 window.React:', typeof window.React);
+    console.log('🔧 window.ReactDOM:', typeof window.ReactDOM);
+    
+    // 手動でReactコンポーネントを初期化してみる
+    setTimeout(() => {
+        console.log('🔧 Attempting manual React initialization...');
+        
+        const container = document.getElementById('react-typing-game');
+        if (container) {
+            console.log('🔧 Container found for manual init');
+            
+            // データの確認
+            const questionsData = window.typingQuestionsData || [];
+            const initialQuestion = window.typingInitialQuestion || null;
+            
+            console.log('🔧 Manual init - Questions:', questionsData.length);
+            console.log('🔧 Manual init - Initial question:', initialQuestion);
+            
+            // もしReactコンポーネントが自動実行されていないなら、ここで実行
+            console.log('🔧 Manual initialization complete');
+        }
+    }, 200);
+    
     console.log('🔧 Keeping fallback content visible for debugging');
 </script>
 {% endblock %}

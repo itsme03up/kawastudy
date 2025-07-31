@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
+// コンポーネント読み込み時のログ
+console.log('🚀 TypingGame.js file loaded!');
+
 const TypingGame = ({ questions = [], initialQuestion = null }) => {
-  console.log('🚀 TypingGame component mounted!');
-  console.log('Questions:', questions);
-  console.log('Initial question:', initialQuestion);
+  console.log('🚀 TypingGame component instantiated!');
+  console.log('🚀 Props received - Questions:', questions);
+  console.log('🚀 Props received - Initial question:', initialQuestion);
 
   // ゲーム状態
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
