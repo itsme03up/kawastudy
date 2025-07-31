@@ -5,14 +5,21 @@
 
 {% block extra_css %}
 <style>
-    body {
+    html, body {
         font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
-        overflow-y: hidden; /* ページ全体のスクロールを禁止 */
+        overflow: hidden; /* ページ全体のスクロールを完全に禁止 */
+        height: 100vh;
+        margin: 0;
+        padding: 0;
     }
 
     .main-layout-chat {
         display: flex;
-        height: calc(100vh - 56px); /* フッターを除いたビューポートの高さ */
+        height: 100vh; /* ビューポート全体の高さを使用 */
+        width: 100vw; /* ビューポート全体の幅を使用 */
+        position: fixed;
+        top: 0;
+        left: 0;
     }
 
     .character-area {
