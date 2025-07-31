@@ -163,12 +163,7 @@
                 <h5 class="mb-0">チャットルーム</h5>
             </div>
             <div class="chat-log" id="chat-log">
-                <!-- メッセージはここに表示される -->
-                <div class="message-wrapper bot">
-                    <div class="chat-bubble bot-message">
-                        <p class="mb-0">何か質問はありますか？</p>
-                    </div>
-                </div>
+                <!-- 過去のメッセージと新しいメッセージがここに表示される -->
             </div>
             <div class="chat-footer">
                 <div class="input-group">
@@ -193,6 +188,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.getElementById('chat-message-submit');
     const kawadaStatusText = document.getElementById('kawada-status-text');
     const kawadaStatusSpinner = document.querySelector('#kawada-status .spinner-border');
+
+    async function loadChatHistory() {
+        try {
+            const response = await fetch("{% url 'chatlesson:chat_history' %}", {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                
+                // チャットログをクリア
+                chatLog.innerHTML = '';
+                
+                // 過去のメッセージがない場合はウェルカムメッセージを表示
+                if (data.messages.length === 0) {
+                    addMessage('何か質問はありますか？', 'bot');
+                } else {
+                    // 過去のメッセージを表示
+                    data.messages.forEach(msg => {
+                        addMessage(msg.message, msg.sender === 'kawada' ? 'bot' : msg.sender);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading chat history:', error);
+            // エラーの場合はウェルカムメッセージを表示
+            addMessage('何か質問はありますか？', 'bot');
+        }
+    }
 
     function addMessage(message, sender) {
         const messageWrapper = document.createElement('div');
@@ -273,6 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初期化
     setLoading(false);
+    
+    // ページ読み込み時に過去の会話履歴を読み込む
+    loadChatHistory();
 });
 </script>
 {% endblock %}
