@@ -50,14 +50,44 @@
 {% endblock %}
 
 {% block react_scripts %}
+<!-- デバッグ用ログ -->
+<script>
+    console.log('🔧 Template DEBUG: Starting script execution');
+    console.log('🔧 React container exists:', !!document.getElementById('react-typing-game'));
+    console.log('🔧 Questions data:', window.typingQuestionsData);
+    console.log('🔧 Initial question:', window.typingInitialQuestion);
+</script>
+
 <!-- React のタイピングゲームを直接読み込み -->
 <script src="{% static 'js/react/typing.bundle.js' %}"></script>
+
 <script>
+    console.log('🔧 After bundle load - checking window objects');
+    console.log('🔧 React available:', typeof React !== 'undefined');
+    console.log('🔧 ReactDOM available:', typeof ReactDOM !== 'undefined');
+    
+    // 手動でReactコンポーネントを初期化してみる
+    setTimeout(() => {
+        console.log('🔧 Manual React initialization attempt');
+        const container = document.getElementById('react-typing-game');
+        if (container) {
+            console.log('🔧 Container found, trying to render...');
+            try {
+                // フォールバック要素を非表示
+                const fallback = container.querySelector('.container');
+                if (fallback) {
+                    fallback.style.display = 'none';
+                    console.log('🔧 Fallback hidden');
+                }
+                console.log('🔧 Manual initialization complete');
+            } catch (error) {
+                console.error('🔧 Manual initialization failed:', error);
+            }
+        } else {
+            console.error('🔧 Container not found!');
+        }
+    }, 100);
+    
     console.log('タイピングゲーム React コンポーネントが読み込まれました');
-    // フォールバック要素を非表示にする
-    const typingFallback = document.querySelector('#react-typing-game .container');
-    if (typingFallback) {
-        typingFallback.style.display = 'none';
-    }
 </script>
 {% endblock %}
