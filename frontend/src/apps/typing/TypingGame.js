@@ -114,8 +114,8 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     if (!isPlaying || !currentQuestion) return;
 
-    // アルファベットキーのみを処理
-    if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
+    // アルファベットとハイフンを処理
+    if (e.key.length === 1 && e.key.match(/[a-z-]/i)) {
       e.preventDefault();
       checkInput(e.key);
     }
