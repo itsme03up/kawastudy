@@ -137,4 +137,44 @@ def chat_api(request):
 
 
 def chat(request):
-    return render(request, 'chatlesson/chat.html', {"hide_sidebar": True})
+    # 現在のセッションの会話履歴を取得
+    chat_session = get_or_create_session(request)
+    messages = chat_session.messages.all()
+    
+    context = {
+        "hide_sidebar": True,
+        "chat_messages": messages,
+        "session_id": chat_session.session_id
+    }
+    return render(request, 'chatlesson/chat.html', context)
+
+def get_chat_history(request):
+    """
+    チャット履歴をJSON形式で返すAPI
+    """
+    if request.method == 'GET':
+        try:
+            session_id = request.GET.get('session_id') or request.session.get('chat_session_id')
+            
+            if not session_id:
+                return JsonResponse({'messages': []})
+                
+            chat_session = ChatSession.objects.get(session_id=session_id)
+            messages = chat_session.messages.all()
+            
+            message_data = []
+            for msg in messages:
+                message_data.append({
+                    'sender': msg.sender,
+                    'message': msg.message,
+                    'timestamp': msg.timestamp.isoformat()
+                })
+            
+            return JsonResponse({'messages': message_data})
+        except ChatSession.DoesNotExist:
+            return JsonResponse({'messages': []})
+        except Exception as e:
+            print(f"Error in get_chat_history: {e}")
+            return JsonResponse({'error': 'Failed to load chat history'}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
