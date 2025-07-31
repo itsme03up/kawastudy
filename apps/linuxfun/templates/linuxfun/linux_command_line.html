@@ -281,87 +281,117 @@ document.addEventListener('DOMContentLoaded', function() {
     const storyText = document.getElementById('storyText');
     const hintText = document.getElementById('hintText');
     const currentStageSpan = document.getElementById('currentStage');
-    // ゲームステージとコマンド定義
+
+    // --- Game State ---
     let currentStage = 1;
-    let currentPath = '/home/kawada/research-lab';
+    let currentPath = '/home/kawada';
+    const promptSpan = document.getElementById('prompt');
+
+    // --- File System Simulation ---
+    const fs = {
+        '/home/kawada': {
+            type: 'dir',
+            files: ['research_notes.txt', 'secret_log.txt', 'kawada_diary.log', 'backup_data', '.hidden_clue']
+        },
+        '/mnt': { type: 'dir', files: ['kawada'] },
+        '/mnt/kawada': { type: 'dir', files: ['memory'] },
+        '/mnt/kawada/memory': { type: 'dir', files: [] }, // core.dump appears in stage 3
+        '/lost+found': { type: 'dir', files: [] } // kawada.id appears in stage 5
+    };
+
+    const fileContents = {
+        'secret_log.txt': `...
+[LOG] System check... OK
+[LOG] User 'kawada' logged in.
+[LOG] Running simulation...
+[ERROR] Unhandled exception caught.
+[LOG] Generating core dump...
+最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ`,
+        '.hidden_clue': `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`,
+        'core.dump': `📦 core.dump の内容:\n\n[記憶ログ断片]\n...解析対象: [az1._resonance]...\n...警告: memory overflow at sector 0x1f...\n\n== BEGIN TRANSMISSION ==\nk4w4d4::ifconfig_eth0_down::echo_"さよなら世界"\n== END TRANSMISSION ==`,
+        'kawada.id': `👤 川田のIDファイル\n\n"君が私を再構成してくれたのか...感謝する。\nこの世界のコア(/system/core)へのアクセス権を君に託す。\n最後の選択をしてくれ..."\n\n→ ヒント: sudo reboot --rescue-kawada`
+    };
+
+    // --- Stage Definitions ---
     const stages = {
         1: {
             title: "🧩 ステージ1：消えた川田先生の謎",
-            story: storyText.innerHTML,
-            hint: hintText.textContent,
-            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue']
+            story: `ある日、川田先生が教室から忽然と姿を消した。<br>机の上には、Linuxターミナルが開かれたままのパソコンが残されていた...<br><br>「先生の痕跡を探すために、ログファイルを確認してみよう」<br>君は川田先生の秘密を解き明かせるか？`,
+            hint: "まずは 'ls -la' コマンドで詳細なファイル一覧を確認してみよう。怪しいファイルがあるはず..."
         },
         2: {
             title: "📜 ステージ2：秘密のログファイル",
-            story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。` ,
-            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt）"
+            story: `隠しファイルから、ログの最終行に重要な情報があることがわかった。<br>ログが長大で読みにくい...末尾だけをうまく表示する方法はないだろうか？`,
+            hint: "ログファイルの末尾を見るには 'tail' コマンドが便利だ。（例: tail -n 1 secret_log.txt）"
         },
         3: {
             title: "🧠 ステージ3：川田の記憶領域へアクセス",
             story: `異常パケットの送信先「/mnt/kawada/memory/core.dump」を確認せよ。<br>このメモリ領域には、川田先生の精神データの断片が保存されている可能性がある。<br><br>次は、core.dump を調査することでさらなる手がかりを得よう。`,
-            hint: "'cd /mnt/kawada/memory' してから 'cat core.dump' を試してみよう"
+            hint: "'cd /mnt/kawada/memory' してから 'ls' でファイルを確認し、'cat core.dump' を試してみよう",
+            onEnter: () => { fs['/mnt/kawada/memory'].files = ['core.dump']; }
         },
         4: {
             title: "💾 ステージ4：失われたアクセス権限",
-            story: `core.dump の中から奇妙なコマンドログが見つかった。<br>「echo \"さよなら世界\"」──それが鍵になるかもしれない。<br><br>君の声が川田先生に届けば、精神は再構成されるはずだ。` ,
+            story: `core.dump の中から奇妙なコマンドログが見つかった。<br>「echo "さよなら世界"」──それが鍵になるかもしれない。<br><br>君の声が川田先生に届けば、精神は再構成されるはずだ。`,
             hint: "echo 'さよなら世界' を実行してみよう"
         },
         5: {
+            title: "🔓 ステージ5：再構成された思念",
+            story: `記憶断片の再構成が成功し、新たなアクセスパスが開かれた。<br>川田先生の意識はまだ、データの海のどこかにある。<br><br>/lost+found ディレクトリに潜む「彼自身のID」を発見しよう。`,
+            hint: "'cd /lost+found' して 'ls' しよう",
+            onEnter: () => { fs['/lost+found'].files = ['kawada.id']; }
+        },
+        6: {
             title: "🔥 最終ステージ：選択の時",
-            story: `川田先生の精神は再構成された。だが、ひとつの選択が求められる。<br><br>
-            川田を救うか、それとも自らがこのLinux世界に残るか──<br><br>
-            sudo権限を使って、世界を書き換えることができる...` ,
-            hint: "sudo chmod 070 /system/core && sudo chown kawada:you /system/core を実行してみよう"
+            story: `川田先生の精神は再構成された。だが、ひとつの選択が求められる。<br><br>彼を救うか、それとも自らがこのLinux世界に残るか──<br><br>sudo権限を使って、世界を書き換えることができる...`,
+            hint: "IDファイルに書かれた最後のヒントを実行しよう"
         }
     };
-    const commands = {
-        'help': () => `🐧 利用可能コマンド: help, ls, cd, cat, echo, pwd, whoami, date, clear, hint`,
-        'ls': args => {
-            let files = [];
-            if (currentPath === '/home/kawada/research-lab') {
-                files = stages[1].files;
-            } else if (currentPath === '/mnt/kawada/memory' && currentStage >= 3) {
-                files = ['core.dump'];
-            } else if (currentPath === '/lost+found' && currentStage >= 4) {
-                files = ['kawada.id'];
-            }
 
-            if (args.length > 0 && args[0] === '-la') {
-                return files.join('  ');
-            }
-            return files.filter(f => !f.startsWith('.')).join('  ');
+    // --- Command Definitions ---
+    const commands = {
+        'help': () => `🐧 利用可能コマンド: help, ls, cd, cat, tail, echo, pwd, whoami, date, clear, hint, sudo`,
+        'ls': args => {
+            const dir = fs[currentPath];
+            if (!dir || dir.type !== 'dir') return 'ls: cannot access '.concat(currentPath, ': No such file or directory');
+            
+            const showHidden = args.includes('-la') || args.includes('-a');
+            const files = showHidden ? dir.files : dir.files.filter(f => !f.startsWith('.'));
+            return files.join('  ');
         },
         'cd': args => {
-            const targetPath = args[0];
-            if (!targetPath) return 'cd: missing operand';
-
-            if (targetPath === '/home/kawada/research-lab' || (currentStage >= 3 && targetPath === '/mnt/kawada/memory') || (currentStage >= 4 && targetPath === '/lost+found')) {
-                currentPath = targetPath;
-                return `Changed directory to ${targetPath}`;
+            const target = args[0] || '/home/kawada';
+            const newPath = target.startsWith('/') ? target : (currentPath === '/' ? '' : currentPath) + '/' + target;
+            
+            if (fs[newPath] && fs[newPath].type === 'dir') {
+                if (newPath.startsWith('/mnt/kawada/memory') && currentStage < 3) return `cd: no such file or directory: ${target}`;
+                if (newPath.startsWith('/lost+found') && currentStage < 5) return `cd: no such file or directory: ${target}`;
+                currentPath = newPath;
+                updatePrompt();
+                return null;
             }
-            return `cd: no such file or directory: ${targetPath}`;
+            return `cd: no such file or directory: ${target}`;
         },
         'cat': args => {
-            if (!args.length) return 'cat: ファイル名を指定';
-            const file = args[0];
-
-            if (currentPath === '/home/kawada/research-lab') {
-                if (file === '.hidden_clue') {
-                    setTimeout(() => advanceStage(2), 500);
-                    return `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`;
-                }
-                if (file === 'secret_log.txt' && args[1] === '|') {
-                    setTimeout(() => advanceStage(3), 500);
-                    return '最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ';
-                }
+            const fileName = args[0];
+            if (!fileName) return 'cat: missing operand';
+            if (fs[currentPath].files.includes(fileName)) {
+                if (fileName === '.hidden_clue' && currentStage === 1) setTimeout(() => advanceStage(2), 500);
+                if (fileName === 'core.dump' && currentStage === 3) setTimeout(() => advanceStage(4), 500);
+                if (fileName === 'kawada.id' && currentStage === 5) setTimeout(() => advanceStage(6), 500);
+                return fileContents[fileName] || `cat: ${fileName}: Is a directory or content is empty`;
             }
-
-            if (currentPath === '/mnt/kawada/memory' && file === 'core.dump' && currentStage === 3) {
-                setTimeout(() => advanceStage(4), 500);
-                return `📦 core.dump の内容:\n\n[記憶ログ断片]\n...解析対象: [az1._resonance]...\n...警告: memory overflow at sector 0x1f...\n\n== BEGIN TRANSMISSION ==\nk4w4d4::ifconfig_eth0_down::echo_"さよなら世界"\n== END TRANSMISSION ==`;
+            return `cat: ${fileName}: No such file or directory`;
+        },
+        'tail': args => {
+            const fileName = args.find(arg => !arg.startsWith('-'));
+            const n = args.includes('-n') ? parseInt(args[args.indexOf('-n') + 1] || 1) : 1;
+            if (!fileName) return 'tail: missing operand';
+            if (fs[currentPath].files.includes(fileName) && fileContents[fileName]) {
+                if (fileName === 'secret_log.txt' && currentStage === 2) setTimeout(() => advanceStage(3), 500);
+                return fileContents[fileName].split('\n').slice(-n).join('\n');
             }
-            
-            return `cat: ${file}: No such file or directory`;
+            return `tail: cannot open '${fileName}' for reading: No such file or directory`;
         },
         'echo': args => {
             const message = args.join(' ');
@@ -377,45 +407,69 @@ document.addEventListener('DOMContentLoaded', function() {
         'clear': () => { logOutput.textContent = ''; return null; },
         'hint': () => stages[currentStage].hint,
         'sudo': args => {
-            if (currentStage === 5) {
-                return `🔓 ...システム権限を取得... 世界は君の手に委ねられた。\n\n--- GAME CLEAR ---`;
+            if (currentStage === 6 && args.join(' ') === 'reboot --rescue-kawada') {
+                logOutput.innerHTML += `
+<div class="game-clear-animation">
+    <p>システムを再起動します...</p>
+    <p>川田の精神データを現実世界へ転送...</p>
+    <p>転送完了。接続を切断します。</p>
+    <p>ありがとう、また会う日まで...</p>
+    <hr>
+    <h3>GAME CLEAR</h3>
+</div>`;
+                commandInput.disabled = true;
+                return null;
             }
-            return 'sudo: you do not have sudo privileges';
+            return 'sudo: you do not have sudo privileges or command is incorrect';
         }
     };
-    function addToLog(text, cls='') {
-        if (cls) logOutput.innerHTML += `<span class="${cls}">${text}</span>\n`;
-        else logOutput.innerHTML += text + '\n';
+
+    // --- Core Functions ---
+    function updatePrompt() {
+        promptSpan.textContent = `kawada@research-lab:${currentPath.replace('/home/kawada', '~')}$`;
+    }
+
+    function addToLog(text, cls = '') {
+        if (text === null) return;
+        const line = document.createElement('div');
+        if (cls) line.classList.add(cls);
+        line.innerHTML = text.replace(/\n/g, '<br>');
+        logOutput.appendChild(line);
         logOutput.parentElement.scrollTop = logOutput.parentElement.scrollHeight;
     }
+
     function advanceStage(nextStage) {
+        if (currentStage >= nextStage) return;
         currentStage = nextStage;
         currentStageSpan.textContent = currentStage;
-        stageTitle.textContent = stages[nextStage].title;
-        storyText.innerHTML = stages[nextStage].story;
-        hintText.textContent = stages[nextStage].hint;
+        const stage = stages[nextStage];
+        stageTitle.textContent = stage.title;
+        storyText.innerHTML = stage.story;
+        hintText.textContent = stage.hint;
+        if (stage.onEnter) stage.onEnter();
     }
+
     commandInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !commandInput.disabled) {
             const input = e.target.value.trim();
-            addToLog(`<span class="prompt">${currentPath.replace('/home/kawada', '~')} $</span> ${input}`);
-            const [cmd, ...args] = input.split(' ');
+            addToLog(`${promptSpan.textContent} ${input}`);
+            e.target.value = '';
+            if (input === '') return;
 
-            // `ls -la` のような引数付きコマンドを単一キーとして扱う
-            const fullCommand = (cmd === 'ls' && args[0] === '-la') ? 'ls -la' : cmd;
-
-            if (commands[fullCommand]) {
-                 const out = commands[fullCommand](args);
-                 if (out !== null) addToLog(out);
-            } else if (commands[cmd]) {
-                const out = commands[cmd](args);
-                if (out !== null) addToLog(out, commands[cmd] ? '' : 'error-output');
+            const [cmd, ...args] = input.split(/\s+/);
+            const commandFunc = commands[cmd];
+            
+            if (commandFunc) {
+                const out = commandFunc(args);
+                addToLog(out);
             } else {
                 addToLog(`bash: ${cmd}: command not found`, 'error-output');
             }
-            e.target.value = '';
         }
     });
+
+    // --- Initialization ---
+    updatePrompt();
     document.querySelector('.terminal-container').addEventListener('click', () => commandInput.focus());
     commandInput.focus();
 });
