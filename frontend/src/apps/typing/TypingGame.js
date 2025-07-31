@@ -123,8 +123,9 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     if (!isPlaying || !currentQuestion) return;
 
-    // アルファベットとハイフンを処理
-    if (e.key.length === 1 && e.key.match(/[a-z-]/i)) {
+    // アルファベット、数字、記号を処理
+    // 日本語ローマ字入力で使用される可能性のある文字を幅広く対応
+    if (e.key.length === 1 && e.key.match(/[a-z0-9\-'.,!?ー]/i)) {
       e.preventDefault();
       checkInput(e.key);
     }
