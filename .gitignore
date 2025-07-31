@@ -42,6 +42,10 @@ node_modules/
 package-lock.json
 yarn.lock
 
+# React build files
+static/js/react/*.bundle.js
+static/js/react/*.bundle.js.map
+
 # dotenv
 .env
 

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}川田先生とのチャット - Kawada Study{% endblock %}
+
+{% block content %}
+<!-- React チャット用コンテナ -->
+<div id="react-chat">
+    <!-- フォールバック：React が読み込まれない場合 -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">💬 川田先生との学習チャット</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            React チャットコンポーネントを読み込み中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block react_scripts %}
+<script>
+    // チャット用 React コンポーネントを読み込み
+    document.addEventListener('DOMContentLoaded', function() {
+        const script = document.createElement('script');
+        script.src = "{% static 'js/react/chatlesson.bundle.js' %}";
+        script.onload = function() {
+            console.log('チャット React コンポーネントが読み込まれました');
+            // フォールバック要素を非表示にする
+            const fallback = document.querySelector('#react-chat .container');
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
+        };
+        script.onerror = function() {
+            console.log('React 読み込み失敗、フォールバックを表示');
+        };
+        document.head.appendChild(script);
+    });
+</script>
+{% endblock %}

@@ -3,119 +3,25 @@
 {% block title %}{{ stage.title }} - Kawada SQLクイズ{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <!-- ステージヘッダー -->
-            <div class="card shadow-lg mb-4">
-                <div class="card-header bg-primary text-white text-center py-3">
-                    <h2 class="mb-0">🧪 Kawada SQL クイズ：Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》</h2>
-                    <div class="mt-2">
-                        <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-light btn-sm">
-                            ← ステージ選択に戻る
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ストーリーセクション -->
-            <div class="card shadow mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">🍱 ストーリー</h5>
-                </div>
-                <div class="card-body bg-light">
-                    <div class="story-text p-3" style="font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8;">
-                        <div id="story-content-{{ stage.stage_number }}">
-                            <!-- ストーリーはJavaScriptで動的に表示 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- サンプルテーブル表示 -->
-            <div class="card shadow mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">📋 <span id="table-name">sample_table</span> テーブル（表示専用）</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="sample-data-table">
-                            <!-- テーブルデータはJavaScriptで動的に表示 -->
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SQL入力エリア -->
-            <div class="card shadow mb-4">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">💬 あなたへの課題</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <p class="lead" id="challenge-text">{{ stage.description }}</p>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <label for="sql-input" class="form-label fw-bold">SQLを入力：</label>
-                            <textarea id="sql-input" class="form-control font-monospace" 
-                                      rows="4" placeholder="SELECT ... FROM ... WHERE ..."></textarea>
-                            <div class="mt-3">
-                                <button id="submit-sql" class="btn btn-primary btn-lg me-2">
-                                    🚀 実行ボタン
-                                </button>
-                                <button id="clear-sql" class="btn btn-secondary">
-                                    🗑️ クリア
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="card bg-info text-white mt-3 mt-lg-0">
-                                <div class="card-body text-center">
-                                    <h6>🤖 川田のヒント</h6>
-                                    <div id="hint-area" style="display: none;">
-                                        <p class="small mb-0" id="hint-text">{{ stage.hint }}</p>
-                                    </div>
-                                    <button id="show-hint-btn" class="btn btn-light btn-sm">
-                                        ヒントを見る
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 結果表示エリア -->
-            <div id="result-section" style="display: none;">
-                <!-- 川田のリアクション -->
-                <div class="card shadow mb-4">
-                    <div class="card-header" id="reaction-header">
-                        <h5 class="mb-0" id="reaction-title"></h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="kawada-reaction" class="p-3" style="font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif; line-height: 1.8;">
-                            <!-- 川田のリアクションテキスト -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 実行結果テーブル -->
-                <div class="card shadow">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0">📊 実行結果（テーブル形式）</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" id="result-table-container">
-                            <!-- 実行結果テーブル -->
-                        </div>
-                        <div class="text-center mt-3" id="next-stage-area" style="display: none;">
-                            <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-success btn-lg">
-                                次のステージへ →
+<!-- React SQLクイズ用コンテナ -->
+<div id="react-sql-quiz">
+    <!-- フォールバック：React が読み込まれない場合の従来版 -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- ステージヘッダー -->
+                <div class="card shadow-lg mb-4">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h2 class="mb-0">🧪 Kawada SQL クイズ：Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》</h2>
+                        <div class="mt-2">
+                            <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-light btn-sm">
+                                ← ステージ選択に戻る
                             </a>
                         </div>
                     </div>
+                </div>
+                <div class="alert alert-info">
+                    React コンポーネントを読み込み中...
                 </div>
             </div>
         </div>
@@ -123,209 +29,31 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const stageNumber = parseInt('{{ stage.stage_number }}');
-    let stageData = null;
-    
-    // サーバーからステージデータを取得
-    fetchStageData();
-    
-    async function fetchStageData() {
-        try {
-            const response = await fetch(`{% url 'sqlquiz:get_stage_data' stage.stage_number %}`);
-            stageData = await response.json();
-            initializePage();
-        } catch (error) {
-            console.error('ステージデータの取得に失敗しました:', error);
-            // フォールバック用のデフォルトデータ
-            stageData = {
-                tableName: 'sample_table',
-                story: 'データを読み込み中...',
-                sampleData: [],
-                successReaction: '成功しました！',
-                failureReaction: 'もう一度挑戦してみてください。',
-                mockResult: []
-            };
-            initializePage();
-        }
-    }
-
-    function initializePage() {
-        if (!stageData) return;
-        
-        // ストーリー表示
-        document.getElementById(`story-content-${stageNumber}`).innerHTML = stageData.story;
-        
-        // テーブル名設定
-        document.getElementById('table-name').textContent = stageData.tableName;
-        
-        // サンプルデータテーブル作成
-        createSampleTable(stageData.sampleData);
-    }
-
-    function createSampleTable(data) {
-        if (!data || data.length === 0) return;
-        
-        const table = document.getElementById('sample-data-table');
-        const headers = Object.keys(data[0]);
-        
-        // ヘッダー作成
-        let headerHtml = '<thead class="table-dark"><tr>';
-        headers.forEach(header => {
-            headerHtml += `<th>${header}</th>`;
-        });
-        headerHtml += '</tr></thead>';
-        
-        // データ行作成
-        let bodyHtml = '<tbody>';
-        data.forEach(row => {
-            bodyHtml += '<tr>';
-            headers.forEach(header => {
-                bodyHtml += `<td>${row[header]}</td>`;
-            });
-            bodyHtml += '</tr>';
-        });
-        bodyHtml += '</tbody>';
-        
-        table.innerHTML = headerHtml + bodyHtml;
-    }
-
-    // SQL実行処理
-    const sqlInput = document.getElementById('sql-input');
-    const submitBtn = document.getElementById('submit-sql');
-    const clearBtn = document.getElementById('clear-sql');
-    const showHintBtn = document.getElementById('show-hint-btn');
-    const hintArea = document.getElementById('hint-area');
-
-    // ヒント表示
-    showHintBtn.addEventListener('click', function() {
-        hintArea.style.display = 'block';
-        showHintBtn.style.display = 'none';
-    });
-
-    // SQL実行
-    submitBtn.addEventListener('click', function() {
-        const sql = sqlInput.value.trim();
-        if (!sql) {
-            alert('SQLを入力してください');
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '⏳ 実行中...';
-
-        fetch('{% url "sqlquiz:check_answer" stage.stage_number %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({sql: sql})
-        })
-        .then(response => response.json())
-        .then(data => {
-            showResult(data.correct, data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('エラーが発生しました');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '🚀 実行ボタン';
-        });
-    });
-
-    // クリア
-    clearBtn.addEventListener('click', function() {
-        sqlInput.value = '';
-        document.getElementById('result-section').style.display = 'none';
-    });
-
-    function showResult(isCorrect, data) {
-        const resultSection = document.getElementById('result-section');
-        
-        // 川田のリアクション表示
-        const reactionHeader = document.getElementById('reaction-header');
-        const reactionTitle = document.getElementById('reaction-title');
-        const kawadaReaction = document.getElementById('kawada-reaction');
-        
-        if (isCorrect) {
-            reactionHeader.className = 'card-header bg-success text-white';
-            reactionTitle.innerHTML = '✅ 成功 - 川田の反応';
-            kawadaReaction.innerHTML = stageData.successReaction;
-            
-            // 模擬実行結果を表示
-            showMockResult();
-            document.getElementById('next-stage-area').style.display = 'block';
-        } else {
-            reactionHeader.className = 'card-header bg-danger text-white';
-            reactionTitle.innerHTML = '❌ 失敗 - 川田の反応';
-            kawadaReaction.innerHTML = stageData.failureReaction;
-            
-            if (data.correct_sql) {
-                kawadaReaction.innerHTML += `<br><br><strong>正解例：</strong><br><code>${data.correct_sql}</code>`;
-            }
-        }
-        
-        resultSection.style.display = 'block';
-        resultSection.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function showMockResult() {
-        const container = document.getElementById('result-table-container');
-        
-        const result = stageData.mockResult;
-        if (!result || result.length === 0) return;
-        
-        const headers = Object.keys(result[0]);
-        
-        let tableHtml = '<table class="table table-striped table-bordered">';
-        tableHtml += '<thead class="table-success"><tr>';
-        headers.forEach(header => {
-            tableHtml += `<th>${header}</th>`;
-        });
-        tableHtml += '</tr></thead><tbody>';
-        
-        result.forEach(row => {
-            tableHtml += '<tr>';
-            headers.forEach(header => {
-                tableHtml += `<td>${row[header]}</td>`;
-            });
-            tableHtml += '</tr>';
-        });
-        
-        tableHtml += '</tbody></table>';
-        container.innerHTML = tableHtml;
-    }
-});
+    // Django からのデータを React に渡す
+    window.sqlStageNumber = {{ stage.stage_number }};
+    window.sqlStageData = {}; // React コンポーネント内で API から取得
 </script>
 
-<style>
-.font-monospace {
-    font-family: 'Courier New', monospace;
-}
-
-#sql-input {
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.story-text {
-    background-color: #f8f9fa;
-    border-left: 4px solid #007bff;
-    font-size: 1.1rem;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(0,123,255,.1);
-}
-
-.card {
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-</style>
+{% block react_scripts %}
+<script>
+    // SQLクイズ用 React コンポーネントを読み込み
+    document.addEventListener('DOMContentLoaded', function() {
+        const script = document.createElement('script');
+        script.src = "{% static 'js/react/sqlquiz.bundle.js' %}";
+        script.onload = function() {
+            console.log('SQLクイズ React コンポーネントが読み込まれました');
+            // フォールバック要素を非表示にする
+            const fallback = document.querySelector('#react-sql-quiz .container');
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
+        };
+        script.onerror = function() {
+            console.log('React 読み込み失敗、従来版を使用');
+            // フォールバックは既に表示されているので何もしない
+        };
+        document.head.appendChild(script);
+    });
+</script>
+{% endblock %}
 {% endblock %}

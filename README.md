@@ -32,20 +32,46 @@ static/ # 共通CSSやchibi川田の素材など
 ```bash
 git clone https://github.com/itsme03up/kawastudy.git
 cd kawastudy
+
+# Python仮想環境の設定
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+
+# Node.js依存関係のインストール（React開発用）
+npm install
+
+# Reactコンポーネントのビルド
+npm run build
+
+# 開発サーバーの起動
 python manage.py runserver
+```
+
+### React開発環境
+
+```bash
+# React開発用webpack-dev-serverの起動（開発時のみ）
+npm run dev
+
+# Reactコンポーネントのウォッチビルド
+npm run watch
+```
 🛠 使用技術
-Python / Django
+**バックエンド**
+- Python / Django
+- SQLite（軽量なデータ保存）
+- ChatGPT API（OpenAI）
 
-HTML / CSS / JavaScript
+**フロントエンド**
+- React 18（モダンなUI コンポーネント）
+- HTML / CSS / JavaScript（フォールバック対応）
+- Bootstrap 5（レスポンシブUI）
+- Webpack（モジュールバンドラー）
 
-Tailwind CSS（共通UI）
-
-ChatGPT API（OpenAI）
-
-SQLite（軽量なデータ保存）
+**開発ツール**
+- Babel（ES6+ トランスパイル）
+- VS Code Tasks（ビルド自動化）
 
 🎨 キャラクター：川田について
 川田は理知的なIT講師。

@@ -9,38 +9,67 @@
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div id="panel" class="inner">
-        <div id="header">
-            <div class="stats-container">
-                <span>問題: <span id="question-number">1</span>/<span id="total-questions">10</span></span>
-                <span>残り時間: <span id="time">60.0</span></span>
-                <span>WPM: <span id="wpm">0</span></span>
-                <span>正解率: <span id="accuracy">0.00</span>%</span>
+<!-- React タイピングゲーム用コンテナ -->
+<div id="react-typing-game">
+    <!-- フォールバック：React が読み込まれない場合の従来版 -->
+    <div class="container my-5">
+        <div id="panel" class="inner">
+            <div id="header">
+                <div class="stats-container">
+                    <span>問題: <span id="question-number">1</span>/<span id="total-questions">10</span></span>
+                    <span>残り時間: <span id="time">60.0</span></span>
+                    <span>WPM: <span id="wpm">0</span></span>
+                    <span>正解率: <span id="accuracy">0.00</span>%</span>
+                </div>
             </div>
-        </div>
 
-        <div id="text-container">
-            <div id="text-display" class="fs-2">
-                {{ question.japanese }}
+            <div id="text-container">
+                <div id="text-display" class="fs-2">
+                    {{ question.japanese }}
+                </div>
+                <div id="romaji-display" class="fs-4 text-muted">
+                    {{ question.romaji }}
+                </div>
             </div>
-            <div id="romaji-display" class="fs-4 text-muted">
-                {{ question.romaji }}
-            </div>
-        </div>
 
-        <div id="overlay">
-            <div class="fs-4">スペースキーで開始</div>
-            <div class="mt-2 text-muted">（日本語入力モードはオフにしてください）</div>
+            <div id="overlay">
+                <div class="fs-4">スペースキーで開始</div>
+                <div class="mt-2 text-muted">（日本語入力モードはオフにしてください）</div>
+            </div>
+            <div id="message"></div>
         </div>
-        <div id="message"></div>
     </div>
 </div>
 
 <script>
-    // Djangoからテンプレートに渡されたデータをJavaScript変数に設定
-    const questions = JSON.parse('{{ questions_json|safe }}');
-    const initialQuestion = JSON.parse('{{ initial_question_json|safe }}');
+    // Django からのデータを React に渡す
+    window.typingQuestionsData = JSON.parse('{{ questions_json|safe }}');
+    window.typingInitialQuestion = JSON.parse('{{ initial_question_json|safe }}');
 </script>
-<script src="{% static 'typinggame/js/game.js' %}"></script>
+
+{% block react_scripts %}
+<script>
+    // タイピングゲーム用 React コンポーネントを読み込み
+    document.addEventListener('DOMContentLoaded', function() {
+        const script = document.createElement('script');
+        script.src = "{% static 'js/react/typing.bundle.js' %}";
+        script.onload = function() {
+            console.log('タイピングゲーム React コンポーネントが読み込まれました');
+            // フォールバック要素を非表示にする
+            const fallback = document.querySelector('#react-typing-game .container');
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
+        };
+        script.onerror = function() {
+            console.log('React 読み込み失敗、従来版JavaScriptを使用');
+            // フォールバック：従来のJavaScriptゲームを読み込み
+            const fallbackScript = document.createElement('script');
+            fallbackScript.src = "{% static 'typinggame/js/game.js' %}";
+            document.head.appendChild(fallbackScript);
+        };
+        document.head.appendChild(script);
+    });
+</script>
+{% endblock %}
 {% endblock %}
