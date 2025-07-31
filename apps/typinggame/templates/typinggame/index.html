@@ -10,84 +10,51 @@
 {% endblock %}
 
 {% block content %}
-<!-- React タイピングゲーム用コンテナ -->
-<div id="react-typing-game">
-    <!-- フォールバック：React が読み込まれない場合の従来版 -->
-    <div class="container my-5">
-        <div id="panel" class="inner">
-            <div id="header">
-                <div class="stats-container">
-                    <span>問題: <span id="question-number">1</span>/<span id="total-questions">10</span></span>
-                    <span>残り時間: <span id="time">60.0</span></span>
-                    <span>WPM: <span id="wpm">0</span></span>
-                    <span>正解率: <span id="accuracy">0.00</span>%</span>
+<div class="container my-5">
+    <h1>タイピングゲーム</h1>
+    <p>テスト表示中...</p>
+    
+    <!-- React タイピングゲーム用コンテナ -->
+    <div id="react-typing-game">
+        <!-- フォールバック：React が読み込まれない場合の従来版 -->
+        <div class="container my-5">
+            <div id="panel" class="inner">
+                <div id="text-container">
+                    <div id="text-display" class="fs-2">
+                        {{ question.japanese|default:"テスト問題" }}
+                    </div>
+                    <div id="romaji-display" class="fs-4 text-muted">
+                        {{ question.romaji|default:"tesutomondai" }}
+                    </div>
+                </div>
+                <div id="overlay">
+                    <div class="fs-4">スペースキーで開始</div>
                 </div>
             </div>
-
-            <div id="text-container">
-                <div id="text-display" class="fs-2">
-                    {{ question.japanese }}
-                </div>
-                <div id="romaji-display" class="fs-4 text-muted">
-                    {{ question.romaji }}
-                </div>
-            </div>
-
-            <div id="overlay">
-                <div class="fs-4">スペースキーで開始</div>
-                <div class="mt-2 text-muted">（日本語入力モードはオフにしてください）</div>
-            </div>
-            <div id="message"></div>
         </div>
     </div>
 </div>
 
 <script>
+    console.log('Page loaded successfully');
     // Django からのデータを React に渡す
     window.typingQuestionsData = JSON.parse('{{ questions_json|safe }}');
     window.typingInitialQuestion = JSON.parse('{{ initial_question_json|safe }}');
+    console.log('Data loaded:', window.typingQuestionsData);
 </script>
 {% endblock %}
 
 {% block react_scripts %}
-<!-- デバッグ用ログ -->
 <script>
-    console.log('🔧 Template DEBUG: Starting script execution - v2');
-    console.log('🔧 React container exists:', !!document.getElementById('react-typing-game'));
-    console.log('🔧 Questions data:', window.typingQuestionsData);
-    console.log('🔧 Initial question:', window.typingInitialQuestion);
+    console.log('🔧 React scripts block started - v4');
+    console.log('🔧 Container exists:', !!document.getElementById('react-typing-game'));
 </script>
 
-<!-- React のタイピングゲームを直接読み込み (キャッシュバスター付き) -->
-<script src="{% static 'js/react/typing.bundle.js' %}?v={{ forloop.counter|default:'1' }}"></script>
+<script src="{% static 'js/react/typing.bundle.js' %}?v=4"></script>
 
 <script>
-    console.log('🔧 After bundle load - checking window objects - v2');
-    console.log('🔧 React available:', typeof React !== 'undefined');
-    console.log('🔧 ReactDOM available:', typeof ReactDOM !== 'undefined');
-    
-    // 手動でReactコンポーネントを初期化してみる
-    setTimeout(() => {
-        console.log('🔧 Manual React initialization attempt - v2');
-        const container = document.getElementById('react-typing-game');
-        if (container) {
-            console.log('🔧 Container found, trying to render...');
-            try {
-                // フォールバック要素を非表示
-                const fallback = container.querySelector('.container');
-                if (fallback) {
-                    fallback.style.display = 'none';
-                    console.log('🔧 Fallback hidden');
-                }
-                console.log('🔧 Manual initialization complete');
-            } catch (error) {
-                console.error('🔧 Manual initialization failed:', error);
-            }
-        } else {
-            console.error('🔧 Container not found!');
-        }
-    }, 100);
-    
-    console.log('タイピングゲーム React コンポーネントが読み込まれました - v2');
+    console.log('🔧 Bundle loaded - v4');
+    // フォールバック非表示を無効化して、コンテンツが消えないようにする
+    console.log('🔧 Keeping fallback content visible for debugging');
 </script>
 {% endblock %}
