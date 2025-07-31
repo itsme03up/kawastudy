@@ -61,24 +61,18 @@ def create_sample_stages():
         },
         {
             'stage_number': 3,
-            'title': '夜のカフェイン控えめ',
-            'description': '夜遅くでも安心！名前に"カフェ"が入り、19時以降も営業しているお店を探そう！',
-            'question': '''お店テーブル（shops）から、以下の条件に合うお店を探してください：
-1. 店名に「カフェ」という文字が含まれている
-2. 営業終了時間が19時以降（19時含む）
-
-テーブル構造：
-- shops(id, name, open_time, close_time, area)
-
-例：「川田カフェ」営業時間 8:00-22:00''',
-            'correct_sql': 'SELECT * FROM shops WHERE name LIKE "%カフェ%" AND close_time >= "19:00";',
-            'hint': 'LIKE演算子で"%カフェ%"を使い、close_time >= "19:00"で時間条件を指定しましょう！',
-            'story_text': '',
-            'table_name': '',
-            'sample_data_json': '[]',
-            'success_reaction': '',
-            'failure_reaction': '',
-            'mock_result_json': '[]'
+            'title': 'カロリー控えめがいい日',
+            'description': '健康を気にして、300kcal以下のヘルシーなスイーツを見つけよう！',
+            'question': '300kcal以下のスイーツを選んでください。',
+            'correct_sql': 'SELECT name FROM sweets WHERE calories <= 300;',
+            'alternative_solutions_json': '[]',
+            'hint': 'WHERE句で数値の上限を指定してみましょう。',
+            'story_text': '川田、今日はちょっとだけ控えめにしたいと思ってました。\n甘いものが好きなのは変わらないんですが……\n胃が重くならないくらいの、優しい甘さを探してました。',
+            'table_name': 'sweets',
+            'sample_data_json': '[{"id": 1, "name": "濃厚チョコケーキ", "calories": 420}, {"id": 2, "name": "いちごゼリー", "calories": 180}, {"id": 3, "name": "ミルフィーユ", "calories": 350}, {"id": 4, "name": "杏仁豆腐", "calories": 240}, {"id": 5, "name": "フルーツ寒天", "calories": 160}]',
+            'success_reaction': '川田、それくらいがちょうど良いと思ってました。\n胃も心も、軽やかでいられる甘さですね。',
+            'failure_reaction': '川田、それ……ちょっと重たかったかもしれません。\n300kcalを超えていないか、もう一度確認してみてください。',
+            'mock_result_json': '[{"name": "いちごゼリー"}, {"name": "杏仁豆腐"}, {"name": "フルーツ寒天"}]'
         },
         {
             'stage_number': 4,
