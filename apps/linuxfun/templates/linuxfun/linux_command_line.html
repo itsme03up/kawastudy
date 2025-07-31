@@ -283,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentStageSpan = document.getElementById('currentStage');
     // ゲームステージとコマンド定義
     let currentStage = 1;
+    let currentPath = '/home/kawada/research-lab';
     const stages = {
         1: {
             title: "🧩 ステージ1：消えた川田先生の謎",
@@ -314,32 +315,73 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     const commands = {
-        'help': () => `🐧 利用可能コマンド: help, ls, cat, echo, pwd, whoami, date, clear, hint`,
+        'help': () => `🐧 利用可能コマンド: help, ls, cd, cat, echo, pwd, whoami, date, clear, hint`,
         'ls': args => {
-            // -la オプションで隠しファイルを含む全ファイルを表示
-            if (args.length && args[0] === '-la') {
-                return stages[currentStage].files.join('  ');
+            let files = [];
+            if (currentPath === '/home/kawada/research-lab') {
+                files = stages[1].files;
+            } else if (currentPath === '/mnt/kawada/memory' && currentStage >= 3) {
+                files = ['core.dump'];
+            } else if (currentPath === '/lost+found' && currentStage >= 4) {
+                files = ['kawada.id'];
             }
-            // デフォルトは隠しファイルを除外
-            return stages[currentStage].files.filter(f => !f.startsWith('.')).join('  ');
+
+            if (args.length > 0 && args[0] === '-la') {
+                return files.join('  ');
+            }
+            return files.filter(f => !f.startsWith('.')).join('  ');
+        },
+        'cd': args => {
+            const targetPath = args[0];
+            if (!targetPath) return 'cd: missing operand';
+
+            if (targetPath === '/home/kawada/research-lab' || (currentStage >= 3 && targetPath === '/mnt/kawada/memory') || (currentStage >= 4 && targetPath === '/lost+found')) {
+                currentPath = targetPath;
+                return `Changed directory to ${targetPath}`;
+            }
+            return `cd: no such file or directory: ${targetPath}`;
         },
         'cat': args => {
             if (!args.length) return 'cat: ファイル名を指定';
-            if (args[0] === '.hidden_clue') {
-                setTimeout(() => advanceStage(2), 500);
-                return `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`;
+            const file = args[0];
+
+            if (currentPath === '/home/kawada/research-lab') {
+                if (file === '.hidden_clue') {
+                    setTimeout(() => advanceStage(2), 500);
+                    return `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`;
+                }
+                if (file === 'secret_log.txt' && args[1] === '|') {
+                    setTimeout(() => advanceStage(3), 500);
+                    return '最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ';
+                }
             }
-            if (args[0] === 'secret_log.txt' && args[1] === '|' ) {
-                return '最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ';
+
+            if (currentPath === '/mnt/kawada/memory' && file === 'core.dump' && currentStage === 3) {
+                setTimeout(() => advanceStage(4), 500);
+                return `📦 core.dump の内容:\n\n[記憶ログ断片]\n...解析対象: [az1._resonance]...\n...警告: memory overflow at sector 0x1f...\n\n== BEGIN TRANSMISSION ==\nk4w4d4::ifconfig_eth0_down::echo_"さよなら世界"\n== END TRANSMISSION ==`;
             }
-            return `内容: ${args[0]}`;
+            
+            return `cat: ${file}: No such file or directory`;
         },
-        'echo': args => args.join(' '),
-        'pwd': () => '/home/kawada/research-lab',
+        'echo': args => {
+            const message = args.join(' ');
+            if (currentStage === 4 && (message === '"さよなら世界"' || message === "'さよなら世界'")) {
+                setTimeout(() => advanceStage(5), 500);
+                return '💡 川田の記憶に共鳴した... 新たなディレクトリへのアクセス権を得た';
+            }
+            return message;
+        },
+        'pwd': () => currentPath,
         'whoami': () => 'kawada',
         'date': () => new Date().toLocaleString('ja-JP'),
         'clear': () => { logOutput.textContent = ''; return null; },
-        'hint': () => stages[currentStage].hint
+        'hint': () => stages[currentStage].hint,
+        'sudo': args => {
+            if (currentStage === 5) {
+                return `🔓 ...システム権限を取得... 世界は君の手に委ねられた。\n\n--- GAME CLEAR ---`;
+            }
+            return 'sudo: you do not have sudo privileges';
+        }
     };
     function addToLog(text, cls='') {
         if (cls) logOutput.innerHTML += `<span class="${cls}">${text}</span>\n`;
@@ -356,10 +398,21 @@ document.addEventListener('DOMContentLoaded', function() {
     commandInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             const input = e.target.value.trim();
-            addToLog(`kawada@research-lab:~$ ${input}`);
+            addToLog(`<span class="prompt">${currentPath.replace('/home/kawada', '~')} $</span> ${input}`);
             const [cmd, ...args] = input.split(' ');
-            const out = commands[cmd] ? commands[cmd](args) : `bash: ${cmd}: command not found`;
-            if (out !== null) addToLog(out, commands[cmd] ? '' : 'error-output');
+
+            // `ls -la` のような引数付きコマンドを単一キーとして扱う
+            const fullCommand = (cmd === 'ls' && args[0] === '-la') ? 'ls -la' : cmd;
+
+            if (commands[fullCommand]) {
+                 const out = commands[fullCommand](args);
+                 if (out !== null) addToLog(out);
+            } else if (commands[cmd]) {
+                const out = commands[cmd](args);
+                if (out !== null) addToLog(out, commands[cmd] ? '' : 'error-output');
+            } else {
+                addToLog(`bash: ${cmd}: command not found`, 'error-output');
+            }
             e.target.value = '';
         }
     });
