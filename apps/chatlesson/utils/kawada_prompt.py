@@ -55,9 +55,23 @@ def get_system_prompt(mode: str = "dry"):
 
 def load_reactions():
     """リアクション定義ファイルを読み込む"""
-    p = Path(__file__).parent / "kawada_reactions.yml"
-    with open(p, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    try:
+        p = Path(__file__).parent.parent / "dry_reactions.yaml"
+        with open(p, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+    except FileNotFoundError:
+        # フォールバック: 基本的なリアクションを返す
+        return {
+            "uncertainty": [
+                "すまないが、少し調子が悪いようですね。後でまた試してみてください。",
+                "申し訳ないです。今回は上手く答えられませんでした。",
+                "川田、ちょっと困ってます。"
+            ],
+            "error": [
+                "エラーが発生してしまいました。",
+                "何か問題があったようです。"
+            ]
+        }
 
 def get_dry_reaction(category: str, strict: bool = False) -> str:
     reactions = load_reactions()

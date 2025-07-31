@@ -43,9 +43,21 @@ def get_kawada_reply(user_message):
         )
         return response.choices[0].message.content
     except Exception as e:
-        # エラーが発生した場合は、ドライな反応を返す
-        print(f"Error: {e}")
-        return kawada_prompt.get_dry_reaction("uncertainty")
+        # エラーが発生した場合は、川田語でフォールバック応答を返す
+        print(f"OpenAI API Error: {e}")
+        
+        # APIクォータエラーの場合
+        if "insufficient_quota" in str(e) or "quota" in str(e).lower():
+            return "川田、APIの使用量が限界に達してしまいました。申し訳ございません。少し時間を置いてから再度お試しください。"
+        
+        # その他のエラーの場合
+        fallback_responses = [
+            "少し調子が悪いようですね。後でまた試してみてください。",
+            "川田、今回は上手く答えられませんでした。申し訳ありません。",
+            "システムに問題があるようですね。川田、確認してみます。"
+        ]
+        import random
+        return random.choice(fallback_responses)
 
 
 def chat_api(request):
