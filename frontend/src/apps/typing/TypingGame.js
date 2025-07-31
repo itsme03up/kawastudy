@@ -101,6 +101,15 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
   const handleKeyPress = useCallback((e) => {
     if (e.isComposing) return;
 
+    // デバッグ用ログ
+    console.log('Key pressed:', {
+      key: e.key,
+      code: e.code,
+      keyCode: e.keyCode,
+      length: e.key.length,
+      matches: e.key.match(/[a-z-]/i)
+    });
+
     // ゲーム開始 (スペースキー)
     if (!isPlaying && e.code === 'Space') {
       e.preventDefault();
@@ -133,6 +142,16 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     const targetRomaji = currentQuestion.romaji;
     const expectedChar = targetRomaji[typedRomaji.length];
+
+    // デバッグ用ログ
+    console.log('Input check:', {
+      inputKey: key,
+      expectedChar: expectedChar,
+      targetRomaji: targetRomaji,
+      typedRomaji: typedRomaji,
+      position: typedRomaji.length,
+      match: key === expectedChar
+    });
 
     if (key === expectedChar) {
       // 正解
