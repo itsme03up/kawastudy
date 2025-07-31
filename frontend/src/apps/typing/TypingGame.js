@@ -101,17 +101,30 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
   const handleKeyPress = useCallback((e) => {
     if (e.isComposing) return;
 
-    // デバッグ用ログ
+    // すべてのキー入力をログに出力
+    console.log('=== Key Event Debug ===');
+    console.log('Raw event:', e);
     console.log('Key pressed:', {
       key: e.key,
       code: e.code,
       keyCode: e.keyCode,
+      which: e.which,
+      charCode: e.charCode,
       length: e.key.length,
-      charCode: e.key.charCodeAt(0),
+      charCodeAt0: e.key.charCodeAt(0),
       unicode: 'U+' + e.key.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'),
-      matches: e.key.match(/[a-z0-9\-'.,!?ー]/i),
-      rawMatch: !!e.key.match(/[a-z0-9\-'.,!?ー]/i)
+      type: e.type
     });
+
+    // ハイフンキーの特別チェック
+    if (e.key === '-' || e.code === 'Minus' || e.keyCode === 189 || e.keyCode === 173) {
+      console.log('🔥 HYPHEN DETECTED! Event details:', {
+        key: e.key,
+        code: e.code,
+        keyCode: e.keyCode,
+        isHyphen: true
+      });
+    }
 
     // ゲーム開始 (スペースキー)
     if (!isPlaying && e.code === 'Space') {
@@ -125,6 +138,14 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     }
 
     if (!isPlaying || !currentQuestion) return;
+
+    // シンプルな文字判定テスト
+    console.log('Simple character tests:');
+    console.log('- Is letter:', /[a-zA-Z]/.test(e.key));
+    console.log('- Is digit:', /[0-9]/.test(e.key));
+    console.log('- Is hyphen (-):', e.key === '-');
+    console.log('- Is space:', e.key === ' ');
+    console.log('- Length is 1:', e.key.length === 1);
 
     // より広範囲の文字を受け付ける（ハイフンの問題を解決するため）
     const isValidInput = (key) => {
@@ -144,16 +165,19 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
       return false;
     };
     
-    if (isValidInput(e.key)) {
+    const validInput = isValidInput(e.key);
+    console.log('Valid input result:', validInput);
+    
+    if (validInput) {
       e.preventDefault();
-      console.log('Input accepted:', {
+      console.log('✅ Input accepted:', {
         key: e.key,
         code: e.code,
         keyCode: e.keyCode
       });
       checkInput(e.key);
     } else {
-      console.log('Input rejected:', {
+      console.log('❌ Input rejected:', {
         key: e.key,
         length: e.key.length,
         reason: 'Not in allowed character set'
@@ -163,8 +187,30 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
   // キーボードイベントリスナー
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
+    // 複数のイベントタイプをテスト
+    const handleKeyDown = (e) => {
+      console.log('📥 keydown event:', { key: e.key, code: e.code, type: 'keydown' });
+      handleKeyPress(e);
+    };
+
+    const handleKeyPress = (e) => {
+      console.log('📥 keypress event:', { key: e.key, code: e.code, type: 'keypress' });
+      // keypress は非推奨だが、ハイフンの検出に使えるかテスト
+    };
+
+    const handleInput = (e) => {
+      console.log('📥 input event:', { data: e.data, inputType: e.inputType, type: 'input' });
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keypress', handleKeyPress);
+    document.addEventListener('input', handleInput);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keypress', handleKeyPress);
+      document.removeEventListener('input', handleInput);
+    };
   }, [handleKeyPress]);
 
   // 入力チェック
