@@ -298,8 +298,14 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     const commands = {
         'help': () => `🐧 利用可能コマンド: help, ls, cat, echo, pwd, whoami, date, clear, hint`,
-        'ls': () => stages[currentStage].files.filter(f => !f.startsWith('.')).join('  '),
-        'ls -la': () => stages[currentStage].files.join('  '),
+        'ls': args => {
+            // -la オプションで隠しファイルを含む全ファイルを表示
+            if (args.length && args[0] === '-la') {
+                return stages[currentStage].files.join('  ');
+            }
+            // デフォルトは隠しファイルを除外
+            return stages[currentStage].files.filter(f => !f.startsWith('.')).join('  ');
+        },
         'cat': args => {
             if (!args.length) return 'cat: ファイル名を指定';
             if (args[0] === '.hidden_clue') {
