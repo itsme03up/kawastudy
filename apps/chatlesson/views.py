@@ -1,6 +1,6 @@
 # chatlesson/views.py
 import os
-import openai
+from openai import OpenAI
 from django.http import JsonResponse
 from django.shortcuts import render
 import json
@@ -11,11 +11,16 @@ from .utils import kawada_prompt
 # 入力はJSON形式 {"message": "..."}、出力は {"reply": "..."} の形にして。
 # 川田語プロンプトは外部モジュール kawada_prompt.py から読み込む。
 
-# APIキーを環境変数から読み込む
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# OpenAI クライアントを初期化
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 debug_mode = os.getenv("DEBUG", "False")
 
-print("API Key:", openai.api_key[:8] + "*****")
+# APIキーの確認用（デバッグ）
+api_key = os.environ.get("OPENAI_API_KEY")
+if api_key:
+    print("API Key:", api_key[:8] + "*****")
+else:
+    print("API Key: Not set")
 
 
 def get_kawada_reply(user_message):
@@ -25,18 +30,18 @@ def get_kawada_reply(user_message):
     system_prompt = kawada_prompt.get_system_prompt()
 
     # APIキーが設定されていない場合は、固定の応答を返す
-    if not openai.api_key:
+    if not os.environ.get("OPENAI_API_KEY"):
         return "APIキーが設定されていないようですね。"
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
             ]
         )
-        return response.choices[0].message["content"]
+        return response.choices[0].message.content
     except Exception as e:
         # エラーが発生した場合は、ドライな反応を返す
         print(f"Error: {e}")
@@ -56,6 +61,9 @@ def chat_api(request):
             return JsonResponse({'reply': reply})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            print(f"Unexpected error in chat_api: {e}")
+            return JsonResponse({'error': f'サーバーエラーが発生しました: {str(e)}'}, status=500)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
