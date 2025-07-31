@@ -3,38 +3,167 @@
 
 {% block title %}川田先生とのチャット - Kawada Study{% endblock %}
 
-{% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <!-- 左側：川田キャラクター -->
-        <div class="col-md-3 text-center">
-            <img src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-3" style="max-width: 150px;">
-            <h5 class="card-title">川田</h5>
-            <p class="card-text text-muted">ベテランエンジニア</p>
-            <div id="kawada-status" class="mt-2 text-muted">
-                待機中...
-            </div>
-        </div>
+{% block extra_css %}
+<style>
+    body {
+        font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+        overflow-y: hidden; /* ページ全体のスクロールを禁止 */
+    }
 
-        <!-- 右側：チャットUI -->
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-header">
-                    チャットルーム
-                </div>
-                <div class="card-body" id="chat-log" style="height: 400px; overflow-y: auto;">
-                    <!-- メッセージはここに表示される -->
-                    <div class="d-flex justify-content-start mb-3">
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0">何か質問ありますか？</p>
-                        </div>
+    .main-layout-chat {
+        display: flex;
+        height: calc(100vh - 56px); /* フッターを除いたビューポートの高さ */
+    }
+
+    .character-area {
+        flex: 1;
+        background-color: #f0f4f8;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #ddd;
+    }
+
+    .chat-area {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .chat-log {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .chat-bubble {
+        max-width: 80%;
+        padding: 10px 14px;
+        margin: 8px 0;
+        border-radius: 16px;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .user-message {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
+
+    .bot-message {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+
+    .chat-footer {
+        padding: 1rem;
+        border-top: 1px solid #ddd;
+        background-color: #f9f9f9;
+    }
+
+    .chat-input {
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }
+    .chat-input:focus {
+        border-color: #409eff;
+        box-shadow: 0 0 0 0.2rem rgba(64, 158, 255, 0.25);
+    }
+
+    .send-button {
+        background-color: #409eff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: background-color 0.3s;
+    }
+
+    .send-button:hover {
+        background-color: #66b1ff;
+    }
+
+    .send-button:disabled {
+        background-color: #a0cfff;
+        cursor: not-allowed;
+    }
+
+    .message-wrapper {
+        display: flex;
+        margin-bottom: 0.5rem;
+    }
+
+    .message-wrapper.user {
+        justify-content: flex-end;
+    }
+
+    .message-wrapper.bot {
+        justify-content: flex-start;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-layout-chat">
+    <!-- 左側: 川田キャライメージ表示エリア -->
+    <div class="character-area">
+        <img src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-4" style="max-width: 200px; border-radius: 50%;">
+        <h4 class="card-title">川田</h4>
+        <p class="card-text text-muted">ベテランエンジニア</p>
+        <hr class="my-4" style="width: 80%;">
+        <div id="kawada-status" class="text-center">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" style="display: none;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span id="kawada-status-text">待機中...</span>
+        </div>
+    </div>
+
+    <!-- 右側: チャットエリア -->
+    <div class="chat-area">
+        <div class="chat-container">
+            <div class="card-header">
+                <h5 class="mb-0">チャットルーム</h5>
+            </div>
+            <div class="chat-log" id="chat-log">
+                <!-- メッセージはここに表示される -->
+                <div class="message-wrapper bot">
+                    <div class="chat-bubble bot-message">
+                        <p class="mb-0">何か質問はありますかな？</p>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <div class="input-group">
-                        <input type="text" id="chat-message-input" class="form-control" placeholder="メッセージを入力...">
-                        <button class="btn btn-primary" id="chat-message-submit">送信</button>
-                    </div>
+            </div>
+            <div class="chat-footer">
+                <div class="input-group">
+                    <input type="text" id="chat-message-input" class="form-control chat-input" placeholder="メッセージを入力...">
+                    <button class="btn send-button" id="chat-message-submit">送信</button>
                 </div>
             </div>
         </div>
@@ -43,25 +172,7 @@
 {% endblock %}
 
 {% block react_scripts %}
-<script>
-    // チャット用 React コンポーネントを読み込み
-    document.addEventListener('DOMContentLoaded', function() {
-        const script = document.createElement('script');
-        script.src = "{% static 'js/react/chatlesson.bundle.js' %}";
-        script.onload = function() {
-            console.log('チャット React コンポーネントが読み込まれました');
-            // フォールバック要素を非表示にする
-            const fallback = document.querySelector('#react-chat .container');
-            if (fallback) {
-                fallback.style.display = 'none';
-            }
-        };
-        script.onerror = function() {
-            console.log('React 読み込み失敗、フォールバックを表示');
-        };
-        document.head.appendChild(script);
-    });
-</script>
+{# このページではReactは使用しないため、ブロックを空にする #}
 {% endblock %}
 
 {% block extra_js %}
@@ -70,39 +181,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatLog = document.getElementById('chat-log');
     const messageInput = document.getElementById('chat-message-input');
     const submitButton = document.getElementById('chat-message-submit');
-    const kawadaStatus = document.getElementById('kawada-status');
+    const kawadaStatusText = document.getElementById('kawada-status-text');
+    const kawadaStatusSpinner = document.querySelector('#kawada-status .spinner-border');
 
     function addMessage(message, sender) {
         const messageWrapper = document.createElement('div');
-        messageWrapper.classList.add('d-flex', 'mb-3');
+        messageWrapper.classList.add('message-wrapper', sender);
 
         const messageBubble = document.createElement('div');
-        messageBubble.classList.add('p-3', 'rounded');
-        messageBubble.innerHTML = `<p class="mb-0">${message}</p>`;
-
-        if (sender === 'user') {
-            messageWrapper.classList.add('justify-content-end');
-            messageBubble.classList.add('bg-primary', 'text-white');
-        } else {
-            messageWrapper.classList.add('justify-content-start');
-            messageBubble.classList.add('bg-light');
-        }
+        messageBubble.classList.add('chat-bubble');
+        messageBubble.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+        
+        const p = document.createElement('p');
+        p.classList.add('mb-0');
+        p.textContent = message;
+        messageBubble.appendChild(p);
 
         messageWrapper.appendChild(messageBubble);
         chatLog.appendChild(messageWrapper);
-        chatLog.scrollTop = chatLog.scrollHeight; // 自動スクロール
+        chatLog.scrollTop = chatLog.scrollHeight;
     }
 
     function setLoading(isLoading) {
         if (isLoading) {
-            kawadaStatus.textContent = '川田、考え中……';
             submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 送信中...`;
             messageInput.disabled = true;
+            kawadaStatusText.textContent = '川田、考え中……';
+            kawadaStatusSpinner.style.display = 'inline-block';
         } else {
-            kawadaStatus.textContent = '待機中...';
             submitButton.disabled = false;
+            submitButton.innerHTML = '送信';
             messageInput.disabled = false;
             messageInput.focus();
+            kawadaStatusText.textContent = '待機中...';
+            kawadaStatusSpinner.style.display = 'none';
         }
     }
 
@@ -125,15 +238,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok.');
+                const errorData = await response.json().catch(() => ({ reply: 'サーバーエラーが発生しました。' }));
+                throw new Error(errorData.reply || 'Network response was not ok.');
             }
 
             const data = await response.json();
-            addMessage(data.reply, 'kawada');
+            addMessage(data.reply, 'bot');
 
         } catch (error) {
             console.error('Error:', error);
-            addMessage('すまないが、少し調子が悪いようだ。後でまた試してくれ。', 'kawada');
+            addMessage(error.message || 'すまないが、少し調子が悪いようだ。後でまた試してくれ。', 'bot');
         } finally {
             setLoading(false);
         }
@@ -141,10 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     submitButton.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             sendMessage();
         }
     });
+    
+    // 初期化
+    setLoading(false);
 });
 </script>
 {% endblock %}
