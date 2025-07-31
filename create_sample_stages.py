@@ -70,36 +70,118 @@ def create_sample_stages():
 
 例：「川田カフェ」営業時間 8:00-22:00''',
             'correct_sql': 'SELECT * FROM shops WHERE name LIKE "%カフェ%" AND close_time >= "19:00";',
-            'hint': 'LIKE演算子で"%カフェ%"を使い、close_time >= "19:00"で時間条件を指定しましょう！'
+            'hint': 'LIKE演算子で"%カフェ%"を使い、close_time >= "19:00"で時間条件を指定しましょう！',
+            'story_text': '',
+            'table_name': '',
+            'sample_data_json': '[]',
+            'success_reaction': '',
+            'failure_reaction': '',
+            'mock_result_json': '[]'
         },
         {
             'stage_number': 4,
-            'title': 'デザートランキング',
-            'description': 'デザート好きの川田さんのために、人気デザートTOP3を見つけよう！',
-            'question': '''メニューテーブルから、カテゴリが「デザート」のメニューを人気順（人気度の高い順）でTOP3を取得してください。
-
-テーブル構造：
-- menu(id, name, price, category, calories, popularity_score)
-
-popularity_scoreが高いほど人気です。''',
-            'correct_sql': 'SELECT * FROM menu WHERE category = "デザート" ORDER BY popularity_score DESC LIMIT 3;',
-            'hint': 'WHERE category = "デザート"、ORDER BY popularity_score DESC、LIMIT 3を組み合わせましょう！'
+            'title': '甘いものは別腹',
+            'description': 'ケーキのカロリーを見ながら、控えめな甘いものを選ぶ問題です。カロリーが300kcal以下のスイーツを抽出しましょう。',
+            'question': 'スイーツメニューの中から、価格が安い順に並べた上位3つだけを選び出してください。',
+            'correct_sql': 'SELECT name FROM sweets_menu ORDER BY price ASC LIMIT 3;',
+            'alternative_solutions_json': '[]',
+            'hint': '`ORDER BY`で並べ替えたあとに、上から必要な件数だけ絞るといいですね。',
+            'story_text': '川田、昼食を控えめにしたんです。\nでも、甘いものは別腹でした。\n300円前後で、ちょっとだけ……心を癒せたらと思ったんです。',
+            'table_name': 'sweets_menu',
+            'sample_data_json': '[{"id": 1, "name": "ガトーショコラ", "price": 420}, {"id": 2, "name": "杏仁豆腐", "price": 280}, {"id": 3, "name": "和三盆プリン", "price": 360}, {"id": 4, "name": "苺のタルト", "price": 480}, {"id": 5, "name": "豆花", "price": 250}]',
+            'success_reaction': '川田……ちょっと、ほっとしました。\nお財布に優しくて、でも甘さはちゃんと心に届く。\nそれが今、一番欲しかったものでした。',
+            'failure_reaction': '川田、それは……少し贅沢すぎたかもしれません。\n並べてから上位3つだけ取り出す方法、もう一度だけ考えてみてもらえたら……',
+            'mock_result_json': '[{"name": "豆花"}, {"name": "杏仁豆腐"}, {"name": "和三盆プリン"}]'
         },
         {
             'stage_number': 5,
-            'title': 'お気に入りにINSERT',
-            'description': '川田さんが新しく見つけたお気に入りメニューをデータベースに追加しよう！',
-            'question': '''お気に入りテーブル（favorites）に、川田さんの新しいお気に入りメニューを追加してください。
-
-追加する情報：
-- user_id: 1 (川田さんのID)
-- menu_id: 15 (新しく気に入ったメニューのID)
-- added_date: "2024-07-31"
-
-テーブル構造：
-- favorites(user_id, menu_id, added_date)''',
-            'correct_sql': 'INSERT INTO favorites (user_id, menu_id, added_date) VALUES (1, 15, "2024-07-31");',
-            'hint': 'INSERT INTO テーブル名 (カラム名1, カラム名2, カラム名3) VALUES (値1, 値2, 値3); の形式で書きましょう！'
+            'title': '新作ガンプラ、リストに追加！',
+            'description': 'INSERT INTO 文で、新しく発売されたガンプラを購入予定リストに追加する問題です。',
+            'question': 'ガンプラ「HG νガンダム（2025年版）」を、購入予定リストに追加してください。',
+            'correct_sql': 'INSERT INTO wishlist (name, category) VALUES (\'HG νガンダム（2025年版）\', \'ガンプラ\');',
+            'alternative_solutions_json': '[]',
+            'hint': '`INSERT INTO`を使って、新しいレコードを追加します。',
+            'story_text': '……川田、今朝コンビニでホビー誌を立ち読みしました。\nHG νガンダムの新バージョン、すごく良かったんです。\nこういうのは、忘れないうちに購入リストに入れておきたいと思ってました。',
+            'table_name': 'wishlist',
+            'sample_data_json': '[{"id": 1, "name": "MG シャア専用ザク Ver.2.0", "category": "ガンプラ"}, {"id": 2, "name": "SDガンダム クロスシルエット", "category": "ガンプラ"}]',
+            'success_reaction': 'ありがとうございます。川田、これで忘れずに済みました。\nこういう「好き」が、毎日を支えてくれている気がします。',
+            'failure_reaction': '川田……惜しかったです。`INSERT INTO`で、ちゃんとカラムを指定して追加してあげてください。',
+            'mock_result_json': '[{"id": 1, "name": "MG シャア専用ザク Ver.2.0", "category": "ガンプラ"}, {"id": 2, "name": "SDガンダム クロスシルエット", "category": "ガンプラ"}, {"id": 3, "name": "HG νガンダム（2025年版）", "category": "ガンプラ"}]'
+        },
+        {
+            'stage_number': 6,
+            'title': '秋葉原・秋月電子でパーツを照合せよ！',
+            'description': 'JOIN句を使って、部品名から在庫数と用途を照合する問題です。2つのテーブルを正しく結合しましょう。',
+            'question': '秋月電子で購入予定の「100uF 電解コンデンサ」の在庫と用途を照合してください。',
+            'correct_sql': 'SELECT parts.name, parts.stock, usage.purpose FROM parts JOIN usage ON parts.id = usage.part_id WHERE parts.name = \'100uF 電解コンデンサ\';',
+            'alternative_solutions_json': '[]',
+            'hint': '2つの表を`JOIN`で結合し、必要なカラムを絞って取得しましょう。',
+            'story_text': '川田、明日は秋葉原に寄れそうでした。\n秋月電子で「100uFの電解コンデンサ」、見ておきたかったんです。\n在庫と、どの回路で使えるか……事前に確認しておくと安心でした。',
+            'table_name': 'parts, usage',
+            'sample_data_json': '{"parts": [{"id": 1, "name": "10uF セラミック", "stock": 120}, {"id": 2, "name": "100uF 電解コンデンサ", "stock": 45}, {"id": 3, "name": "470uF 電解コンデンサ", "stock": 0}], "usage": [{"id": 1, "part_id": 1, "purpose": "ノイズ除去"}, {"id": 2, "part_id": 2, "purpose": "電源平滑"}, {"id": 3, "part_id": 3, "purpose": "アンプ出力"}]}',
+            'success_reaction': '川田、それでした……安心して秋葉原に行けます。\n機能と在庫、両方見えていると心の準備も整いますね。',
+            'failure_reaction': '結合が……上手くいってなかったかもしれません。\n`JOIN`で関連するidを繋げて、そこからカラムを取るのがコツでした。',
+            'mock_result_json': '[{"name": "100uF 電解コンデンサ", "stock": 45, "purpose": "電源平滑"}]'
+        },
+        {
+            'stage_number': 7,
+            'title': 'うちの犬に、もう一度チャンスを',
+            'description': 'NOT IN を使って、過去に食べなかったおやつを除外しつつ、価格条件を満たすおやつを選ぶ問題です。',
+            'question': '飼い犬にあげるおやつを、以前食べなかったものを除いて、\nかつ300円以内のものに絞って選んでください。',
+            'correct_sql': 'SELECT name FROM dog_snacks WHERE price <= 300 AND name NOT IN (SELECT snack_name FROM rejected_history);',
+            'alternative_solutions_json': '[]',
+            'hint': '`NOT IN`を使って、「食べなかった履歴に含まれないもの」を除外しましょう。',
+            'story_text': '川田、こないだ買ったおやつ……見向きもされなかったんです。\nでも、もう一度ちゃんと考え直して、喜んでくれるものを選びたくて。\n今度は、無駄にしたくないと思ってました。',
+            'table_name': 'dog_snacks, rejected_history',
+            'sample_data_json': '{"dog_snacks": [{"id": 1, "name": "ビーフジャーキー", "price": 280}, {"id": 2, "name": "チーズキューブ", "price": 310}, {"id": 3, "name": "さつまいもスティック", "price": 290}, {"id": 4, "name": "ボーロ", "price": 180}], "rejected_history": [{"id": 1, "snack_name": "ビーフジャーキー"}]}',
+            'success_reaction': '川田……今回は、ちゃんと喜んでもらえる気がしました。\n無理させたくなくて。でも、ちゃんと選び直せたと思います。',
+            'failure_reaction': 'うまく除外できていなかったかもしれません。\n過去の履歴と照合して、「もう与えない」って条件、忘れずにでした。',
+            'mock_result_json': '[{"name": "さつまいもスティック"}, {"name": "ボーロ"}]'
+        },
+        {
+            'stage_number': 8,
+            'title': '混雑してる店は、今日はちょっと……',
+            'description': 'WHERE句で「混雑中ではない」カフェを選ぶ問題です。NOT、!=、<>の使い方を学べます。',
+            'question': '現在「混雑中」ではない店をすべて表示してください。',
+            'correct_sql': 'SELECT name FROM cafe_status WHERE status != \'混雑中\';',
+            'alternative_solutions_json': '["SELECT name FROM cafe_status WHERE NOT status = \'混雑中\'", "SELECT name FROM cafe_status WHERE status <> \'混雑中\'"]',
+            'hint': '`!=` や `NOT` を使って、ある条件を除く方法を試してみましょう。',
+            'story_text': '川田、今日はちょっとだけ静かに過ごしたかったんです。\n普段なら賑やかなのも悪くないですが、今は……少しだけ距離を取りたくて。',
+            'table_name': 'cafe_status',
+            'sample_data_json': '[{"id": 1, "name": "陽だまりカフェ", "status": "空席あり"}, {"id": 2, "name": "喫茶エトランゼ", "status": "混雑中"}, {"id": 3, "name": "珈琲館ひつじ", "status": "空席わずか"}, {"id": 4, "name": "ナイトカフェ・ロッソ", "status": "閉店中"}]',
+            'success_reaction': '川田、それでした。\n少し静かな場所に身を置くだけで……心って落ち着くんですね。',
+            'failure_reaction': '川田、それだと、混雑中の店も含まれてしまっていたかもしれません。\n`!=` や `<>`、あるいは `NOT` を試してみてください。',
+            'mock_result_json': '[{"name": "陽だまりカフェ"}, {"name": "珈琲館ひつじ"}, {"name": "ナイトカフェ・ロッソ"}]'
+        },
+        {
+            'stage_number': 9,
+            'title': '川田、恋をする（荻窪からのデート）',
+            'description': '荻窪駅から10km以内で行けるデートスポットを抽出する問題です。距離条件とorigin指定を両立させましょう。',
+            'question': '荻窪駅から10km以内で行ける場所を選んでください。\n※候補の中には、ちょっと遠い所も混ざっています。',
+            'correct_sql': 'SELECT name FROM date_spots WHERE origin = \'荻窪\' AND distance_km <= 10;',
+            'alternative_solutions_json': '[]',
+            'hint': '条件を満たす距離の範囲を `WHERE` でしっかり絞るのがポイントでした。',
+            'story_text': '……川田、ちょっとだけ寄り道したい場所がありました。\nあまり遠くじゃなくて、でも少しだけ特別で。\n荻窪から、10km以内の場所で……一緒に行ってくれる人がいたらって、思ってました。',
+            'table_name': 'date_spots',
+            'sample_data_json': '[{"id": 1, "name": "井の頭公園", "origin": "荻窪", "distance_km": 6.2}, {"id": 2, "name": "葛西臨海公園", "origin": "荻窪", "distance_km": 18.5}, {"id": 3, "name": "ジブリ美術館", "origin": "荻窪", "distance_km": 4.7}, {"id": 4, "name": "等々力渓谷", "origin": "荻窪", "distance_km": 9.8}, {"id": 5, "name": "箱根彫刻の森", "origin": "荻窪", "distance_km": 75.0}]',
+            'success_reaction': '川田、それくらいの距離が……ちょうどいいって、思ってました。\n近すぎず、遠すぎず。誰かと行くには、ちょうどいいくらいの。',
+            'failure_reaction': '川田、それだと……ちょっと遠くまで行ってしまうかもしれません。\n距離にちゃんと制限をつけて、10km以内を選んでみてください。',
+            'mock_result_json': '[{"name": "井の頭公園"}, {"name": "ジブリ美術館"}, {"name": "等々力渓谷"}]'
+        },
+        {
+            'stage_number': 10,
+            'title': '今日は静かな場所で（岩吉さんを避けて）',
+            'description': '特定の駅から20km以上離れていて、かつ静かな場所を選ぶ問題です。フラグと数値条件のAND指定が必要です。',
+            'question': '岩吉さんが今日は「新宿駅」付近に営業に行っています。\nそこで、新宿駅から20km以上離れていて、かつ「静か（quiet = TRUE）」な場所を探してください。',
+            'correct_sql': 'SELECT name FROM spots WHERE quiet = TRUE AND distance_from_shinjuku >= 20;',
+            'alternative_solutions_json': '["SELECT name FROM spots WHERE quiet = 1 AND distance_from_shinjuku >= 20"]',
+            'hint': '`quiet`フラグと距離の条件、2つを両立させる必要がありました。',
+            'story_text': '……川田、今日は静かに過ごしたかったんです。\n新宿には岩吉さんがいるので、少し離れた場所を選びました。\n騒がしいライブハウスとかじゃなくて、もっと落ち着いた場所が、今はいいと思ってました。',
+            'table_name': 'spots',
+            'sample_data_json': '[{"id": 1, "name": "水族館（しながわ）", "quiet": true, "distance_from_shinjuku": 24}, {"id": 2, "name": "ライブハウス・ブレイズ", "quiet": false, "distance_from_shinjuku": 2}, {"id": 3, "name": "温泉センター（八王子）", "quiet": true, "distance_from_shinjuku": 35}, {"id": 4, "name": "映画館（中野）", "quiet": false, "distance_from_shinjuku": 5}, {"id": 5, "name": "カフェ・ユグドラシル", "quiet": true, "distance_from_shinjuku": 12}]',
+            'success_reaction': '川田、それが……今の自分にはちょうど良い距離でした。\n静かで、少し遠くて。安心できる場所があるって、思えました。',
+            'failure_reaction': '川田、それだと近すぎたかもしれません。\n距離と静けさ、両方を満たす選び方を、もう一度だけ見直してみてください。',
+            'mock_result_json': '[{"name": "水族館（しながわ）"}, {"name": "温泉センター（八王子）"}]'
         }
     ]
     
