@@ -144,10 +144,10 @@ def create_sample_stages():
             'hint': '`!=` や `NOT` を使って、満席以外の条件を指定してみましょう。',
             'story_text': '川田、久しぶりに映画を見に行きたいと思ってました。\n気になる作品があったんですが、人気で満席の回も多くて。\n満席じゃない上映時間を探して、チケットを取りたいと思ってました。',
             'table_name': 'movie_schedule',
-            'sample_data_json': '[{"id": 1, "movie_title": "宇宙戦艦ヤマト", "time": "14:00", "status": "空席あり"}, {"id": 2, "movie_title": "宇宙戦艦ヤマト", "time": "16:30", "status": "満席"}, {"id": 3, "movie_title": "宇宙戦艦ヤマト", "time": "19:00", "status": "残席わずか"}, {"id": 4, "movie_title": "宇宙戦艦ヤマト", "time": "21:30", "status": "空席あり"}]',
+            'sample_data_json': '[{"id": 1, "movie_title": "Eddington", "time": "14:00", "status": "空席あり"}, {"id": 2, "movie_title": "Eddington", "time": "16:30", "status": "満席"}, {"id": 3, "movie_title": "Eddington", "time": "19:00", "status": "残席わずか"}, {"id": 4, "movie_title": "Eddington", "time": "21:30", "status": "空席あり"}]',
             'success_reaction': '川田、これでチケット取れそうです。\n満席じゃない時間帯が見つかって、安心しました。映画、楽しみです。',
             'failure_reaction': '川田、それだと満席の回も含まれてしまっていたかもしれません。\n`!=` や `<>`、あるいは `NOT` を使って満席以外を選んでみてください。',
-            'mock_result_json': '[{"id": 1, "movie_title": "宇宙戦艦ヤマト", "time": "14:00", "status": "空席あり"}, {"id": 3, "movie_title": "宇宙戦艦ヤマト", "time": "19:00", "status": "残席わずか"}, {"id": 4, "movie_title": "宇宙戦艦ヤマト", "time": "21:30", "status": "空席あり"}]'
+            'mock_result_json': '[{"id": 1, "movie_title": "Eddington", "time": "14:00", "status": "空席あり"}, {"id": 3, "movie_title": "Eddington", "time": "19:00", "status": "残席わずか"}, {"id": 4, "movie_title": "Eddington", "time": "21:30", "status": "空席あり"}]'
         },
         {
             'stage_number': 9,
