@@ -174,7 +174,7 @@ def create_sample_stages():
             'hint': 'SUM関数を使って、条件に合う店舗の価格を合計してみましょう。',
             'story_text': '川田、今度一緒に行く人のことを考えて……\n卵アレルギーがあるって聞いたので、安心して食べられるお店を選びたいと思ってました。\nレストランとカフェ、両方で卵不使用メニューがあるところの予算を、計算してみたくて。',
             'table_name': 'date_plan',
-            'sample_data_json': '[{"id": 1, "type": "レストラン", "name": "イタリアン・ベラヴィスタ", "price": 3500, "egg_free": true}, {"id": 2, "type": "カフェ", "name": "カフェ・ノンアレルゲン", "price": 1200, "egg_free": true}, {"id": 3, "type": "レストラン", "name": "洋食屋・クラシック", "price": 2800, "egg_free": false}, {"id": 4, "type": "カフェ", "name": "スイーツパラダイス", "price": 1500, "egg_free": false}, {"id": 5, "type": "レストラン", "name": "和食処・さくら", "price": 4200, "egg_free": true}]',
+            'sample_data_json': '[{"id": 1, "type": "レストラン", "name": "イタリアン・ベラヴィスタ", "price": 3500, "egg_free": true, "distance_from_shinjuku": 8}, {"id": 2, "type": "カフェ", "name": "カフェ・ノンアレルゲン", "price": 1200, "egg_free": true, "distance_from_shinjuku": 12}, {"id": 3, "type": "レストラン", "name": "洋食屋・クラシック", "price": 2800, "egg_free": false, "distance_from_shinjuku": 5}, {"id": 4, "type": "カフェ", "name": "スイーツパラダイス", "price": 1500, "egg_free": false, "distance_from_shinjuku": 3}, {"id": 5, "type": "レストラン", "name": "和食処・さくら", "price": 4200, "egg_free": true, "distance_from_shinjuku": 15}]',
             'success_reaction': '川田、その予算なら……安心してお誘いできそうです。\n相手のことを考えた選択ができて、良かったと思ってました。',
             'failure_reaction': '川田、卵アレルギーの条件を忘れていませんか？\n安心して食べられるお店だけを選んで、合計を計算してみてください。',
             'mock_result_json': '[{"SUM(price)": 8900}]'
