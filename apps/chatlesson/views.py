@@ -61,4 +61,4 @@ def chat_api(request):
 
 
 def chat(request):
-    return render(request, 'chatlesson/chat.html')
+    return render(request, 'chatlesson/chat.html', {"hide_sidebar": True})

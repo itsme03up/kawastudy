@@ -13,7 +13,9 @@
     {% include 'components/navigation.html' %}
     
     <div class="main-layout">
+        {% if not hide_sidebar %}
         {% include 'components/sidebar.html' %}
+        {% endif %}
         
         <main class="main-content">
             <div class="container-fluid">
