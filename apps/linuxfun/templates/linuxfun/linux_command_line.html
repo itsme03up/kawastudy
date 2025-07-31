@@ -2,42 +2,310 @@
 
 {% block title %}楽しいLinux - Kawada Study{% endblock %}
 
+{% block extra_css %}
+<style>
+.terminal {
+    background: #000;
+    color: #00ff00;
+    font-family: "Courier New", "Monaco", "Menlo", monospace;
+    padding: 20px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.terminal-header {
+    background: #333;
+    color: #fff;
+    padding: 10px 20px;
+    margin: -20px -20px 20px -20px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.terminal-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.btn-close { background: #ff5f56; }
+.btn-minimize { background: #ffbd2e; }
+.btn-maximize { background: #27ca3f; }
+
+.log-area {
+    overflow-y: auto;
+    flex-grow: 1;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.4;
+    padding-bottom: 10px;
+}
+
+.log-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-area::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.log-area::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.log-area::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+}
+
+.prompt {
+    color: #00ff00;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+input#commandInput {
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: inherit;
+    font-size: 14px;
+    flex-grow: 1;
+    outline: none;
+    padding: 0;
+}
+
+input#commandInput::placeholder {
+    color: #666;
+}
+
+.command-output {
+    color: #fff;
+    margin-left: 0;
+}
+
+.error-output {
+    color: #ff6b6b;
+}
+
+.success-output {
+    color: #51cf66;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-decoration: none;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-dark text-white">
-                    <h1 class="mb-0">🐧 楽しいLinux</h1>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h3>Linuxコマンドライン学習</h3>
-                        <p class="lead">川田先生と一緒にLinuxコマンドを覚えましょう！</p>
-                    </div>
-                    
-                    <div class="alert alert-info">
-                        <h5>🚧 準備中</h5>
-                        <p class="mb-0">
-                            現在、Linuxコマンド学習機能を開発中です。<br>
-                            近日中に以下の機能が追加予定です：
-                        </p>
-                        <ul class="mt-2">
-                            <li>基本コマンドの練習</li>
-                            <li>ファイル操作の演習</li>
-                            <li>権限管理の学習</li>
-                            <li>シェルスクリプト入門</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="text-center">
-                        <a href="{% url 'home' %}" class="btn btn-primary">
-                            ← ホームに戻る
-                        </a>
-                    </div>
-                </div>
+<div class="container-fluid">
+    <a href="{% url 'home' %}" class="back-btn">← ホームに戻る</a>
+    
+    <div id="terminal" class="terminal">
+        <div class="terminal-header">
+            <span>🐧 Linux Terminal - 川田先生と一緒にコマンドを覚えよう！</span>
+            <div class="terminal-controls">
+                <div class="terminal-btn btn-close"></div>
+                <div class="terminal-btn btn-minimize"></div>
+                <div class="terminal-btn btn-maximize"></div>
             </div>
+        </div>
+        
+        <div id="log" class="log-area">Welcome to Kawada Linux Terminal! 🐧
+Type 'help' to see available commands.
+
+</div>
+        
+        <div class="input-area">
+            <span class="prompt">kawada@linux:~$</span>
+            <input type="text" id="commandInput" autocomplete="off" placeholder="コマンドを入力してください..." />
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const commandInput = document.getElementById('commandInput');
+    const logArea = document.getElementById('log');
+    
+    // コマンド履歴
+    let commandHistory = [];
+    let historyIndex = -1;
+    
+    // 利用可能なコマンドと応答
+    const commands = {
+        'help': () => {
+            return `利用可能なコマンド:
+  help      - このヘルプメッセージを表示
+  echo      - テキストを表示 (例: echo Hello World)
+  date      - 現在の日時を表示
+  whoami    - 現在のユーザーを表示
+  pwd       - 現在のディレクトリを表示
+  ls        - ファイル一覧を表示
+  clear     - 画面をクリア
+  uname     - システム情報を表示
+  fortune   - 今日の運勢を表示`;
+        },
+        
+        'echo': (args) => {
+            return args.join(' ');
+        },
+        
+        'date': () => {
+            return new Date().toLocaleString('ja-JP');
+        },
+        
+        'whoami': () => {
+            return 'kawada';
+        },
+        
+        'pwd': () => {
+            return '/home/kawada';
+        },
+        
+        'ls': () => {
+            return `total 8
+drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Documents
+drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Downloads
+-rw-r--r--  1 kawada kawada  220 Jul 31 12:00 .bashrc
+-rw-r--r--  1 kawada kawada  807 Jul 31 12:00 .profile`;
+        },
+        
+        'clear': () => {
+            logArea.textContent = 'Welcome to Kawada Linux Terminal! 🐧\nType \'help\' to see available commands.\n\n';
+            return null;
+        },
+        
+        'uname': () => {
+            return 'Linux kawada-linux 5.15.0 #1 SMP x86_64 GNU/Linux';
+        },
+        
+        'fortune': () => {
+            const fortunes = [
+                '今日は新しいことを学ぶのに最適な日です！ 🌟',
+                'コマンドラインをマスターすれば、きっと素晴らしいエンジニアになれますよ！ 💻',
+                '失敗を恐れず、どんどんコマンドを試してみましょう！ 🚀',
+                'Linuxの世界は広大です。一歩ずつ進んでいきましょう！ 🐧',
+                '今日覚えたコマンドは、明日のあなたを助けてくれるでしょう！ ✨'
+            ];
+            return fortunes[Math.floor(Math.random() * fortunes.length)];
+        }
+    };
+    
+    function addToLog(text, className = '') {
+        const span = document.createElement('span');
+        if (className) {
+            span.className = className;
+        }
+        span.textContent = text + '\n';
+        logArea.appendChild(span);
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+    
+    function processCommand(input) {
+        const args = input.trim().split(/\s+/);
+        const command = args[0].toLowerCase();
+        const commandArgs = args.slice(1);
+        
+        // コマンドをログに表示
+        addToLog(`kawada@linux:~$ ${input}`);
+        
+        if (command === '') {
+            return;
+        }
+        
+        // コマンド履歴に追加
+        commandHistory.unshift(input);
+        if (commandHistory.length > 50) {
+            commandHistory.pop();
+        }
+        historyIndex = -1;
+        
+        if (commands[command]) {
+            const output = commands[command](commandArgs);
+            if (output !== null) {
+                addToLog(output, 'command-output');
+            }
+        } else {
+            addToLog(`bash: ${command}: command not found`, 'error-output');
+            addToLog('ヒント: "help" コマンドで利用可能なコマンドを確認できます', 'success-output');
+        }
+        
+        addToLog(''); // 空行を追加
+    }
+    
+    // Enterキーでコマンド実行
+    commandInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const input = e.target.value;
+            processCommand(input);
+            e.target.value = '';
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                commandInput.value = commandHistory[historyIndex];
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                commandInput.value = commandHistory[historyIndex];
+            } else if (historyIndex === 0) {
+                historyIndex = -1;
+                commandInput.value = '';
+            }
+        }
+    });
+    
+    // ターミナルクリックで入力フォーカス
+    document.getElementById('terminal').addEventListener('click', function() {
+        commandInput.focus();
+    });
+    
+    // 初期フォーカス
+    commandInput.focus();
+});
+</script>
 {% endblock %}
