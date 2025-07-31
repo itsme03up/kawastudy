@@ -25,12 +25,12 @@ def get_kawada_reply(user_message):
 
     # ダミーモード：APIキーがない場合は、固定の応答を返す
     if openai.api_key == "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx":
-        if "おはよう" in user_message:
+        if "おはようございます" in user_message:
             return kawada_prompt.get_dry_reaction("greetings")
-        elif "ありがとう" in user_message:
+        elif "ありがとうございます" in user_message:
             return kawada_prompt.get_dry_reaction("acknowledgements")
         else:
-            return "ふむ、なるほどな。それで、君は何がしたいんだ？"
+            return "何か腹落ちしてないことがありますか？"
 
     try:
         response = openai.ChatCompletion.create(
