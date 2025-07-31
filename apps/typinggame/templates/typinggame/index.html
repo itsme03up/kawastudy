@@ -47,6 +47,7 @@
     window.typingQuestionsData = JSON.parse('{{ questions_json|safe }}');
     window.typingInitialQuestion = JSON.parse('{{ initial_question_json|safe }}');
 </script>
+{% endblock %}
 
 {% block react_scripts %}
 <!-- React のタイピングゲームを直接読み込み -->
