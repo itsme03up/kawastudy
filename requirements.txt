@@ -1,11 +1,7 @@
 Django>=4.2.0
 openai>=1.0.0
 python-dotenv>=1.0.0
-openai
 PyYAML
-openai
-PyYAML
-python-dotenv
 gunicorn
 whitenoise
 dj-database-url
