@@ -1,3 +1,0 @@
-<!-- This is a placeholder for kawada.png -->
-<!-- In a real project, you would place an actual image file here -->
-<!-- For now, we'll use CSS to create a placeholder character -->

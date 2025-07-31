@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}楽しいLinux - Kawada Study{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-dark text-white">
+                    <h1 class="mb-0">🐧 楽しいLinux</h1>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h3>Linuxコマンドライン学習</h3>
+                        <p class="lead">川田先生と一緒にLinuxコマンドを覚えましょう！</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h5>🚧 準備中</h5>
+                        <p class="mb-0">
+                            現在、Linuxコマンド学習機能を開発中です。<br>
+                            近日中に以下の機能が追加予定です：
+                        </p>
+                        <ul class="mt-2">
+                            <li>基本コマンドの練習</li>
+                            <li>ファイル操作の演習</li>
+                            <li>権限管理の学習</li>
+                            <li>シェルスクリプト入門</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            ← ホームに戻る
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
