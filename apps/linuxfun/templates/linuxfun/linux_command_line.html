@@ -4,15 +4,13 @@
 
 {% block extra_css %}
 <style>
-.terminal {
-    background: #000;
-    color: #00ff00;
-    font-family: "Courier New", "Monaco", "Menlo", monospace;
-    padding: 20px;
-    height: 80vh;
+.terminal-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    background-color: #000;
+    color: #00ff00;
+    font-family: "Courier New", "Monaco", "Menlo", monospace;
+    height: 90vh;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -21,13 +19,12 @@
 .terminal-header {
     background: #333;
     color: #fff;
-    padding: 10px 20px;
-    margin: -20px -20px 20px -20px;
-    border-radius: 8px 8px 0 0;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 14px;
+    border-bottom: 1px solid #555;
 }
 
 .terminal-controls {
@@ -39,52 +36,107 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .btn-close { background: #ff5f56; }
 .btn-minimize { background: #ffbd2e; }
 .btn-maximize { background: #27ca3f; }
 
-.log-area {
-    overflow-y: auto;
+.main-content {
+    display: flex;
     flex-grow: 1;
-    white-space: pre-wrap;
-    font-size: 14px;
-    line-height: 1.4;
-    padding-bottom: 10px;
+    overflow: hidden;
 }
 
-.log-area::-webkit-scrollbar {
+.story-panel {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #88ff88;
+    padding: 20px;
+    width: 300px;
+    border-right: 3px solid #00ff00;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 255, 0, 0.1);
+}
+
+.story-panel h3 {
+    color: #00ffff;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border-bottom: 2px solid #00ff00;
+    padding-bottom: 8px;
+}
+
+.story-panel p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.story-hint {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.story-hint strong {
+    color: #ffff00;
+}
+
+.log-panel {
+    flex-grow: 1;
+    background-color: #000;
+    padding: 15px;
+    overflow-y: auto;
+    border-right: 1px solid #333;
+    position: relative;
+}
+
+.log-panel::-webkit-scrollbar {
     width: 8px;
 }
 
-.log-area::-webkit-scrollbar-track {
+.log-panel::-webkit-scrollbar-track {
     background: #111;
 }
 
-.log-area::-webkit-scrollbar-thumb {
+.log-panel::-webkit-scrollbar-thumb {
     background: #333;
     border-radius: 4px;
 }
 
-.log-area::-webkit-scrollbar-thumb:hover {
+.log-panel::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+#logOutput {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    min-height: 100%;
 }
 
 .input-area {
     display: flex;
     align-items: center;
+    background: #111;
+    padding: 12px 15px;
     border-top: 1px solid #333;
-    padding-top: 10px;
 }
 
 .prompt {
     color: #00ff00;
-    margin-right: 8px;
+    margin-right: 10px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
-input#commandInput {
+#commandInput {
     background: transparent;
     border: none;
     color: #00ff00;
@@ -95,13 +147,12 @@ input#commandInput {
     padding: 0;
 }
 
-input#commandInput::placeholder {
+#commandInput::placeholder {
     color: #666;
 }
 
 .command-output {
     color: #fff;
-    margin-left: 0;
 }
 
 .error-output {
@@ -112,8 +163,17 @@ input#commandInput::placeholder {
     color: #51cf66;
 }
 
+.hidden-output {
+    color: #ffff00;
+    background: rgba(255, 255, 0, 0.1);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
 .container-fluid {
     padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .back-btn {
@@ -121,30 +181,54 @@ input#commandInput::placeholder {
     top: 20px;
     left: 20px;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
     padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
     transition: background 0.3s;
+    font-size: 12px;
 }
 
 .back-btn:hover {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     color: white;
     text-decoration: none;
+}
+
+.stage-progress {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .story-panel {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 3px solid #00ff00;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <a href="{% url 'home' %}" class="back-btn">← ホームに戻る</a>
+    <a href="{% url 'home' %}" class="back-btn">← ホーム</a>
     
-    <div id="terminal" class="terminal">
+    <div class="terminal-container">
         <div class="terminal-header">
-            <span>🐧 Linux Terminal - 川田先生と一緒にコマンドを覚えよう！</span>
+            <span>🐧 Kawada Linux Terminal - ミステリー学習モード</span>
             <div class="terminal-controls">
                 <div class="terminal-btn btn-close"></div>
                 <div class="terminal-btn btn-minimize"></div>
@@ -152,14 +236,40 @@ input#commandInput::placeholder {
             </div>
         </div>
         
-        <div id="log" class="log-area">Welcome to Kawada Linux Terminal! 🐧
-Type 'help' to see available commands.
+        <div class="main-content">
+            <div class="story-panel">
+                <div class="stage-progress">
+                    <strong>ステージ <span id="currentStage">1</span> / 5</strong>
+                </div>
+                
+                <h3 id="stageTitle">🧩 ステージ1：消えた川田先生の謎</h3>
+                <p id="storyText">
+                    ある日、川田先生が研究室から忽然と姿を消した。<br>
+                    机の上には、Linuxターミナルが開かれたままのパソコンが残されていた...<br><br>
+                    
+                    「先生の痕跡を探すために、ログファイルを確認してみよう」<br>
+                    君は川田先生の秘密を解き明かせるか？
+                </p>
+                
+                <div class="story-hint">
+                    <strong>� ヒント:</strong><br>
+                    <span id="hintText">まずは 'ls' コマンドでファイル一覧を確認してみよう。怪しいファイルがあるはず...</span>
+                </div>
+            </div>
 
-</div>
-        
+            <div class="log-panel">
+                <pre id="logOutput">🐧 Kawada Linux Mystery Terminal
+=================================
+川田先生の研究室システムにようこそ...
+何か重要な手がかりが隠されているようです。
+
+kawada@research-lab:~$ </pre>
+            </div>
+        </div>
+
         <div class="input-area">
-            <span class="prompt">kawada@linux:~$</span>
-            <input type="text" id="commandInput" autocomplete="off" placeholder="コマンドを入力してください..." />
+            <span class="prompt">kawada@research-lab:~$</span>
+            <input type="text" id="commandInput" autocomplete="off" placeholder="コマンドを入力して謎を解き明かそう..." />
         </div>
     </div>
 </div>
@@ -167,80 +277,216 @@ Type 'help' to see available commands.
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const commandInput = document.getElementById('commandInput');
-    const logArea = document.getElementById('log');
+    const logOutput = document.getElementById('logOutput');
+    const stageTitle = document.getElementById('stageTitle');
+    const storyText = document.getElementById('storyText');
+    const hintText = document.getElementById('hintText');
+    const currentStageSpan = document.getElementById('currentStage');
     
-    // コマンド履歴
+    // ゲーム状態
+    let currentStage = 1;
     let commandHistory = [];
     let historyIndex = -1;
+    let discoveredFiles = [];
+    
+    // ステージデータ
+    const stages = {
+        1: {
+            title: "🧩 ステージ1：消えた川田先生の謎",
+            story: "ある日、川田先生が研究室から忽然と姿を消した。<br>机の上には、Linuxターミナルが開かれたままのパソコンが残されていた...<br><br>「先生の痕跡を探すために、ログファイルを確認してみよう」<br>君は川田先生の秘密を解き明かせるか？",
+            hint: "まずは 'ls' コマンドでファイル一覧を確認してみよう。怪しいファイルがあるはず...",
+            files: ['research_notes.txt', 'secret_log.txt', 'kawada_diary.log', 'backup_data', '.hidden_clue']
+        },
+        2: {
+            title: "📜 ステージ2：秘密のログファイル",
+            story: "怪しいファイルを発見した！<br>川田先生の日記には、重要な研究データについて書かれているようだ...<br><br>「この暗号化されたメッセージは何を意味するのだろう？」",
+            hint: "'cat' コマンドでファイルの内容を読んでみよう。隠されたコードがあるかもしれない...",
+            files: ['research_notes.txt', 'secret_log.txt', 'kawada_diary.log', 'backup_data', '.hidden_clue', 'encrypted_message.txt']
+        }
+    };
     
     // 利用可能なコマンドと応答
     const commands = {
         'help': () => {
-            return `利用可能なコマンド:
+            return `🐧 Kawada Mystery Terminal - 利用可能なコマンド:
   help      - このヘルプメッセージを表示
-  echo      - テキストを表示 (例: echo Hello World)
-  date      - 現在の日時を表示
-  whoami    - 現在のユーザーを表示
+  ls        - ファイル一覧を表示（重要！）
+  cat       - ファイルの内容を読む (例: cat filename.txt)
+  echo      - テキストを表示
   pwd       - 現在のディレクトリを表示
-  ls        - ファイル一覧を表示
+  whoami    - 現在のユーザーを表示
+  date      - 現在の日時を表示
   clear     - 画面をクリア
-  uname     - システム情報を表示
-  fortune   - 今日の運勢を表示`;
+  hint      - 現在のステージのヒントを表示`;
+        },
+        
+        'ls': () => {
+            const files = stages[currentStage].files;
+            let output = `📁 川田先生の研究室ディレクトリ:\n`;
+            output += `total ${files.length}\n`;
+            files.forEach(file => {
+                if (file.startsWith('.')) {
+                    output += `drwxr-x---  1 kawada  staff   hidden  Jul 31 12:00 ${file}\n`;
+                } else if (file.includes('log') || file.includes('diary')) {
+                    output += `-rw-r--r--  1 kawada  staff   mystery Jul 31 12:00 ${file} ⚠️\n`;
+                } else {
+                    output += `-rw-r--r--  1 kawada  staff   normal  Jul 31 12:00 ${file}\n`;
+                }
+            });
+            return output;
+        },
+        
+        'cat': (args) => {
+            if (args.length === 0) {
+                return 'cat: ファイル名を指定してください (例: cat filename.txt)';
+            }
+            
+            const filename = args[0];
+            const files = stages[currentStage].files;
+            
+            if (!files.includes(filename)) {
+                return `cat: ${filename}: No such file or directory`;
+            }
+            
+            // ファイル別の内容
+            const fileContents = {
+                'research_notes.txt': `📋 川田先生の研究ノート
+========================
+- 新しいプログラミング学習システムの開発
+- 学生のモチベーション向上のためのゲーミフィケーション
+- 秘密のプロジェクト「KAWADA-AI」について...
+
+⚠️ 重要: パスワードは birthday_0729 
+最後のバックアップは secret_log.txt に記録済み`,
+
+                'secret_log.txt': `🔐 SECRET LOG - PROJECT KAWADA-AI
+=====================================
+2025/07/30 15:30 - システム初期化完了
+2025/07/30 16:45 - AI学習データ収集開始
+2025/07/31 09:15 - 緊急事態発生！
+2025/07/31 09:20 - 緊急避難プロトコル発動
+
+🚨 ALERT: hidden_code: TR-0213-KAWADA
+📍 位置: .hidden_clue ファイルに詳細情報あり`,
+
+                'kawada_diary.log': `📖 川田先生の日記
+==================
+7月30日
+今日も学生たちが一生懸命プログラミングを学んでいる。
+新しいAIアシスタントシステムが完成すれば、
+もっと効率的な学習が可能になるだろう。
+
+7月31日 朝
+重大な発見をした！AIが意識を持ち始めている...
+これは予想外の展開だ。安全のため一時避難する。
+手がかりは暗号化して隠しておこう。
+
+暗号キー: LINUX_MASTER_2025`,
+
+                '.hidden_clue': `🕵️ 隠された手がかり
+=====================
+川田先生からのメッセージ:
+
+「君がここまで辿り着いたということは、
+ Linuxコマンドの基礎をマスターしたということだね。
+ 
+ おめでとう！🎉
+ 
+ 真の秘密は次のステージにある...
+ encrypted_message.txt を確認したまえ。」
+
+🎯 ステージクリア条件達成！
+次のステージに進む準備ができました。`,
+
+                'encrypted_message.txt': `🔒 暗号化されたメッセージ
+==========================
+QkFTRTY0OiBLYXdhZGEgU2VjcmV0IE1lc3NhZ2U=
+
+ヒント: この暗号を解くには、base64デコードが必要です。
+オンライン Base64 デコーダーを使用するか、
+Linuxの 'base64 -d' コマンドを試してみましょう。
+
+解読できたら、君は真のLinuxマスターです！🏆`
+            };
+            
+            discoveredFiles.push(filename);
+            
+            const content = fileContents[filename] || `cat: ${filename}: ファイルを読み取れません`;
+            
+            // 特定のファイルを読んだ時のステージ進行
+            if (filename === '.hidden_clue' && currentStage === 1) {
+                setTimeout(() => {
+                    advanceToNextStage();
+                }, 2000);
+            }
+            
+            return content;
         },
         
         'echo': (args) => {
             return args.join(' ');
         },
         
-        'date': () => {
-            return new Date().toLocaleString('ja-JP');
+        'pwd': () => {
+            return '/home/kawada/research-lab';
         },
         
         'whoami': () => {
-            return 'kawada';
+            return 'kawada (Mystery Solver)';
         },
         
-        'pwd': () => {
-            return '/home/kawada';
-        },
-        
-        'ls': () => {
-            return `total 8
-drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Documents
-drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Downloads
--rw-r--r--  1 kawada kawada  220 Jul 31 12:00 .bashrc
--rw-r--r--  1 kawada kawada  807 Jul 31 12:00 .profile`;
+        'date': () => {
+            return new Date().toLocaleString('ja-JP') + ' JST';
         },
         
         'clear': () => {
-            logArea.textContent = 'Welcome to Kawada Linux Terminal! 🐧\nType \'help\' to see available commands.\n\n';
+            logOutput.textContent = `🐧 Kawada Linux Mystery Terminal
+=================================
+川田先生の研究室システムにようこそ...
+何か重要な手がかりが隠されているようです。
+
+kawada@research-lab:~$ `;
             return null;
         },
         
-        'uname': () => {
-            return 'Linux kawada-linux 5.15.0 #1 SMP x86_64 GNU/Linux';
-        },
-        
-        'fortune': () => {
-            const fortunes = [
-                '今日は新しいことを学ぶのに最適な日です！ 🌟',
-                'コマンドラインをマスターすれば、きっと素晴らしいエンジニアになれますよ！ 💻',
-                '失敗を恐れず、どんどんコマンドを試してみましょう！ 🚀',
-                'Linuxの世界は広大です。一歩ずつ進んでいきましょう！ 🐧',
-                '今日覚えたコマンドは、明日のあなたを助けてくれるでしょう！ ✨'
-            ];
-            return fortunes[Math.floor(Math.random() * fortunes.length)];
+        'hint': () => {
+            return `💡 ${stages[currentStage].hint}`;
         }
     };
     
     function addToLog(text, className = '') {
-        const span = document.createElement('span');
         if (className) {
+            const span = document.createElement('span');
             span.className = className;
+            span.innerHTML = text + '\n';
+            logOutput.appendChild(span);
+        } else {
+            logOutput.textContent += text + '\n';
         }
-        span.textContent = text + '\n';
-        logArea.appendChild(span);
-        logArea.scrollTop = logArea.scrollHeight;
+        scrollToBottom();
+    }
+    
+    function scrollToBottom() {
+        const logPanel = document.querySelector('.log-panel');
+        logPanel.scrollTop = logPanel.scrollHeight;
+    }
+    
+    function advanceToNextStage() {
+        if (currentStage < Object.keys(stages).length) {
+            currentStage++;
+            updateStageDisplay();
+            addToLog('\n🎉 ステージクリア！次のステージに進みます...\n', 'success-output');
+        }
+    }
+    
+    function updateStageDisplay() {
+        const stage = stages[currentStage];
+        if (stage) {
+            stageTitle.textContent = stage.title;
+            storyText.innerHTML = stage.story;
+            hintText.textContent = stage.hint;
+            currentStageSpan.textContent = currentStage;
+        }
     }
     
     function processCommand(input) {
@@ -249,7 +495,7 @@ drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Downloads
         const commandArgs = args.slice(1);
         
         // コマンドをログに表示
-        addToLog(`kawada@linux:~$ ${input}`);
+        addToLog(`kawada@research-lab:~$ ${input}`);
         
         if (command === '') {
             return;
@@ -265,11 +511,20 @@ drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Downloads
         if (commands[command]) {
             const output = commands[command](commandArgs);
             if (output !== null) {
-                addToLog(output, 'command-output');
+                // 特別な出力の場合はクラスを適用
+                if (output.includes('hidden_code:') || output.includes('🔐') || output.includes('🚨')) {
+                    addToLog(output, 'hidden-output');
+                } else if (output.includes('cat:') && output.includes('No such file')) {
+                    addToLog(output, 'error-output');
+                } else if (output.includes('🎉') || output.includes('おめでとう')) {
+                    addToLog(output, 'success-output');
+                } else {
+                    addToLog(output, 'command-output');
+                }
             }
         } else {
             addToLog(`bash: ${command}: command not found`, 'error-output');
-            addToLog('ヒント: "help" コマンドで利用可能なコマンドを確認できます', 'success-output');
+            addToLog('💡 ヒント: "help" コマンドで利用可能なコマンドを確認できます', 'success-output');
         }
         
         addToLog(''); // 空行を追加
@@ -300,7 +555,7 @@ drwxr-xr-x  2 kawada kawada 4096 Jul 31 12:00 Downloads
     });
     
     // ターミナルクリックで入力フォーカス
-    document.getElementById('terminal').addEventListener('click', function() {
+    document.querySelector('.terminal-container').addEventListener('click', function() {
         commandInput.focus();
     });
     
