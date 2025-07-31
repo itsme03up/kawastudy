@@ -13,6 +13,9 @@ from .utils import kawada_prompt
 
 # APIキーを環境変数から読み込む
 openai.api_key = os.environ.get("OPENAI_API_KEY")
+debug_mode = os.getenv("DEBUG", "False")
+
+print("API Key:", openai.api_key[:8] + "*****")
 
 
 def get_kawada_reply(user_message):
