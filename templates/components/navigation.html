@@ -30,6 +30,35 @@
                                 </select>
                             </div>
                         </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">音声設定</h6></li>
+                        <li>
+                            <div class="dropdown-item">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="global-auto-tts" checked>
+                                    <label class="form-check-label" for="global-auto-tts">自動読み上げ</label>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <label for="global-pitch" class="form-label">ピッチ (低いほど男性的)</label>
+                                <input type="range" id="global-pitch" min="0.1" max="2" step="0.1" value="0.6" class="form-range">
+                                <small class="text-muted" id="global-pitch-value">0.6</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <label for="global-rate" class="form-label">読み上げ速度</label>
+                                <input type="range" id="global-rate" min="0.1" max="2" step="0.1" value="0.8" class="form-range">
+                                <small class="text-muted" id="global-rate-value">0.8</small>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="testGlobalVoice()">音声テスト</button>
+                            </div>
+                        </li>
                     </ul>
                 </li>
             </ul>

@@ -33,6 +33,57 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// グローバルTTS設定
+let globalTTSSettings = {
+    autoTTS: true,
+    pitch: 0.6,
+    rate: 0.8
+};
+
+// TTS設定の初期化
+document.addEventListener('DOMContentLoaded', function() {
+    // 保存された設定を復元
+    const savedSettings = localStorage.getItem('ttsSettings');
+    if (savedSettings) {
+        globalTTSSettings = JSON.parse(savedSettings);
+    }
+    
+    // UI要素の初期化
+    const autoTTSCheckbox = document.getElementById('global-auto-tts');
+    const pitchSlider = document.getElementById('global-pitch');
+    const rateSlider = document.getElementById('global-rate');
+    const pitchValue = document.getElementById('global-pitch-value');
+    const rateValue = document.getElementById('global-rate-value');
+    
+    if (autoTTSCheckbox) {
+        autoTTSCheckbox.checked = globalTTSSettings.autoTTS;
+        autoTTSCheckbox.addEventListener('change', function() {
+            globalTTSSettings.autoTTS = this.checked;
+            saveTTSSettings();
+        });
+    }
+    
+    if (pitchSlider) {
+        pitchSlider.value = globalTTSSettings.pitch;
+        pitchValue.textContent = globalTTSSettings.pitch;
+        pitchSlider.addEventListener('input', function() {
+            globalTTSSettings.pitch = parseFloat(this.value);
+            pitchValue.textContent = this.value;
+            saveTTSSettings();
+        });
+    }
+    
+    if (rateSlider) {
+        rateSlider.value = globalTTSSettings.rate;
+        rateValue.textContent = globalTTSSettings.rate;
+        rateSlider.addEventListener('input', function() {
+            globalTTSSettings.rate = parseFloat(this.value);
+            rateValue.textContent = this.value;
+            saveTTSSettings();
+        });
+    }
+});
+
 function changeFontSize() {
     const fontSizeSelect = document.getElementById('font-size');
     if (!fontSizeSelect) return;
@@ -41,6 +92,40 @@ function changeFontSize() {
     document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/g, '');
     document.documentElement.classList.add(`font-size-${size}`);
     localStorage.setItem('fontSize', size);
+}
+
+function saveTTSSettings() {
+    localStorage.setItem('ttsSettings', JSON.stringify(globalTTSSettings));
+}
+
+function testGlobalVoice() {
+    if ('speechSynthesis' in window) {
+        const testText = "川田です。音声のテストをしています。設定は正常に動作しています。";
+        const utterance = new SpeechSynthesisUtterance(testText);
+        
+        // 利用可能な音声から最適なものを選択
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        utterance.pitch = globalTTSSettings.pitch;
+        utterance.rate = globalTTSSettings.rate;
+        utterance.volume = 1.0;
+        
+        speechSynthesis.speak(utterance);
+    } else {
+        alert('お使いのブラウザは音声合成に対応していません。');
+    }
+}
+
+// グローバルTTS設定を取得する関数（他のページから使用可能）
+function getGlobalTTSSettings() {
+    return globalTTSSettings;
 }
 
 // CSS変数でフォントサイズを設定
