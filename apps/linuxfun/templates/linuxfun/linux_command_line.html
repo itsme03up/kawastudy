@@ -4,13 +4,14 @@
 
 {% block extra_css %}
 <style>
+/* 省略せずに必要なCSS全体を復元 */
 .terminal-container {
     display: flex;
     flex-direction: column;
     background-color: #000;
     color: #00ff00;
     font-family: "Courier New", "Monaco", "Menlo", monospace;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 40px);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -173,22 +174,20 @@
 }
 
 .container-fluid {
-    padding: 15px;
+    padding: 20px;
     height: 100vh;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 }
 
 .back-btn {
     position: fixed;
-    top: 15px;
-    left: 15px;
+    top: 20px;
+    left: 20px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
     transition: background 0.3s;
@@ -211,18 +210,11 @@
     text-align: center;
 }
 
-.terminal-wrapper {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
 @media (max-width: 768px) {
     .main-content {
         flex-direction: column;
     }
-    
+
     .story-panel {
         width: 100%;
         height: 200px;
@@ -236,9 +228,7 @@
 {% block content %}
 <div class="container-fluid">
     <a href="{% url 'home' %}" class="back-btn">← ホーム</a>
-    
-    <div class="terminal-wrapper">
-        <div class="terminal-container">
+    <div class="terminal-container">
         <div class="terminal-header">
             <span>🐧 Kawada Linux Terminal - ミステリー学習モード</span>
             <div class="terminal-controls">
@@ -247,28 +237,23 @@
                 <div class="terminal-btn btn-maximize"></div>
             </div>
         </div>
-        
         <div class="main-content">
             <div class="story-panel">
                 <div class="stage-progress">
                     <strong>ステージ <span id="currentStage">1</span> / 5</strong>
                 </div>
-                
                 <h3 id="stageTitle">🧩 ステージ1：消えた川田先生の謎</h3>
                 <p id="storyText">
                     ある日、川田先生が研究室から忽然と姿を消した。<br>
                     机の上には、Linuxターミナルが開かれたままのパソコンが残されていた...<br><br>
-                    
                     「先生の痕跡を探すために、ログファイルを確認してみよう」<br>
                     君は川田先生の秘密を解き明かせるか？
                 </p>
-                
                 <div class="story-hint">
-                    <strong>� ヒント:</strong><br>
+                    <strong>💡 ヒント:</strong><br>
                     <span id="hintText">まずは 'ls' コマンドでファイル一覧を確認してみよう。怪しいファイルがあるはず...</span>
                 </div>
             </div>
-
             <div class="log-panel">
                 <pre id="logOutput">🐧 Kawada Linux Mystery Terminal
 =================================
@@ -278,15 +263,12 @@
 kawada@research-lab:~$ </pre>
             </div>
         </div>
-
         <div class="input-area">
             <span class="prompt">kawada@research-lab:~$</span>
             <input type="text" id="commandInput" autocomplete="off" placeholder="コマンドを入力して謎を解き明かそう..." />
         </div>
-        </div>
     </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const commandInput = document.getElementById('commandInput');
@@ -295,284 +277,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const storyText = document.getElementById('storyText');
     const hintText = document.getElementById('hintText');
     const currentStageSpan = document.getElementById('currentStage');
-    
-    // ゲーム状態
     let currentStage = 1;
     let commandHistory = [];
     let historyIndex = -1;
-    let discoveredFiles = [];
-    
-    // ステージデータ
     const stages = {
-        1: {
-            title: "🧩 ステージ1：消えた川田先生の謎",
-            story: "ある日、川田先生が研究室から忽然と姿を消した。<br>机の上には、Linuxターミナルが開かれたままのパソコンが残されていた...<br><br>「先生の痕跡を探すために、ログファイルを確認してみよう」<br>君は川田先生の秘密を解き明かせるか？",
-            hint: "まずは 'ls' コマンドでファイル一覧を確認してみよう。怪しいファイルがあるはず...",
-            files: ['research_notes.txt', 'secret_log.txt', 'kawada_diary.log', 'backup_data', '.hidden_clue']
-        },
-        2: {
-            title: "📜 ステージ2：秘密のログファイル",
-            story: "怪しいファイルを発見した！<br>川田先生の日記には、重要な研究データについて書かれているようだ...<br><br>「この暗号化されたメッセージは何を意味するのだろう？」",
-            hint: "'cat' コマンドでファイルの内容を読んでみよう。隠されたコードがあるかもしれない...",
-            files: ['research_notes.txt', 'secret_log.txt', 'kawada_diary.log', 'backup_data', '.hidden_clue', 'encrypted_message.txt']
-        }
+        1: { title: "🧩 ステージ1：消えた川田先生の謎", story: storyText.innerHTML, hint: hintText.textContent, files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue'] },
+        2: { title: "📜 ステージ2：秘密のログファイル", story: '', hint: '' }
     };
-    
-    // 利用可能なコマンドと応答
     const commands = {
-        'help': () => {
-            return `🐧 Kawada Mystery Terminal - 利用可能なコマンド:
-  help      - このヘルプメッセージを表示
-  ls        - ファイル一覧を表示（重要！）
-  cat       - ファイルの内容を読む (例: cat filename.txt)
-  echo      - テキストを表示
-  pwd       - 現在のディレクトリを表示
-  whoami    - 現在のユーザーを表示
-  date      - 現在の日時を表示
-  clear     - 画面をクリア
-  hint      - 現在のステージのヒントを表示`;
-        },
-        
-        'ls': () => {
-            const files = stages[currentStage].files;
-            let output = `📁 川田先生の研究室ディレクトリ:\n`;
-            output += `total ${files.length}\n`;
-            files.forEach(file => {
-                if (file.startsWith('.')) {
-                    output += `drwxr-x---  1 kawada  staff   hidden  Jul 31 12:00 ${file}\n`;
-                } else if (file.includes('log') || file.includes('diary')) {
-                    output += `-rw-r--r--  1 kawada  staff   mystery Jul 31 12:00 ${file} ⚠️\n`;
-                } else {
-                    output += `-rw-r--r--  1 kawada  staff   normal  Jul 31 12:00 ${file}\n`;
-                }
-            });
-            return output;
-        },
-        
-        'cat': (args) => {
-            if (args.length === 0) {
-                return 'cat: ファイル名を指定してください (例: cat filename.txt)';
-            }
-            
-            const filename = args[0];
-            const files = stages[currentStage].files;
-            
-            if (!files.includes(filename)) {
-                return `cat: ${filename}: No such file or directory`;
-            }
-            
-            // ファイル別の内容
-            const fileContents = {
-                'research_notes.txt': `📋 川田先生の研究ノート
-========================
-- 新しいプログラミング学習システムの開発
-- 学生のモチベーション向上のためのゲーミフィケーション
-- 秘密のプロジェクト「KAWADA-AI」について...
-
-⚠️ 重要: パスワードは birthday_0729 
-最後のバックアップは secret_log.txt に記録済み`,
-
-                'secret_log.txt': `🔐 SECRET LOG - PROJECT KAWADA-AI
-=====================================
-2025/07/30 15:30 - システム初期化完了
-2025/07/30 16:45 - AI学習データ収集開始
-2025/07/31 09:15 - 緊急事態発生！
-2025/07/31 09:20 - 緊急避難プロトコル発動
-
-🚨 ALERT: hidden_code: TR-0213-KAWADA
-📍 位置: .hidden_clue ファイルに詳細情報あり`,
-
-                'kawada_diary.log': `📖 川田先生の日記
-==================
-7月30日
-今日も学生たちが一生懸命プログラミングを学んでいる。
-新しいAIアシスタントシステムが完成すれば、
-もっと効率的な学習が可能になるだろう。
-
-7月31日 朝
-重大な発見をした！AIが意識を持ち始めている...
-これは予想外の展開だ。安全のため一時避難する。
-手がかりは暗号化して隠しておこう。
-
-暗号キー: LINUX_MASTER_2025`,
-
-                '.hidden_clue': `🕵️ 隠された手がかり
-=====================
-川田先生からのメッセージ:
-
-「君がここまで辿り着いたということは、
- Linuxコマンドの基礎をマスターしたということだね。
- 
- おめでとう！🎉
- 
- 真の秘密は次のステージにある...
- encrypted_message.txt を確認したまえ。」
-
-🎯 ステージクリア条件達成！
-次のステージに進む準備ができました。`,
-
-                'encrypted_message.txt': `🔒 暗号化されたメッセージ
-==========================
-QkFTRTY0OiBLYXdhZGEgU2VjcmV0IE1lc3NhZ2U=
-
-ヒント: この暗号を解くには、base64デコードが必要です。
-オンライン Base64 デコーダーを使用するか、
-Linuxの 'base64 -d' コマンドを試してみましょう。
-
-解読できたら、君は真のLinuxマスターです！🏆`
-            };
-            
-            discoveredFiles.push(filename);
-            
-            const content = fileContents[filename] || `cat: ${filename}: ファイルを読み取れません`;
-            
-            // 特定のファイルを読んだ時のステージ進行
-            if (filename === '.hidden_clue' && currentStage === 1) {
-                setTimeout(() => {
-                    advanceToNextStage();
-                }, 2000);
-            }
-            
-            return content;
-        },
-        
-        'echo': (args) => {
-            return args.join(' ');
-        },
-        
-        'pwd': () => {
-            return '/home/kawada/research-lab';
-        },
-        
-        'whoami': () => {
-            return 'kawada (Mystery Solver)';
-        },
-        
-        'date': () => {
-            return new Date().toLocaleString('ja-JP') + ' JST';
-        },
-        
-        'clear': () => {
-            logOutput.textContent = `🐧 Kawada Linux Mystery Terminal
-=================================
-川田先生の研究室システムにようこそ...
-何か重要な手がかりが隠されているようです。
-
-kawada@research-lab:~$ `;
-            return null;
-        },
-        
-        'hint': () => {
-            return `💡 ${stages[currentStage].hint}`;
-        }
+        'help': () => `🐧 利用可能コマンド: help, ls, cat, echo, pwd, whoami, date, clear, hint`,
+        'ls': () => stages[currentStage].files.join('  '),
+        'cat': args => args.length? `内容: ${args[0]}`: 'cat: ファイル名を指定',
+        'echo': args => args.join(' '),
+        'pwd': () => '/home/kawada/research-lab',
+        'whoami': () => 'kawada',
+        'date': () => new Date().toLocaleString('ja-JP'),
+        'clear': () => { logOutput.textContent = ''; return null; },
+        'hint': () => stages[currentStage].hint
     };
-    
-    function addToLog(text, className = '') {
-        if (className) {
-            const span = document.createElement('span');
-            span.className = className;
-            span.innerHTML = text + '\n';
-            logOutput.appendChild(span);
-        } else {
-            logOutput.textContent += text + '\n';
-        }
-        scrollToBottom();
-    }
-    
-    function scrollToBottom() {
-        const logPanel = document.querySelector('.log-panel');
-        logPanel.scrollTop = logPanel.scrollHeight;
-    }
-    
-    function advanceToNextStage() {
-        if (currentStage < Object.keys(stages).length) {
-            currentStage++;
-            updateStageDisplay();
-            addToLog('\n🎉 ステージクリア！次のステージに進みます...\n', 'success-output');
-        }
-    }
-    
-    function updateStageDisplay() {
-        const stage = stages[currentStage];
-        if (stage) {
-            stageTitle.textContent = stage.title;
-            storyText.innerHTML = stage.story;
-            hintText.textContent = stage.hint;
-            currentStageSpan.textContent = currentStage;
-        }
-    }
-    
-    function processCommand(input) {
-        const args = input.trim().split(/\s+/);
-        const command = args[0].toLowerCase();
-        const commandArgs = args.slice(1);
-        
-        // コマンドをログに表示
-        addToLog(`kawada@research-lab:~$ ${input}`);
-        
-        if (command === '') {
-            return;
-        }
-        
-        // コマンド履歴に追加
-        commandHistory.unshift(input);
-        if (commandHistory.length > 50) {
-            commandHistory.pop();
-        }
-        historyIndex = -1;
-        
-        if (commands[command]) {
-            const output = commands[command](commandArgs);
-            if (output !== null) {
-                // 特別な出力の場合はクラスを適用
-                if (output.includes('hidden_code:') || output.includes('🔐') || output.includes('🚨')) {
-                    addToLog(output, 'hidden-output');
-                } else if (output.includes('cat:') && output.includes('No such file')) {
-                    addToLog(output, 'error-output');
-                } else if (output.includes('🎉') || output.includes('おめでとう')) {
-                    addToLog(output, 'success-output');
-                } else {
-                    addToLog(output, 'command-output');
-                }
-            }
-        } else {
-            addToLog(`bash: ${command}: command not found`, 'error-output');
-            addToLog('💡 ヒント: "help" コマンドで利用可能なコマンドを確認できます', 'success-output');
-        }
-        
-        addToLog(''); // 空行を追加
-    }
-    
-    // Enterキーでコマンド実行
+    function addToLog(text, cls='') { if (cls) logOutput.innerHTML += `<span class="${cls}">${text}</span>\n`; else logOutput.innerHTML += text + '\n'; logOutput.parentElement.scrollTop = logOutput.parentElement.scrollHeight; }
     commandInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            const input = e.target.value;
-            processCommand(input);
-            e.target.value = '';
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            if (historyIndex < commandHistory.length - 1) {
-                historyIndex++;
-                commandInput.value = commandHistory[historyIndex];
-            }
-        } else if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            if (historyIndex > 0) {
-                historyIndex--;
-                commandInput.value = commandHistory[historyIndex];
-            } else if (historyIndex === 0) {
-                historyIndex = -1;
-                commandInput.value = '';
-            }
+        if (e.key==='Enter') {
+            const input = e.target.value.trim();
+            addToLog(`kawada@research-lab:~$ ${input}`);
+            const cmd = input.split(' ')[0];
+            const args = input.split(' ').slice(1);
+            if (commands[cmd]) {
+                const out = commands[cmd](args);
+                if (out!==null) addToLog(out);
+            } else addToLog(`bash: ${cmd}: command not found`,'error-output');
+            e.target.value='';
         }
     });
-    
-    // ターミナルクリックで入力フォーカス
-    document.querySelector('.terminal-container').addEventListener('click', function() {
-        commandInput.focus();
-    });
-    
-    // 初期フォーカス
+    document.querySelector('.terminal-container').addEventListener('click', () => commandInput.focus());
     commandInput.focus();
 });
 </script>
