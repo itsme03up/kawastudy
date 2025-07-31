@@ -76,4 +76,13 @@ def check_answer(request, stage_number):
         })
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def get_stage_info(request):
+    """ステージ情報を取得するAPI"""
+    stages = QuizStage.objects.all().order_by('stage_number')
+    stage_info = {
+        'total_stages': stages.count(),
+        'available_stages': [stage.stage_number for stage in stages]
+    }
+    return JsonResponse(stage_info)
 # sqlquiz/urls.py

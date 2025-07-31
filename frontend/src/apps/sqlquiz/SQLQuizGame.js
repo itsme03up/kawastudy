@@ -8,6 +8,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [stageInfo, setStageInfo] = useState({ total_stages: 0, available_stages: [] });
 
   useEffect(() => {
     // ステージデータを取得
@@ -30,8 +31,31 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
       }
     };
 
+    // ステージ情報を取得
+    const fetchStageInfo = async () => {
+      try {
+        const response = await axios.get('/sqlquiz/api/stage-info/');
+        setStageInfo(response.data);
+      } catch (error) {
+        console.error('ステージ情報の取得に失敗:', error);
+      }
+    };
+
     fetchStageData();
+    fetchStageInfo();
   }, [stageNumber, stageData]);
+
+  // 次のステージへの遷移
+  const goToNextStage = () => {
+    const nextStageNumber = parseInt(stageNumber) + 1;
+    if (stageInfo.available_stages.includes(nextStageNumber)) {
+      window.location.href = `/sqlquiz/stage/${nextStageNumber}/`;
+    } else {
+      // 全ステージクリア！
+      alert('🎉 おめでとうございます！全ステージクリアしました！');
+      window.location.href = '/sqlquiz/';
+    }
+  };
 
   // SQL実行
   const executeSQL = async () => {
@@ -275,9 +299,32 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
                   <div className="card-body">
                     {renderResultTable()}
                     <div className="text-center mt-3">
-                      <a href="/sqlquiz/" className="btn btn-success btn-lg">
-                        次のステージへ →
-                      </a>
+                      {stageInfo.available_stages.includes(parseInt(stageNumber) + 1) ? (
+                        <button 
+                          className="btn btn-success btn-lg me-3"
+                          onClick={goToNextStage}
+                        >
+                          次のステージへ →
+                        </button>
+                      ) : (
+                        <div>
+                          <div className="alert alert-success">
+                            🎉 全ステージクリア！おめでとうございます！
+                          </div>
+                          <button 
+                            className="btn btn-primary btn-lg"
+                            onClick={() => window.location.href = '/sqlquiz/'}
+                          >
+                            ステージ選択に戻る
+                          </button>
+                        </div>
+                      )}
+                      <button 
+                        className="btn btn-outline-secondary"
+                        onClick={() => window.location.href = '/sqlquiz/'}
+                      >
+                        ステージ選択
+                      </button>
                     </div>
                   </div>
                 </div>
