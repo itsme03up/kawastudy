@@ -126,16 +126,38 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     if (!isPlaying || !currentQuestion) return;
 
-    // アルファベット、数字、記号を処理
-    // ハイフンを明示的にエスケープして対応
-    const allowedChars = /^[a-zA-Z0-9\-'.,!?ー]$/;
+    // より広範囲の文字を受け付ける（ハイフンの問題を解決するため）
+    const isValidInput = (key) => {
+      // 1文字で、以下のいずれかに該当
+      if (key.length !== 1) return false;
+      
+      // アルファベット
+      if (/[a-zA-Z]/.test(key)) return true;
+      
+      // 数字
+      if (/[0-9]/.test(key)) return true;
+      
+      // 特別な記号（個別にチェック）
+      const allowedSymbols = ['-', '−', '－', '.', ',', '!', '?', ' '];
+      if (allowedSymbols.includes(key)) return true;
+      
+      return false;
+    };
     
-    if (e.key.length === 1 && allowedChars.test(e.key)) {
+    if (isValidInput(e.key)) {
       e.preventDefault();
-      console.log('Input accepted:', e.key);
+      console.log('Input accepted:', {
+        key: e.key,
+        code: e.code,
+        keyCode: e.keyCode
+      });
       checkInput(e.key);
     } else {
-      console.log('Input rejected:', e.key, 'Length:', e.key.length, 'Test result:', allowedChars.test(e.key));
+      console.log('Input rejected:', {
+        key: e.key,
+        length: e.key.length,
+        reason: 'Not in allowed character set'
+      });
     }
   }, [isPlaying, currentQuestion, typedRomaji, gameMessage]);
 
@@ -145,71 +167,35 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [handleKeyPress]);
 
-  // 長音記号を適切な母音に変換する関数
-  const convertChoonToVowel = (text) => {
-    let result = '';
-    const vowels = 'aiueo';
-    
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      if (char === 'ー') {
-        // 前の文字から母音を探す
-        for (let j = i - 1; j >= 0; j--) {
-          if (vowels.includes(text[j])) {
-            result += text[j]; // 前の母音を繰り返す
-            break;
-          }
-        }
-      } else {
-        result += char;
-      }
-    }
-    return result;
-  };
-
   // 入力チェック
   const checkInput = (key) => {
     if (!currentQuestion) return;
 
-    let targetRomaji = currentQuestion.romaji;
-    
-    // 長音記号があれば適切な母音に変換
-    if (targetRomaji.includes('ー')) {
-      targetRomaji = convertChoonToVowel(targetRomaji);
-    }
-    
-    let expectedChar = targetRomaji[typedRomaji.length];
-
-    // ハイフンの代替入力を許可
-    const hyphenAlternatives = ['-', '−', '－', 'ー'];
-    let inputKey = key;
-    
-    // 入力された文字がハイフンの代替文字の場合、標準ハイフンに統一
-    if (hyphenAlternatives.includes(key)) {
-      inputKey = '-';
-    }
-    
-    // 期待される文字もハイフン系の場合、標準ハイフンとして比較
-    if (hyphenAlternatives.includes(expectedChar)) {
-      expectedChar = '-';
-    }
+    const targetRomaji = currentQuestion.romaji;
+    const expectedChar = targetRomaji[typedRomaji.length];
 
     // デバッグ用ログ
     console.log('Input check:', {
-      originalRomaji: currentQuestion.romaji,
-      convertedRomaji: targetRomaji,
-      originalInputKey: key,
-      normalizedInputKey: inputKey,
-      originalExpectedChar: currentQuestion.romaji[typedRomaji.length],
-      normalizedExpectedChar: expectedChar,
+      inputKey: key,
+      inputKeyCode: key.charCodeAt(0),
+      inputKeyUnicode: 'U+' + key.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'),
+      expectedChar: expectedChar,
+      expectedCharCode: expectedChar.charCodeAt(0),
+      expectedCharUnicode: 'U+' + expectedChar.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'),
+      targetRomaji: targetRomaji,
       typedRomaji: typedRomaji,
       position: typedRomaji.length,
-      match: inputKey === expectedChar
+      exactMatch: key === expectedChar,
+      hyphenMatch: (key === '-' || key === '−' || key === '－') && (expectedChar === '-' || expectedChar === '−' || expectedChar === '－')
     });
 
-    if (inputKey === expectedChar) {
+    // ハイフン系の文字は互換性を持たせる
+    const isHyphenInput = ['-', '−', '－'].includes(key);
+    const isHyphenExpected = ['-', '−', '－'].includes(expectedChar);
+    
+    if (key === expectedChar || (isHyphenInput && isHyphenExpected)) {
       // 正解
-      const newTypedRomaji = typedRomaji + targetRomaji[typedRomaji.length]; // 変換後の文字を使用
+      const newTypedRomaji = typedRomaji + expectedChar; // 期待される文字を使用
       setTypedRomaji(newTypedRomaji);
       setTotalTypedCount(prev => prev + 1);
 
@@ -235,13 +221,7 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
   const renderRomajiDisplay = () => {
     if (!currentQuestion) return '';
     
-    let targetRomaji = currentQuestion.romaji;
-    
-    // 長音記号があれば適切な母音に変換
-    if (targetRomaji.includes('ー')) {
-      targetRomaji = convertChoonToVowel(targetRomaji);
-    }
-    
+    const targetRomaji = currentQuestion.romaji;
     const typedPart = targetRomaji.substring(0, typedRomaji.length);
     const remainingPart = targetRomaji.substring(typedRomaji.length);
 
