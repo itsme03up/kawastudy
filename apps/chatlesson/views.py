@@ -1,10 +1,12 @@
 # chatlesson/views.py
 import os
+import uuid
 from openai import OpenAI
 from django.http import JsonResponse
 from django.shortcuts import render
 import json
 from .utils import kawada_prompt
+from .models import ChatSession, ChatMessage
 
 # Copilotにお願い：POSTで送られてきたメッセージに対して
 # ChatGPT APIを呼び出し、川田語で返信する関数を実装して。
@@ -58,6 +60,43 @@ def get_kawada_reply(user_message):
         ]
         import random
         return random.choice(fallback_responses)
+
+
+def get_or_create_session(request):
+    """
+    チャットセッションを取得または新規作成する
+    """
+    # セッションIDをブラウザセッションから取得
+    session_id = request.session.get('chat_session_id')
+    
+    if session_id:
+        try:
+            chat_session = ChatSession.objects.get(session_id=session_id)
+            return chat_session
+        except ChatSession.DoesNotExist:
+            pass
+    
+    # 新しいセッションを作成
+    session_id = str(uuid.uuid4())
+    chat_session = ChatSession.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        session_id=session_id
+    )
+    
+    # ブラウザセッションに保存
+    request.session['chat_session_id'] = session_id
+    
+    return chat_session
+
+def save_message(session, sender, message):
+    """
+    メッセージをデータベースに保存する
+    """
+    return ChatMessage.objects.create(
+        session=session,
+        sender=sender,
+        message=message
+    )
 
 
 def chat_api(request):
