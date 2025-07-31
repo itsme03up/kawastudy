@@ -11,10 +11,8 @@ from .utils import kawada_prompt
 # 入力はJSON形式 {"message": "..."}、出力は {"reply": "..."} の形にして。
 # 川田語プロンプトは外部モジュール kawada_prompt.py から読み込む。
 
-# 注意：実際に使用する際は、APIキーを環境変数などに設定してください。
-# openai.api_key = os.environ.get("OPENAI_API_KEY")
-# ダミーのAPIキーを設定（動作確認用）
-openai.api_key = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# APIキーを環境変数から読み込む
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 def get_kawada_reply(user_message):
@@ -23,14 +21,9 @@ def get_kawada_reply(user_message):
     """
     system_prompt = kawada_prompt.get_system_prompt()
 
-    # ダミーモード：APIキーがない場合は、固定の応答を返す
-    if openai.api_key == "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx":
-        if "おはようございます" in user_message:
-            return kawada_prompt.get_dry_reaction("greetings")
-        elif "ありがとうございます" in user_message:
-            return kawada_prompt.get_dry_reaction("acknowledgements")
-        else:
-            return "何か腹落ちしてないことがありますか？"
+    # APIキーが設定されていない場合は、固定の応答を返す
+    if not openai.api_key:
+        return "APIキーが設定されていないようですね。"
 
     try:
         response = openai.ChatCompletion.create(
