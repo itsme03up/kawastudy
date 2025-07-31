@@ -306,7 +306,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
                         const nextStageNumber = parseInt(stageNumber) + 1;
                         return nextStageNumber <= totalStages ? (
                           <button 
-                            className="btn btn-success btn-lg me-3"
+                            className="btn btn-success btn-lg"
                             onClick={goToNextStage}
                           >
                             ▶ NEXT Stage {String(nextStageNumber).padStart(2, '0')}
@@ -325,12 +325,6 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
                           </div>
                         );
                       })()}
-                      <button 
-                        className="btn btn-outline-secondary"
-                        onClick={() => window.location.href = '/sqlquiz/'}
-                      >
-                        ステージ選択
-                      </button>
                     </div>
                   </div>
                 </div>
