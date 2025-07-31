@@ -167,17 +167,17 @@ def create_sample_stages():
         {
             'stage_number': 10,
             'title': 'デートプランを立てよう！',
-            'description': 'SUM関数を使って合計金額を計算する問題です。卵不使用メニューがあるレストランとカフェの組み合わせで予算を確認しましょう。',
-            'question': '今度のデートで、卵アレルギーの相手のことを考えて「卵不使用メニューがある（egg_free = TRUE）」レストランとカフェの合計予算を計算してください。',
-            'correct_sql': 'SELECT SUM(price) FROM date_plan WHERE egg_free = TRUE;',
-            'alternative_solutions_json': '["SELECT SUM(price) FROM date_plan WHERE egg_free = 1"]',
-            'hint': 'SUM関数を使って、条件に合う店舗の価格を合計してみましょう。',
-            'story_text': '川田、今度一緒に行く人のことを考えて……\n卵アレルギーがあるって聞いたので、安心して食べられるお店を選びたいと思ってました。\nレストランとカフェ、両方で卵不使用メニューがあるところの予算を、計算してみたくて。',
+            'description': 'SUM関数を使って合計金額を計算する問題です。卵不使用メニューがあり、新宿から10km以上離れたレストランとカフェの組み合わせで予算を確認しましょう。',
+            'question': '今度のデートで、卵アレルギーの相手のことを考えて「卵不使用メニューがある（egg_free = TRUE）」かつ「新宿から10km以上離れている」レストランとカフェの合計予算を計算してください。',
+            'correct_sql': 'SELECT SUM(price) FROM date_plan WHERE egg_free = TRUE AND distance_from_shinjuku >= 10;',
+            'alternative_solutions_json': '["SELECT SUM(price) FROM date_plan WHERE egg_free = 1 AND distance_from_shinjuku >= 10"]',
+            'hint': 'SUM関数を使って、卵不使用メニューがあり、かつ新宿から10km以上離れた店舗の価格を合計してみましょう。',
+            'story_text': '川田、今度一緒に行く人のことを考えて……\n卵アレルギーがあるって聞いたので、安心して食べられるお店を選びたいと思ってました。\nレストランとカフェ、両方で卵不使用メニューがあるところの予算を、計算してみたくて。あと、確か岩吉さんが今日は新宿行くって言ってたなぁ……10キロは離れておきたいです、か、ねぇ…。',
             'table_name': 'date_plan',
             'sample_data_json': '[{"id": 1, "type": "レストラン", "name": "イタリアン・ベラヴィスタ", "price": 3500, "egg_free": true, "distance_from_shinjuku": 8}, {"id": 2, "type": "カフェ", "name": "カフェ・ノンアレルゲン", "price": 1200, "egg_free": true, "distance_from_shinjuku": 12}, {"id": 3, "type": "レストラン", "name": "洋食屋・クラシック", "price": 2800, "egg_free": false, "distance_from_shinjuku": 5}, {"id": 4, "type": "カフェ", "name": "スイーツパラダイス", "price": 1500, "egg_free": false, "distance_from_shinjuku": 3}, {"id": 5, "type": "レストラン", "name": "和食処・さくら", "price": 4200, "egg_free": true, "distance_from_shinjuku": 15}]',
             'success_reaction': '川田、その予算なら……安心してお誘いできそうです。\n相手のことを考えた選択ができて、良かったと思ってました。',
-            'failure_reaction': '川田、卵アレルギーの条件を忘れていませんか？\n安心して食べられるお店だけを選んで、合計を計算してみてください。',
-            'mock_result_json': '[{"SUM(price)": 8900}]'
+            'failure_reaction': '川田、卵アレルギーの条件を忘れていませんか？\n安心して食べられるお店だけを選んで、合計を計算してみてください。あ、Slackで岩吉さんから「川田先生デートですか？」なんてメッセージが来ないように距離も気をつけたいですね。',
+            'mock_result_json': '[{"SUM(price)": 5400}]'
         }
     ]
     
