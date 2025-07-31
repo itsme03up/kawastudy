@@ -83,7 +83,20 @@ npm run build
 
 # ビルドのウォッチモード
 npm run watch
-```
+```  
+
+## ⚙️ サンプルデータ生成
+
+```bash
+# マイグレーションの実行とサンプルデータ投入
+python manage.py migrate
+python create_sample_stages.py
+```  
+
+## 🎨 UIガイド
+
+詳細なUIカスタマイズ方法は `UI_GUIDE.md` を参照してください。
+
 🛠 使用技術
 **バックエンド**
 - Python / Django
