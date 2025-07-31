@@ -62,7 +62,7 @@ def create_sample_stages():
         {
             'stage_number': 3,
             'title': 'カロリー控えめがいい日',
-            'description': '健康を気にして、300kcal以下のヘルシーなスイーツを見つけよう！',
+            'description': '健康を意識して、300kcal以下の低カロリーなスイーツを選んでください。',
             'question': '300kcal以下のスイーツを選んでください。',
             'correct_sql': 'SELECT name FROM sweets WHERE calories <= 300;',
             'alternative_solutions_json': '[]',
