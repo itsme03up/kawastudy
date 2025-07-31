@@ -3,7 +3,27 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import re
 from .models import Quiz, QuizStage
+
+def normalize_sql(sql_string):
+    """SQLクエリを正規化して比較用に準備する"""
+    if not sql_string:
+        return ""
+    
+    # 小文字に変換
+    normalized = sql_string.lower()
+    
+    # 改行、タブ、複数の空白を単一の空白に変換
+    normalized = re.sub(r'\s+', ' ', normalized)
+    
+    # 先頭と末尾の空白を削除
+    normalized = normalized.strip()
+    
+    # セミコロンを削除（任意）
+    normalized = normalized.rstrip(';')
+    
+    return normalized
 
 def quiz(request):
     quizzes = Quiz.objects.all()
@@ -44,8 +64,10 @@ def check_answer(request, stage_number):
         data = json.loads(request.body)
         user_sql = data.get('sql', '').strip()
         
-        # 簡単な正解チェック（実際のプロジェクトではより詳細な検証が必要）
-        is_correct = user_sql.lower().replace(' ', '') == stage.correct_sql.lower().replace(' ', '')
+        # 改良されたSQL比較ロジック
+        normalized_user_sql = normalize_sql(user_sql)
+        normalized_correct_sql = normalize_sql(stage.correct_sql)
+        is_correct = normalized_user_sql == normalized_correct_sql
         
         return JsonResponse({
             'correct': is_correct,
