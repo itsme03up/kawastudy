@@ -361,14 +361,37 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'cd': args => {
             const target = args[0] || '/home/kawada';
-            const newPath = target.startsWith('/') ? target : (currentPath === '/' ? '' : currentPath) + '/' + target;
+            let newPath;
+
+            if (target.startsWith('/')) {
+                // Absolute path
+                newPath = target;
+            } else {
+                // Relative path
+                const currentParts = currentPath.split('/').filter(p => p);
+                const targetParts = target.split('/').filter(p => p);
+
+                for (const part of targetParts) {
+                    if (part === '..') {
+                        currentParts.pop();
+                    } else if (part !== '.') {
+                        currentParts.push(part);
+                    }
+                }
+                newPath = '/' + currentParts.join('/');
+            }
+
+            // Normalize path (e.g., /mnt/kawada/ -> /mnt/kawada)
+            if (newPath !== '/' && newPath.endsWith('/')) {
+                newPath = newPath.slice(0, -1);
+            }
             
             if (fs[newPath] && fs[newPath].type === 'dir') {
                 if (newPath.startsWith('/mnt/kawada/memory') && currentStage < 3) return `cd: no such file or directory: ${target}`;
                 if (newPath.startsWith('/lost+found') && currentStage < 5) return `cd: no such file or directory: ${target}`;
                 currentPath = newPath;
                 updatePrompt();
-                return null;
+                return null; // Success, no output
             }
             return `cd: no such file or directory: ${target}`;
         },
