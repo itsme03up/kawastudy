@@ -30,7 +30,8 @@ def get_stage_data(request, stage_number):
         'sampleData': stage.get_sample_data(),
         'successReaction': stage.success_reaction,
         'failureReaction': stage.failure_reaction,
-        'mockResult': stage.get_mock_result()
+        'mockResult': stage.get_mock_result(),
+        'hint': stage.hint  # ヒントを追加
     }
     
     return JsonResponse(stage_data)

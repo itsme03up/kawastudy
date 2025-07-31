@@ -3,7 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    typing: './src/apps/typing/index.js'
+    typing: './src/apps/typing/index.js',
+    sqlquiz: './src/apps/sqlquiz/index.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/react/'),
