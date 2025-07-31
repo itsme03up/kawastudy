@@ -288,12 +288,18 @@ document.addEventListener('DOMContentLoaded', function() {
             title: "🧩 ステージ1：消えた川田先生の謎",
             story: storyText.innerHTML,
             hint: hintText.textContent,
-            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue']
+            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue', 'mnt']
         },
         2: {
             title: "📜 ステージ2：秘密のログファイル",
             story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。`,
-            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt）"
+            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt | tail -n 1）",
+            files: ['secret_log.txt']
+        },
+        3: {
+            title: "🧠 ステージ3：川田の記憶領域へアクセス",
+            story: `異常パケットの送信先「/mnt/kawada/memory/core.dump」を確認せよ。<br>このメモリ領域には、川田先生の精神データの断片が保存されている可能性がある。<br><br>次は、core.dump を調査することでさらなる手がかりを得よう。`,
+            hint: "'cd /mnt/kawada/memory' してから 'cat core.dump' を試してみよう"
         }
     };
     const commands = {
