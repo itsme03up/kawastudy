@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 const TypingGame = ({ questions = [], initialQuestion = null }) => {
+  console.log('🚀 TypingGame component mounted!');
+  console.log('Questions:', questions);
+  console.log('Initial question:', initialQuestion);
+
   // ゲーム状態
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [typedRomaji, setTypedRomaji] = useState('');
@@ -16,6 +20,9 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
   // 現在の問題
   const currentQuestion = questions[currentQuestionIndex] || initialQuestion;
+
+  console.log('Current question:', currentQuestion);
+  console.log('Is playing:', isPlaying);
 
   // 統計計算
   const calculateWPM = useCallback((typed, timeInSeconds) => {
@@ -187,6 +194,8 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
   // キーボードイベントリスナー
   useEffect(() => {
+    console.log('🎯 Setting up keyboard event listeners...');
+    
     // 複数のイベントタイプをテスト
     const handleKeyDown = (e) => {
       console.log('📥 keydown event:', { key: e.key, code: e.code, type: 'keydown' });
@@ -202,14 +211,29 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
       console.log('📥 input event:', { data: e.data, inputType: e.inputType, type: 'input' });
     };
 
+    // テスト用の簡単なイベントリスナー
+    const testKeyListener = (e) => {
+      console.log('🔥 TEST: Any key pressed!', { key: e.key, code: e.code });
+    };
+
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keypress', handleKeyPressEvent);
     document.addEventListener('input', handleInput);
+    document.addEventListener('keydown', testKeyListener);
+    
+    console.log('✅ Event listeners added successfully');
+
+    // テスト: 3秒後にメッセージを表示
+    setTimeout(() => {
+      console.log('⏰ 3 seconds passed - component is still active');
+    }, 3000);
     
     return () => {
+      console.log('🧹 Cleaning up event listeners...');
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keypress', handleKeyPressEvent);
       document.removeEventListener('input', handleInput);
+      document.removeEventListener('keydown', testKeyListener);
     };
   }, [handleKeyPress]);
 
@@ -299,12 +323,15 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
   };
 
   if (!currentQuestion) {
+    console.log('❌ No current question available');
     return (
       <div className="alert alert-warning">
         問題データが読み込まれていません。
       </div>
     );
   }
+
+  console.log('✅ Rendering TypingGame component');
 
   return (
     <div className="container my-5">
