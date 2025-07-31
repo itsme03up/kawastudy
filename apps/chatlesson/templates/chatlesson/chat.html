@@ -277,9 +277,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         currentUtterance = new SpeechSynthesisUtterance(text);
         currentUtterance.voice = getJapaneseVoice();
-        currentUtterance.rate = 0.9; // 少し遅めに
-        currentUtterance.pitch = 1.0;
-        currentUtterance.volume = 0.8;
+        currentUtterance.rate = 0.85; // 少し遅めで落ち着いた話し方
+        currentUtterance.pitch = 0.8; // 低めのピッチで男性らしく
+        currentUtterance.volume = 0.9;
 
         currentUtterance.onstart = function() {
             isPlaying = true;
@@ -434,7 +434,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // 音声リストが読み込まれるまで待機
     if ('speechSynthesis' in window) {
         speechSynthesis.onvoiceschanged = function() {
-            console.log('TTS voices loaded');
+            const voices = speechSynthesis.getVoices();
+            console.log('Available TTS voices:');
+            voices.forEach((voice, index) => {
+                console.log(`${index}: ${voice.name} (${voice.lang}) - ${voice.gender || 'Unknown gender'}`);
+            });
+            
+            const selectedVoice = getJapaneseVoice();
+            console.log('Selected voice for Kawada:', selectedVoice?.name || 'None');
         };
     }
     
