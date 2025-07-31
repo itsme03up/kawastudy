@@ -1,13 +1,21 @@
-.fixed-footer {
+/* フッターの設定 */
+.footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 56px; /* フッターの高さを明確に指定 */
-    z-index: 1030; /* Bootstrapのnavbarのz-indexより小さい値 */
-    background-color: #f8f9fa; /* 背景色を指定 */
+    height: 56px;
+    z-index: 1030;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* ナビゲーションバーの高さ設定 */
+.navbar {
+    height: 56px;
+    border-bottom: 1px solid #dee2e6;
 }
 
 html, body {
@@ -19,29 +27,27 @@ html, body {
 /* メインレイアウト */
 .main-layout {
     display: flex;
-    height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
+    min-height: calc(100vh - 112px); /* nav(56px) + footer(56px) を引く */
+    margin-top: 56px; /* ナビゲーションバーの高さ */
+    margin-bottom: 56px; /* フッターの高さ */
 }
 
 /* サイドバーの固定レイアウト */
 .sidebar-fixed {
     width: 250px;
-    height: calc(100vh - 56px); /* ナビゲーションバーの高さを引く */
-    position: fixed;
-    top: 56px;
-    left: 0;
     background-color: #f8f9fa;
     border-right: 1px solid #dee2e6;
-    z-index: 1000;
+    flex-shrink: 0;
     overflow-y: auto;
+    max-height: calc(100vh - 112px);
 }
 
 /* メインコンテンツ */
 .main-content {
     flex: 1;
-    margin-left: 250px; /* サイドバーの幅と同じ */
-    padding: 2rem;
+    padding: 0;
     overflow-y: auto;
-    height: calc(100vh - 56px - 56px); /* navとfooterの高さを引く */
+    max-height: calc(100vh - 112px);
 }
 
 .sidebar-container {
@@ -149,5 +155,45 @@ html, body {
     
     .main-content-with-sidebar {
         margin-left: 0;
+    }
+}
+
+/* レスポンシブデザイン対応 */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+        margin-top: 56px;
+        margin-bottom: 56px;
+    }
+    
+    .sidebar-fixed {
+        width: 100%;
+        max-height: none;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .main-content {
+        max-height: none;
+    }
+    
+    .character-image img {
+        width: 150px;
+    }
+    
+    .sidebar-content {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .character-image img {
+        width: 100px;
     }
 }
