@@ -137,6 +137,32 @@
     .message-wrapper.bot {
         justify-content: flex-start;
     }
+
+    .tts-button {
+        background: none;
+        border: none;
+        color: #409eff;
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 2px 6px;
+        margin-left: 8px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .tts-button:hover {
+        background-color: rgba(64, 158, 255, 0.1);
+    }
+
+    .tts-button:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .tts-controls {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+    }
 </style>
 {% endblock %}
 
@@ -153,6 +179,15 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
             <span id="kawada-status-text">待機中...</span>
+        </div>
+        
+        <!-- TTS設定 -->
+        <div class="tts-controls mt-3">
+            <small class="text-muted">音声設定</small><br>
+            <label class="form-check-label">
+                <input type="checkbox" id="auto-tts" class="form-check-input" checked>
+                自動読み上げ
+            </label>
         </div>
     </div>
 
@@ -188,6 +223,57 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.getElementById('chat-message-submit');
     const kawadaStatusText = document.getElementById('kawada-status-text');
     const kawadaStatusSpinner = document.querySelector('#kawada-status .spinner-border');
+    const autoTTSCheckbox = document.getElementById('auto-tts');
+
+    // TTS関連の変数
+    let speechSynthesis = window.speechSynthesis;
+    let currentUtterance = null;
+    let isPlaying = false;
+
+    // 日本語音声の設定
+    function getJapaneseVoice() {
+        const voices = speechSynthesis.getVoices();
+        // 日本語音声を優先して選択
+        return voices.find(voice => 
+            voice.lang.includes('ja') || 
+            voice.name.includes('Japanese') ||
+            voice.name.includes('日本')
+        ) || voices[0];
+    }
+
+    // TTSで音声読み上げ
+    function speakText(text, button) {
+        if (isPlaying) {
+            speechSynthesis.cancel();
+            isPlaying = false;
+            button.textContent = '🔊';
+            return;
+        }
+
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        currentUtterance.voice = getJapaneseVoice();
+        currentUtterance.rate = 0.9; // 少し遅めに
+        currentUtterance.pitch = 1.0;
+        currentUtterance.volume = 0.8;
+
+        currentUtterance.onstart = function() {
+            isPlaying = true;
+            button.textContent = '⏸️';
+        };
+
+        currentUtterance.onend = function() {
+            isPlaying = false;
+            button.textContent = '🔊';
+        };
+
+        currentUtterance.onerror = function(event) {
+            console.error('TTS Error:', event);
+            isPlaying = false;
+            button.textContent = '🔊';
+        };
+
+        speechSynthesis.speak(currentUtterance);
+    }
 
     async function loadChatHistory() {
         try {
@@ -221,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function addMessage(message, sender) {
+    function addMessage(message, sender, enableTTS = false) {
         const messageWrapper = document.createElement('div');
         messageWrapper.classList.add('message-wrapper', sender);
 
@@ -233,6 +319,25 @@ document.addEventListener('DOMContentLoaded', function() {
         p.classList.add('mb-0');
         p.textContent = message;
         messageBubble.appendChild(p);
+
+        // 川田のメッセージにTTSボタンを追加
+        if (sender === 'bot') {
+            const ttsButton = document.createElement('button');
+            ttsButton.classList.add('tts-button');
+            ttsButton.textContent = '🔊';
+            ttsButton.title = '音声で聞く';
+            ttsButton.onclick = function() {
+                speakText(message, ttsButton);
+            };
+            messageBubble.appendChild(ttsButton);
+
+            // 新しいメッセージの場合は自動で読み上げ
+            if (enableTTS && autoTTSCheckbox.checked && 'speechSynthesis' in window) {
+                setTimeout(() => {
+                    speakText(message, ttsButton);
+                }, 500); // 少し遅延させて自然に
+            }
+        }
 
         messageWrapper.appendChild(messageBubble);
         chatLog.appendChild(messageWrapper);
@@ -280,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const data = await response.json();
-            addMessage(data.reply, 'bot');
+            addMessage(data.reply, 'bot', true); // 新しいメッセージは自動読み上げ有効
 
         } catch (error) {
             console.error('Error:', error);
@@ -300,6 +405,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初期化
     setLoading(false);
+    
+    // 音声リストが読み込まれるまで待機
+    if ('speechSynthesis' in window) {
+        speechSynthesis.onvoiceschanged = function() {
+            console.log('TTS voices loaded');
+        };
+    }
+    
+    // チャット履歴を読み込み
+    loadChatHistory();
     
     // ページ読み込み時に過去の会話履歴を読み込む
     loadChatHistory();
