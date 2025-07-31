@@ -176,7 +176,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
   };
 
   return (
-    <div className="container my-5">
+    <div className="container mb-4">
       <div className="row justify-content-center">
         <div className="col-lg-10">
           {/* ストーリーセクション */}
