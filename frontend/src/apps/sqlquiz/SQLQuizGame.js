@@ -71,6 +71,17 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
 
     const headers = Object.keys(stageData.sampleData[0]);
     
+    // 値を適切に表示するためのヘルパー関数
+    const formatCellValue = (value) => {
+      if (typeof value === 'boolean') {
+        return value ? '○' : '×';
+      }
+      if (value === null || value === undefined) {
+        return 'NULL';
+      }
+      return String(value);
+    };
+    
     return (
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
@@ -85,7 +96,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
             {stageData.sampleData.map((row, index) => (
               <tr key={index}>
                 {headers.map(header => (
-                  <td key={header}>{row[header]}</td>
+                  <td key={header}>{formatCellValue(row[header])}</td>
                 ))}
               </tr>
             ))}
@@ -103,6 +114,17 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
 
     const headers = Object.keys(stageData.mockResult[0]);
     
+    // 値を適切に表示するためのヘルパー関数
+    const formatCellValue = (value) => {
+      if (typeof value === 'boolean') {
+        return value ? '○' : '×';
+      }
+      if (value === null || value === undefined) {
+        return 'NULL';
+      }
+      return String(value);
+    };
+    
     return (
       <div className="table-responsive">
         <table className="table table-striped table-bordered">
@@ -117,7 +139,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
             {stageData.mockResult.map((row, index) => (
               <tr key={index}>
                 {headers.map(header => (
-                  <td key={header}>{row[header]}</td>
+                  <td key={header}>{formatCellValue(row[header])}</td>
                 ))}
               </tr>
             ))}
