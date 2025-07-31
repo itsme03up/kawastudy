@@ -33,6 +33,7 @@
     // Django からのデータを React に渡す
     window.sqlStageNumber = {{ stage.stage_number }};
     window.sqlStageData = {}; // React コンポーネント内で API から取得
+    window.totalStages = {{ total_stages }};
 </script>
 
 {% block react_scripts %}
@@ -57,4 +58,28 @@
     });
 </script>
 {% endblock %}
+
+<!-- 次のステージへのボタン（Reactが失敗した場合のフォールバック） -->
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            {% if stage.stage_number|add:"1" <= total_stages %}
+                <div class="text-center mt-4">
+                    <a href="{% url 'sqlquiz:quiz_play' stage.stage_number|add:'1' %}" class="btn btn-success btn-lg">
+                        ▶ NEXT Stage {{ stage.stage_number|add:"1"|stringformat:"02d" }}
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center mt-4">
+                    <div class="alert alert-success">
+                        🎉 全ステージクリア！おめでとうございます！
+                    </div>
+                    <a href="{% url 'sqlquiz:stage_list' %}" class="btn btn-secondary btn-lg">
+                        📖 ステージ選択に戻る
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

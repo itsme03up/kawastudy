@@ -48,7 +48,9 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
   // 次のステージへの遷移
   const goToNextStage = () => {
     const nextStageNumber = parseInt(stageNumber) + 1;
-    if (stageInfo.available_stages.includes(nextStageNumber)) {
+    const totalStages = window.totalStages || stageInfo.total_stages;
+    
+    if (nextStageNumber <= totalStages) {
       window.location.href = `/sqlquiz/stage/${nextStageNumber}/`;
     } else {
       // 全ステージクリア！
@@ -299,26 +301,30 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
                   <div className="card-body">
                     {renderResultTable()}
                     <div className="text-center mt-3">
-                      {stageInfo.available_stages.includes(parseInt(stageNumber) + 1) ? (
-                        <button 
-                          className="btn btn-success btn-lg me-3"
-                          onClick={goToNextStage}
-                        >
-                          次のステージへ →
-                        </button>
-                      ) : (
-                        <div>
-                          <div className="alert alert-success">
-                            🎉 全ステージクリア！おめでとうございます！
-                          </div>
+                      {(() => {
+                        const totalStages = window.totalStages || stageInfo.total_stages;
+                        const nextStageNumber = parseInt(stageNumber) + 1;
+                        return nextStageNumber <= totalStages ? (
                           <button 
-                            className="btn btn-primary btn-lg"
-                            onClick={() => window.location.href = '/sqlquiz/'}
+                            className="btn btn-success btn-lg me-3"
+                            onClick={goToNextStage}
                           >
-                            ステージ選択に戻る
+                            ▶ NEXT Stage {String(nextStageNumber).padStart(2, '0')}
                           </button>
-                        </div>
-                      )}
+                        ) : (
+                          <div>
+                            <div className="alert alert-success">
+                              🎉 全ステージクリア！おめでとうございます！
+                            </div>
+                            <button 
+                              className="btn btn-primary btn-lg"
+                              onClick={() => window.location.href = '/sqlquiz/'}
+                            >
+                              📖 ステージ選択に戻る
+                            </button>
+                          </div>
+                        );
+                      })()}
                       <button 
                         className="btn btn-outline-secondary"
                         onClick={() => window.location.href = '/sqlquiz/'}

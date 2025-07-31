@@ -37,7 +37,11 @@ def stage_list(request):
 def quiz_play(request, stage_number):
     """クイズプレイ画面"""
     stage = get_object_or_404(QuizStage, stage_number=stage_number)
-    return render(request, 'sqlquiz/quiz_play.html', {'stage': stage})
+    total_stages = QuizStage.objects.count()
+    return render(request, 'sqlquiz/quiz_play.html', {
+        'stage': stage,
+        'total_stages': total_stages
+    })
 
 @csrf_exempt
 def get_stage_data(request, stage_number):
