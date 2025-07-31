@@ -288,18 +288,29 @@ document.addEventListener('DOMContentLoaded', function() {
             title: "🧩 ステージ1：消えた川田先生の謎",
             story: storyText.innerHTML,
             hint: hintText.textContent,
-            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue', 'mnt']
+            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue']
         },
         2: {
             title: "📜 ステージ2：秘密のログファイル",
-            story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。`,
-            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt | tail -n 1）",
-            files: ['secret_log.txt']
+            story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。` ,
+            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt）"
         },
         3: {
             title: "🧠 ステージ3：川田の記憶領域へアクセス",
             story: `異常パケットの送信先「/mnt/kawada/memory/core.dump」を確認せよ。<br>このメモリ領域には、川田先生の精神データの断片が保存されている可能性がある。<br><br>次は、core.dump を調査することでさらなる手がかりを得よう。`,
             hint: "'cd /mnt/kawada/memory' してから 'cat core.dump' を試してみよう"
+        },
+        4: {
+            title: "💾 ステージ4：失われたアクセス権限",
+            story: `core.dump の中から奇妙なコマンドログが見つかった。<br>「echo \"さよなら世界\"」──それが鍵になるかもしれない。<br><br>君の声が川田先生に届けば、精神は再構成されるはずだ。` ,
+            hint: "echo 'さよなら世界' を実行してみよう"
+        },
+        5: {
+            title: "🔥 最終ステージ：選択の時",
+            story: `川田先生の精神は再構成された。だが、ひとつの選択が求められる。<br><br>
+            川田を救うか、それとも自らがこのLinux世界に残るか──<br><br>
+            sudo権限を使って、世界を書き換えることができる...` ,
+            hint: "sudo chmod 070 /system/core && sudo chown kawada:you /system/core を実行してみよう"
         }
     };
     const commands = {
