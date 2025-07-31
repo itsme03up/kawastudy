@@ -256,7 +256,7 @@
                 </p>
                 <div class="story-hint">
                     <strong>💡 ヒント:</strong><br>
-                    <span id="hintText">まずは 'ls' コマンドでファイル一覧を確認してみよう。怪しいファイルがあるはず...</span>
+                    <span id="hintText">まずは 'ls -la' コマンドで詳細なファイル一覧を確認してみよう。怪しいファイルがあるはず...</span>
                 </div>
             </div>
             <div class="log-panel">
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
         2: { title: "📜 ステージ2：秘密のログファイル", story: '', hint: '' }
     };
     const commands = {
-        'help': () => `🐧 利用可能コマンド: help, ls, cat, echo, pwd, whoami, date, clear, hint`,
+        'help': () => `🐧 利用可能コマンド: help, ls -la, cat, echo, pwd, whoami, date, clear, hint`,
         'ls': () => stages[currentStage].files.join('  '),
         'cat': args => args.length? `内容: ${args[0]}`: 'cat: ファイル名を指定',
         'echo': args => args.join(' '),
