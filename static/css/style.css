@@ -22,14 +22,27 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    padding-top: 56px; /* ナビゲーションバーの高さ */
+    padding-bottom: 56px; /* フッターの高さ */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1031; /* サイドバーより手前に */
 }
 
 /* メインレイアウト */
 .main-layout {
     display: flex;
-    min-height: calc(100vh - 112px); /* nav(56px) + footer(56px) を引く */
-    margin-top: 56px; /* ナビゲーションバーの高さ */
-    margin-bottom: 56px; /* フッターの高さ */
+    flex: 1; /* 利用可能な高さいっぱいに広がる */
+    overflow: hidden; /* スクロールは子要素に任せる */
 }
 
 /* サイドバーの固定レイアウト */
@@ -38,16 +51,21 @@ html, body {
     background-color: #f8f9fa;
     border-right: 1px solid #dee2e6;
     flex-shrink: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 112px);
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* 親の高さに合わせる */
+}
+
+.sidebar-content {
+    overflow-y: auto; /* コンテンツが多ければスクロール */
+    flex: 1;
 }
 
 /* メインコンテンツ */
 .main-content {
     flex: 1;
-    padding: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 112px);
+    padding: 2rem;
+    overflow-y: auto; /* コンテンツが多ければスクロール */
 }
 
 .sidebar-container {
