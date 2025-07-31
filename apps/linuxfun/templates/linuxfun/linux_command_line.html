@@ -281,24 +281,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const storyText = document.getElementById('storyText');
     const hintText = document.getElementById('hintText');
     const currentStageSpan = document.getElementById('currentStage');
+    // ゲームステージとコマンド定義
     let currentStage = 1;
-    let commandHistory = [];
-    let historyIndex = -1;
     const stages = {
-        1: { title: "🧩 ステージ1：消えた川田先生の謎", story: storyText.innerHTML, hint: hintText.textContent, files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue'] },
+        1: {
+            title: "🧩 ステージ1：消えた川田先生の謎",
+            story: storyText.innerHTML,
+            hint: hintText.textContent,
+            files: ['research_notes.txt','secret_log.txt','kawada_diary.log','backup_data','.hidden_clue']
+        },
         2: {
             title: "📜 ステージ2：秘密のログファイル",
-            story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>
-彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>
-Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。`,
-            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt | tail -n 1）",
-            files: ['secret_log.txt']
+            story: `ログファイルの最深部から川田先生の痕跡が見つかった。<br>彼は何かの「パケット」によってデジタルの彼方へ引きずり込まれたようだ……<br><br>Linuxの内部に残されたデータを読み解けば、まだ追いつけるかもしれない。`,
+            hint: "秘密のログファイルをもう一度よく読んでみよう（cat secret_log.txt）"
         }
     };
     const commands = {
-        'help': () => `🐧 利用可能コマンド: help, ls -la, cat, echo, pwd, whoami, date, clear, hint`,
-        'ls': args => stages[currentStage].files.join('  '),
-        'cat': args => args.length? `内容: ${args[0]}`: 'cat: ファイル名を指定',
+        'help': () => `🐧 利用可能コマンド: help, ls, cat, echo, pwd, whoami, date, clear, hint`,
+        'ls': () => stages[currentStage].files.filter(f => !f.startsWith('.')).join('  '),
+        'ls -la': () => stages[currentStage].files.join('  '),
+        'cat': args => {
+            if (!args.length) return 'cat: ファイル名を指定';
+            if (args[0] === '.hidden_clue') {
+                setTimeout(() => advanceStage(2), 500);
+                return `📁 .hidden_clue の内容:\n川田先生の最後の言葉が残されている……！\n\n"ログファイルの最終行を見ろ…"\n\n→ ヒント: cat secret_log.txt | tail -n 1`;
+            }
+            if (args[0] === 'secret_log.txt' && args[1] === '|' ) {
+                return '最終記録: /mnt/kawada/memory/core.dump に異常なパケットログ';
+            }
+            return `内容: ${args[0]}`;
+        },
         'echo': args => args.join(' '),
         'pwd': () => '/home/kawada/research-lab',
         'whoami': () => 'kawada',
@@ -306,40 +318,26 @@ Linuxの内部に残されたデータを読み解けば、まだ追いつける
         'clear': () => { logOutput.textContent = ''; return null; },
         'hint': () => stages[currentStage].hint
     };
-    function addToLog(text, cls='') { if (cls) logOutput.innerHTML += `<span class="${cls}">${text}</span>\n`; else logOutput.innerHTML += text + '\n'; logOutput.parentElement.scrollTop = logOutput.parentElement.scrollHeight; }
+    function addToLog(text, cls='') {
+        if (cls) logOutput.innerHTML += `<span class="${cls}">${text}</span>\n`;
+        else logOutput.innerHTML += text + '\n';
+        logOutput.parentElement.scrollTop = logOutput.parentElement.scrollHeight;
+    }
+    function advanceStage(nextStage) {
+        currentStage = nextStage;
+        currentStageSpan.textContent = currentStage;
+        stageTitle.textContent = stages[nextStage].title;
+        storyText.innerHTML = stages[nextStage].story;
+        hintText.textContent = stages[nextStage].hint;
+    }
     commandInput.addEventListener('keydown', function(e) {
-        if (e.key==='Enter') {
+        if (e.key === 'Enter') {
             const input = e.target.value.trim();
             addToLog(`kawada@research-lab:~$ ${input}`);
-            // ステージ1のカスタムコマンド応答
-            if (currentStage === 1 && input === 'ls -la') {
-                addToLog('.  ..  research_notes.txt  .hidden_clue  secret_log.txt  kawada_diary.log  backup_data');
-                e.target.value = '';
-                return;
-            }
-            if (currentStage === 1 && input === 'cat .hidden_clue') {
-                addToLog('📁 .hidden_clue の内容:');
-                addToLog('川田先生の最後の言葉が残されている……！');
-                addToLog('');
-                addToLog('"ログファイルの最終行を見ろ…"');
-                addToLog('');
-                addToLog('→ ヒント: cat secret_log.txt | tail -n 1');
-                // ステージ2へ進行
-                currentStage = 2;
-                currentStageSpan.textContent = currentStage;
-                stageTitle.textContent = stages[2].title;
-                storyText.innerHTML = stages[2].story;
-                hintText.textContent = stages[2].hint;
-                e.target.value = '';
-                return;
-            }
-            const cmd = input.split(' ')[0];
-            const args = input.split(' ').slice(1);
-            if (commands[cmd]) {
-                const out = commands[cmd](args);
-                if (out!==null) addToLog(out);
-            } else addToLog(`bash: ${cmd}: command not found`,'error-output');
-            e.target.value='';
+            const [cmd, ...args] = input.split(' ');
+            const out = commands[cmd] ? commands[cmd](args) : `bash: ${cmd}: command not found`;
+            if (out !== null) addToLog(out, commands[cmd] ? '' : 'error-output');
+            e.target.value = '';
         }
     });
     document.querySelector('.terminal-container').addEventListener('click', () => commandInput.focus());
