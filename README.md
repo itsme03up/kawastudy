@@ -15,19 +15,33 @@
 
 ---
 
-## 📁 ディレクトリ構成（概要）
+## 📁 ディレクトリ構成
 
-apps/ # 各アプリごとの機能モジュール
-├─ typinggame/ # タイピングゲーム
-├─ chatlesson/ # GPTとの会話勉強モード
-├─ sqlquiz/ # SQLクイズ問題
-└─ linuxfun/ # Linux基礎知識編
-templates/ # 共通テンプレート、ベースHTML
-static/ # 共通CSSやchibi川田の素材など
+```
+kawastudy/
+├── frontend/               # React frontend (separate)
+│   ├── src/               # React source code
+│   ├── public/            # Static assets
+│   ├── package.json       # Frontend dependencies
+│   └── webpack.config.js  # Build configuration
+├── apps/                  # Django apps (backend)
+│   ├── typinggame/        # タイピングゲーム
+│   ├── chatlesson/        # GPTとの会話勉強モード
+│   ├── sqlquiz/           # SQLクイズ問題
+│   └── linuxfun/          # Linux基礎知識編
+├── kawastudy/             # Django project settings
+├── templates/             # Django templates
+├── static/                # Backend static files
+├── venv/                  # Python virtual environment
+├── manage.py              # Django management
+└── requirements.txt       # Python dependencies
+```
 
 ---
 
 ## 🚀 開発環境セットアップ
+
+### バックエンド (Django)
 
 ```bash
 git clone https://github.com/itsme03up/kawastudy.git
@@ -38,23 +52,36 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Node.js依存関係のインストール（React開発用）
+# Djangoサーバーの起動
+python manage.py runserver
+```
+
+### フロントエンド (React)
+
+```bash
+# フロントエンドディレクトリに移動
+cd frontend
+
+# Node.js依存関係のインストール
 npm install
 
-# Reactコンポーネントのビルド
-npm run build
-
 # 開発サーバーの起動
-python manage.py runserver
+npm run dev
 ```
 
 ### React開発環境
 
 ```bash
-# React開発用webpack-dev-serverの起動（開発時のみ）
+# フロントエンドディレクトリで実行
+cd frontend
+
+# 開発サーバー（ホットリロード付き）
 npm run dev
 
-# Reactコンポーネントのウォッチビルド
+# プロダクションビルド
+npm run build
+
+# ビルドのウォッチモード
 npm run watch
 ```
 🛠 使用技術
@@ -85,21 +112,3 @@ Issue・PR・アイデア大歓迎です。
 
 📄 ライセンス
 MIT License
-
-
-kawastudy/
-├── frontend/               # New React frontend (separate)
-├── apps/                  # Django apps (backend only now)
-│   ├── chatlesson/
-│   ├── core/
-│   ├── linuxfun/
-│   ├── sqlquiz/
-│   └── typinggame/
-├── kawastudy/             # Django project settings
-├── static/                # Backend static files (minimal)
-├── templates/             # Core Django templates only
-├── venv/                  # Python virtual environment
-├── manage.py              # Django management
-├── db.sqlite3            # Database
-├── requirements.txt       # Python dependencies
-└── README.md             # Documentation
