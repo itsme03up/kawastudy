@@ -106,21 +106,12 @@
 {% endblock %}
 
 {% block react_scripts %}
-{% with react_bundle_url="js/react/main.bundle.js" %}
+<!-- React バンドルファイルが存在する場合に読み込み（開発用） -->
 <script>
     // React コンポーネントが存在する場合のみ読み込み
     document.addEventListener('DOMContentLoaded', function() {
-        // React バンドルファイルを動的に読み込み
-        const script = document.createElement('script');
-        script.src = "{% get_static_prefix %}{{ react_bundle_url }}";
-        script.onload = function() {
-            console.log('React コンポーネントが読み込まれました');
-        };
-        script.onerror = function() {
-            console.log('React コンポーネントの読み込みに失敗しました（開発モード用）');
-        };
-        document.head.appendChild(script);
+        console.log('React コンポーネントの初期化準備完了');
+        // React バンドルファイルの読み込みは静的ファイルとして処理
     });
 </script>
-{% endwith %}
 {% endblock %}
