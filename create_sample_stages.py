@@ -123,7 +123,7 @@ def create_sample_stages():
             'stage_number': 7,
             'title': 'うちの犬に、ヘルシーなおやつを',
             'description': 'WHERE句で複数の条件を組み合わせて、価格とカロリーの両方を満たすおやつを選ぶ問題です。',
-            'question': '飼い犬にあげるおやつを選んでください。\n条件：300円以下で、かつ100kcal以下のもの',
+            'question': '飼い犬にあげるおやつを選んでください。\n条件：300円以下で、かつ100kcal以下のもの\n※該当する行をすべて探してください。',
             'correct_sql': 'SELECT * FROM dog_snacks WHERE price <= 300 AND calories <= 100;',
             'alternative_solutions_json': '["SELECT name FROM dog_snacks WHERE price <= 300 AND calories <= 100"]',
             'hint': 'WHERE句でANDを使って、価格とカロリーの両方の条件を指定しましょう。',
