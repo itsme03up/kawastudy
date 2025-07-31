@@ -107,7 +107,10 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
       code: e.code,
       keyCode: e.keyCode,
       length: e.key.length,
-      matches: e.key.match(/[a-z-]/i)
+      charCode: e.key.charCodeAt(0),
+      unicode: 'U+' + e.key.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0'),
+      matches: e.key.match(/[a-z0-9\-'.,!?ー]/i),
+      rawMatch: !!e.key.match(/[a-z0-9\-'.,!?ー]/i)
     });
 
     // ゲーム開始 (スペースキー)
@@ -124,10 +127,15 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     if (!isPlaying || !currentQuestion) return;
 
     // アルファベット、数字、記号を処理
-    // 日本語ローマ字入力で使用される可能性のある文字を幅広く対応
-    if (e.key.length === 1 && e.key.match(/[a-z0-9\-'.,!?ー]/i)) {
+    // ハイフンを明示的にエスケープして対応
+    const allowedChars = /^[a-zA-Z0-9\-'.,!?ー]$/;
+    
+    if (e.key.length === 1 && allowedChars.test(e.key)) {
       e.preventDefault();
+      console.log('Input accepted:', e.key);
       checkInput(e.key);
+    } else {
+      console.log('Input rejected:', e.key, 'Length:', e.key.length, 'Test result:', allowedChars.test(e.key));
     }
   }, [isPlaying, currentQuestion, typedRomaji, gameMessage]);
 
@@ -142,21 +150,37 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     if (!currentQuestion) return;
 
     const targetRomaji = currentQuestion.romaji;
-    const expectedChar = targetRomaji[typedRomaji.length];
+    let expectedChar = targetRomaji[typedRomaji.length];
+
+    // ハイフンの代替入力を許可
+    const hyphenAlternatives = ['-', '−', '－', 'ー'];
+    let inputKey = key;
+    
+    // 入力された文字がハイフンの代替文字の場合、標準ハイフンに統一
+    if (hyphenAlternatives.includes(key)) {
+      inputKey = '-';
+    }
+    
+    // 期待される文字もハイフン系の場合、標準ハイフンとして比較
+    if (hyphenAlternatives.includes(expectedChar)) {
+      expectedChar = '-';
+    }
 
     // デバッグ用ログ
     console.log('Input check:', {
-      inputKey: key,
-      expectedChar: expectedChar,
+      originalInputKey: key,
+      normalizedInputKey: inputKey,
+      originalExpectedChar: targetRomaji[typedRomaji.length],
+      normalizedExpectedChar: expectedChar,
       targetRomaji: targetRomaji,
       typedRomaji: typedRomaji,
       position: typedRomaji.length,
-      match: key === expectedChar
+      match: inputKey === expectedChar
     });
 
-    if (key === expectedChar) {
+    if (inputKey === expectedChar) {
       // 正解
-      const newTypedRomaji = typedRomaji + key;
+      const newTypedRomaji = typedRomaji + targetRomaji[typedRomaji.length]; // 元の文字を使用
       setTypedRomaji(newTypedRomaji);
       setTotalTypedCount(prev => prev + 1);
 
