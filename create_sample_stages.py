@@ -46,16 +46,18 @@ def create_sample_stages():
         },
         {
             'stage_number': 2,
-            'title': 'カロリー控えめがいい日',
-            'description': '健康を気にして、600kcal未満のヘルシーメニューを見つけよう！',
-            'question': '''今日は健康志向！メニューテーブルから、カロリーが600kcal未満のメニューを全て取得してください。
-
-テーブル構造：
-- menu(id, name, price, category, calories)
-
-カロリーが低い順に並べて表示してください。''',
-            'correct_sql': 'SELECT * FROM menu WHERE calories < 600 ORDER BY calories;',
-            'hint': 'WHERE calories < 600 と ORDER BY calories を組み合わせましょう！'
+            'title': '夜カフェを探して',
+            'description': '夜遅くでも安心！名前に"カフェ"が入り、22時以降も営業しているお店を探そう！',
+            'question': '「名前に"カフェ"を含み」、かつ「22時以降も営業している」お店を表示してください。',
+            'correct_sql': 'SELECT name FROM shop WHERE name LIKE \'%カフェ%\' AND close_hour >= \'22:00\';',
+            'alternative_solutions_json': '["SELECT name FROM shop WHERE category = \'カフェ\' AND close_hour >= \'22:00\'"]',
+            'hint': 'LIKE句で名前に「カフェ」を含むか、categoryを使っても良いかもしれません。',
+            'story_text': '……川田、ちょっと夜にカフェで過ごしたいと思ってました。\n喧騒じゃなくて、静かな場所で、温かい飲み物と本を。\n22時くらいまで開いてるところ……あると嬉しいです。',
+            'table_name': 'shop',
+            'sample_data_json': '[{"id": 1, "name": "星空カフェ", "category": "カフェ", "open_hour": "10:00", "close_hour": "22:00"}, {"id": 2, "name": "スナックあけぼの", "category": "スナック", "open_hour": "19:00", "close_hour": "01:00"}, {"id": 3, "name": "居酒屋まるしん", "category": "居酒屋", "open_hour": "17:00", "close_hour": "23:00"}, {"id": 4, "name": "カフェド・モナリザ", "category": "カフェ", "open_hour": "08:00", "close_hour": "21:00"}, {"id": 5, "name": "深夜カフェロワ", "category": "カフェ", "open_hour": "18:00", "close_hour": "23:30"}]',
+            'success_reaction': '川田、こういう場所が欲しかったんです。\n夜の静けさに溶けるように、灯りがあって、温かくて……\nちゃんと見つけられて、良かったです。',
+            'failure_reaction': 'それ、惜しかったです。時間か、「名前の中に"カフェ"」の条件、どちらかが漏れていたかもしれません。',
+            'mock_result_json': '[{"name": "星空カフェ"}, {"name": "深夜カフェロワ"}]'
         },
         {
             'stage_number': 3,
