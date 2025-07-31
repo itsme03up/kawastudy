@@ -15,7 +15,12 @@ def index(request):
         {'id': 7, 'japanese': 'ご照覧あれい', 'romaji': 'gosyouranarei'},
         {'id': 8, 'japanese': 'お前が本当の橋になれ', 'romaji': 'omaegahontounohashininare'},
         {'id': 9, 'japanese': '誉れは浜で死にました', 'romaji': 'homarewahamadeshinimashita'},
-        {'id': 10, 'japanese': '私は見たぞ', 'romaji': 'watashiwamitazo'}
+        {'id': 10, 'japanese': '私は見たぞ', 'romaji': 'watashiwamitazo'},
+        {'id': 11, 'japanese': 'やっぱりNO.1!', 'romaji': 'yappari no.1!'},
+        {'id': 12, 'japanese': 'チャーハン作るよ!', 'romaji': 'cha-hantsukuyoyo!'},
+        {'id': 13, 'japanese': 'コーヒーブレイク', 'romaji': 'ko-hi-bureiku'},
+        {'id': 14, 'japanese': 'メールアドレス', 'romaji': 'me-ruadoresu'},
+        {'id': 15, 'japanese': 'プログラミング', 'romaji': 'puroguramingu'},
     ]
     
     first_question = questions_data[0] if questions_data else None
