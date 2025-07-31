@@ -385,10 +385,15 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'tail': args => {
             const fileName = args.find(arg => !arg.startsWith('-'));
-            const n = args.includes('-n') ? parseInt(args[args.indexOf('-n') + 1] || 1) : 1;
             if (!fileName) return 'tail: missing operand';
+
+            const nArgIndex = args.indexOf('-n');
+            const n = nArgIndex !== -1 && args.length > nArgIndex + 1 ? parseInt(args[nArgIndex + 1]) : 10;
+
             if (fs[currentPath].files.includes(fileName) && fileContents[fileName]) {
-                if (fileName === 'secret_log.txt' && currentStage === 2) setTimeout(() => advanceStage(3), 500);
+                if (fileName === 'secret_log.txt' && currentStage === 2) {
+                    setTimeout(() => advanceStage(3), 500);
+                }
                 return fileContents[fileName].split('\n').slice(-n).join('\n');
             }
             return `tail: cannot open '${fileName}' for reading: No such file or directory`;
