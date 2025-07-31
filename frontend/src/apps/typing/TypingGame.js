@@ -193,7 +193,7 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
       handleKeyPress(e);
     };
 
-    const handleKeyPress = (e) => {
+    const handleKeyPressEvent = (e) => {
       console.log('📥 keypress event:', { key: e.key, code: e.code, type: 'keypress' });
       // keypress は非推奨だが、ハイフンの検出に使えるかテスト
     };
@@ -203,12 +203,12 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keypress', handleKeyPress);
+    document.addEventListener('keypress', handleKeyPressEvent);
     document.addEventListener('input', handleInput);
     
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keypress', handleKeyPress);
+      document.removeEventListener('keypress', handleKeyPressEvent);
       document.removeEventListener('input', handleInput);
     };
   }, [handleKeyPress]);
