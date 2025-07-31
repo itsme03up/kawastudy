@@ -107,16 +107,16 @@ def create_sample_stages():
         {
             'stage_number': 6,
             'title': '秋葉原・秋月電子でパーツを照合せよ！',
-            'description': 'JOIN句を使って、部品名から在庫数と用途を照合する問題です。2つのテーブルを正しく結合しましょう。',
+            'description': 'WHERE句を使って、特定の部品の在庫数と用途を照合する問題です。条件を指定してデータを絞り込みましょう。',
             'question': '秋月電子で購入予定の「100uF 電解コンデンサ」の在庫と用途を照合してください。',
             'correct_sql': 'SELECT name, stock, purpose FROM parts_with_usage WHERE name = \'100uF 電解コンデンサ\';',
             'alternative_solutions_json': '[]',
-            'hint': '2つの表を`JOIN`で結合し、必要なカラムを絞って取得しましょう。',
+            'hint': 'WHERE句で部品名を指定して、必要なカラム（name, stock, purpose）を取得しましょう。',
             'story_text': '川田、明日は秋葉原に寄れそうでした。\n秋月電子で「100uFの電解コンデンサ」、見ておきたかったんです。\n在庫と、どの回路で使えるか……事前に確認しておくと安心でした。',
             'table_name': 'parts_with_usage',
             'sample_data_json': '[{"id": 1, "name": "10uF セラミック", "stock": 120, "purpose": "ノイズ除去"}, {"id": 2, "name": "100uF 電解コンデンサ", "stock": 45, "purpose": "電源平滑"}, {"id": 3, "name": "470uF 電解コンデンサ", "stock": 0, "purpose": "アンプ出力"}]',
             'success_reaction': '川田、それでした……安心して秋葉原に行けます。\n機能と在庫、両方見えていると心の準備も整いますね。',
-            'failure_reaction': '結合が……上手くいってなかったかもしれません。\n`JOIN`で関連するidを繋げて、そこからカラムを取るのがコツでした。',
+            'failure_reaction': '川田、それは惜しかったです。\nWHERE句で「100uF 電解コンデンサ」を指定して、name、stock、purposeを取得してみてください。',
             'mock_result_json': '[{"name": "100uF 電解コンデンサ", "stock": 45, "purpose": "電源平滑"}]'
         },
         {
