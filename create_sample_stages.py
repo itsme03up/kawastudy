@@ -109,7 +109,7 @@ def create_sample_stages():
             'title': '秋葉原・秋月電子でパーツを照合せよ！',
             'description': 'JOIN句を使って、部品名から在庫数と用途を照合する問題です。2つのテーブルを正しく結合しましょう。',
             'question': '秋月電子で購入予定の「100uF 電解コンデンサ」の在庫と用途を照合してください。',
-            'correct_sql': 'SELECT parts.name, parts.stock, usage.purpose FROM parts JOIN usage ON parts.id = usage.part_id WHERE parts.name = \'100uF 電解コンデンサ\';',
+            'correct_sql': 'SELECT name, stock, purpose FROM parts_with_usage WHERE name = \'100uF 電解コンデンサ\';',
             'alternative_solutions_json': '[]',
             'hint': '2つの表を`JOIN`で結合し、必要なカラムを絞って取得しましょう。',
             'story_text': '川田、明日は秋葉原に寄れそうでした。\n秋月電子で「100uFの電解コンデンサ」、見ておきたかったんです。\n在庫と、どの回路で使えるか……事前に確認しておくと安心でした。',
