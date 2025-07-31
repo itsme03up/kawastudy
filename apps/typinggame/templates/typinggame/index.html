@@ -54,10 +54,9 @@
 <script>
     console.log('タイピングゲーム React コンポーネントが読み込まれました');
     // フォールバック要素を非表示にする
-    const fallback = document.querySelector('#react-typing-game .container');
-    if (fallback) {
-        fallback.style.display = 'none';
+    const typingFallback = document.querySelector('#react-typing-game .container');
+    if (typingFallback) {
+        typingFallback.style.display = 'none';
     }
 </script>
-{% endblock %}
 {% endblock %}
