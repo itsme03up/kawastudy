@@ -53,6 +53,12 @@ def get_system_prompt(mode: str = "dry"):
     else:
         return "あなたは理知的なIT講師『川田』として振る舞ってください。"
 
+def load_reactions():
+    """リアクション定義ファイルを読み込む"""
+    p = Path(__file__).parent / "kawada_reactions.yml"
+    with open(p, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 def get_dry_reaction(category: str, strict: bool = False) -> str:
     reactions = load_reactions()
     candidates = reactions.get(category)
