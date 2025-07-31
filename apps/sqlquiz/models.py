@@ -8,6 +8,7 @@ class QuizStage(models.Model):
     description = models.TextField()
     question = models.TextField()
     correct_sql = models.TextField()
+    alternative_solutions_json = models.TextField(help_text="代替正解パターン（JSON配列）", default="[]")
     hint = models.TextField(blank=True)
     
     # 新しいフィールド：ストーリーとデータ
@@ -47,6 +48,17 @@ class QuizStage(models.Model):
     def set_mock_result(self, data):
         """模擬実行結果をJSON形式で保存"""
         self.mock_result_json = json.dumps(data, ensure_ascii=False)
+    
+    def get_alternative_solutions(self):
+        """代替正解パターンをPythonリストとして取得"""
+        try:
+            return json.loads(self.alternative_solutions_json)
+        except (json.JSONDecodeError, TypeError):
+            return []
+    
+    def set_alternative_solutions(self, solutions_list):
+        """代替正解パターンをJSON形式で保存"""
+        self.alternative_solutions_json = json.dumps(solutions_list, ensure_ascii=False)
 
 class Quiz(models.Model):
     title = models.CharField(max_length=255)

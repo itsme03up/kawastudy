@@ -25,6 +25,46 @@ def normalize_sql(sql_string):
     
     return normalized
 
+def check_sql_equivalence(user_sql, stage):
+    """SQLの意味的同等性をチェック"""
+    normalized_user_sql = normalize_sql(user_sql)
+    
+    # メインの正解パターンをチェック
+    normalized_correct_sql = normalize_sql(stage.correct_sql)
+    if normalized_user_sql == normalized_correct_sql:
+        return True
+    
+    # 代替正解パターンをチェック
+    alternative_solutions = stage.get_alternative_solutions()
+    for alt_sql in alternative_solutions:
+        normalized_alt_sql = normalize_sql(alt_sql)
+        if normalized_user_sql == normalized_alt_sql:
+            return True
+    
+    # BETWEEN パターンの自動検出と変換
+    return check_between_equivalence(normalized_user_sql, normalized_correct_sql)
+
+def check_between_equivalence(user_sql, correct_sql):
+    """BETWEEN句と比較演算子の同等性をチェック"""
+    # BETWEEN パターン: WHERE price BETWEEN 1000 AND 2000
+    # 比較演算子パターン: WHERE price >= 1000 AND price <= 2000
+    
+    # BETWEEN → 比較演算子への変換
+    between_pattern = r'(\w+)\s+between\s+(\d+)\s+and\s+(\d+)'
+    comparison_pattern = r'\1 >= \2 and \1 <= \3'
+    
+    # ユーザー入力のBETWEENを比較演算子に変換
+    user_converted = re.sub(between_pattern, comparison_pattern, user_sql)
+    if user_converted == correct_sql:
+        return True
+    
+    # 正解のBETWEENを比較演算子に変換（逆パターン）
+    correct_converted = re.sub(between_pattern, comparison_pattern, correct_sql)
+    if user_sql == correct_converted:
+        return True
+    
+    return False
+
 def quiz(request):
     quizzes = Quiz.objects.all()
     return render(request, 'sqlquiz/quiz.html', {'quizzes': quizzes})
@@ -68,10 +108,8 @@ def check_answer(request, stage_number):
         data = json.loads(request.body)
         user_sql = data.get('sql', '').strip()
         
-        # 改良されたSQL比較ロジック
-        normalized_user_sql = normalize_sql(user_sql)
-        normalized_correct_sql = normalize_sql(stage.correct_sql)
-        is_correct = normalized_user_sql == normalized_correct_sql
+        # 改良されたSQL同等性チェック
+        is_correct = check_sql_equivalence(user_sql, stage)
         
         return JsonResponse({
             'correct': is_correct,

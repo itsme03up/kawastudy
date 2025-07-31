@@ -14,7 +14,7 @@ class QuizStageAdmin(admin.ModelAdmin):
             'fields': ('stage_number', 'title', 'description')
         }),
         ('問題設定', {
-            'fields': ('question', 'correct_sql', 'hint')
+            'fields': ('question', 'correct_sql', 'alternative_solutions_json', 'hint')
         }),
         ('ストーリー・データ', {
             'fields': ('story_text', 'table_name', 'sample_data_json', 'mock_result_json')
