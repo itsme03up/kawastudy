@@ -113,8 +113,8 @@ def create_sample_stages():
             'alternative_solutions_json': '[]',
             'hint': '2つの表を`JOIN`で結合し、必要なカラムを絞って取得しましょう。',
             'story_text': '川田、明日は秋葉原に寄れそうでした。\n秋月電子で「100uFの電解コンデンサ」、見ておきたかったんです。\n在庫と、どの回路で使えるか……事前に確認しておくと安心でした。',
-            'table_name': 'parts, usage',
-            'sample_data_json': '{"parts": [{"id": 1, "name": "10uF セラミック", "stock": 120}, {"id": 2, "name": "100uF 電解コンデンサ", "stock": 45}, {"id": 3, "name": "470uF 電解コンデンサ", "stock": 0}], "usage": [{"id": 1, "part_id": 1, "purpose": "ノイズ除去"}, {"id": 2, "part_id": 2, "purpose": "電源平滑"}, {"id": 3, "part_id": 3, "purpose": "アンプ出力"}]}',
+            'table_name': 'parts_with_usage',
+            'sample_data_json': '[{"id": 1, "name": "10uF セラミック", "stock": 120, "purpose": "ノイズ除去"}, {"id": 2, "name": "100uF 電解コンデンサ", "stock": 45, "purpose": "電源平滑"}, {"id": 3, "name": "470uF 電解コンデンサ", "stock": 0, "purpose": "アンプ出力"}]',
             'success_reaction': '川田、それでした……安心して秋葉原に行けます。\n機能と在庫、両方見えていると心の準備も整いますね。',
             'failure_reaction': '結合が……上手くいってなかったかもしれません。\n`JOIN`で関連するidを繋げて、そこからカラムを取るのがコツでした。',
             'mock_result_json': '[{"name": "100uF 電解コンデンサ", "stock": 45, "purpose": "電源平滑"}]'
