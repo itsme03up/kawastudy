@@ -145,11 +145,39 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [handleKeyPress]);
 
+  // 長音記号を適切な母音に変換する関数
+  const convertChoonToVowel = (text) => {
+    let result = '';
+    const vowels = 'aiueo';
+    
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === 'ー') {
+        // 前の文字から母音を探す
+        for (let j = i - 1; j >= 0; j--) {
+          if (vowels.includes(text[j])) {
+            result += text[j]; // 前の母音を繰り返す
+            break;
+          }
+        }
+      } else {
+        result += char;
+      }
+    }
+    return result;
+  };
+
   // 入力チェック
   const checkInput = (key) => {
     if (!currentQuestion) return;
 
-    const targetRomaji = currentQuestion.romaji;
+    let targetRomaji = currentQuestion.romaji;
+    
+    // 長音記号があれば適切な母音に変換
+    if (targetRomaji.includes('ー')) {
+      targetRomaji = convertChoonToVowel(targetRomaji);
+    }
+    
     let expectedChar = targetRomaji[typedRomaji.length];
 
     // ハイフンの代替入力を許可
@@ -168,11 +196,12 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     // デバッグ用ログ
     console.log('Input check:', {
+      originalRomaji: currentQuestion.romaji,
+      convertedRomaji: targetRomaji,
       originalInputKey: key,
       normalizedInputKey: inputKey,
-      originalExpectedChar: targetRomaji[typedRomaji.length],
+      originalExpectedChar: currentQuestion.romaji[typedRomaji.length],
       normalizedExpectedChar: expectedChar,
-      targetRomaji: targetRomaji,
       typedRomaji: typedRomaji,
       position: typedRomaji.length,
       match: inputKey === expectedChar
@@ -180,7 +209,7 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
 
     if (inputKey === expectedChar) {
       // 正解
-      const newTypedRomaji = typedRomaji + targetRomaji[typedRomaji.length]; // 元の文字を使用
+      const newTypedRomaji = typedRomaji + targetRomaji[typedRomaji.length]; // 変換後の文字を使用
       setTypedRomaji(newTypedRomaji);
       setTotalTypedCount(prev => prev + 1);
 
@@ -206,7 +235,13 @@ const TypingGame = ({ questions = [], initialQuestion = null }) => {
   const renderRomajiDisplay = () => {
     if (!currentQuestion) return '';
     
-    const targetRomaji = currentQuestion.romaji;
+    let targetRomaji = currentQuestion.romaji;
+    
+    // 長音記号があれば適切な母音に変換
+    if (targetRomaji.includes('ー')) {
+      targetRomaji = convertChoonToVowel(targetRomaji);
+    }
+    
     const typedPart = targetRomaji.substring(0, typedRomaji.length);
     const remainingPart = targetRomaji.substring(typedRomaji.length);
 
