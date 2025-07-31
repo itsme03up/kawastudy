@@ -236,6 +236,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const kawadaStatusText = document.getElementById('kawada-status-text');
     const kawadaStatusSpinner = document.querySelector('#kawada-status .spinner-border');
     const autoTTSCheckbox = document.getElementById('auto-tts');
+    const pitchSlider = document.getElementById('pitch-slider');
+    const rateSlider = document.getElementById('rate-slider');
+    const pitchValue = document.getElementById('pitch-value');
+    const rateValue = document.getElementById('rate-value');
 
     // TTS関連の変数
     let speechSynthesis = window.speechSynthesis;
