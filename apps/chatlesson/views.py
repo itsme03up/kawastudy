@@ -108,7 +108,24 @@ def chat_api(request):
             if not user_message:
                 return JsonResponse({'error': 'Message not provided'}, status=400)
 
+            # チャットセッションを取得または作成
+            chat_session = get_or_create_session(request)
+            
+            # ユーザーメッセージを保存
+            save_message(chat_session, 'user', user_message)
+            
+            # 川田の返答を取得
             reply = get_kawada_reply(user_message)
+            
+            # 川田の返答を保存
+            save_message(chat_session, 'kawada', reply)
+            
+            # セッションのタイトルを自動生成（最初のメッセージから）
+            if not chat_session.title and user_message:
+                title = user_message[:30] + "..." if len(user_message) > 30 else user_message
+                chat_session.title = title
+                chat_session.save()
+            
             return JsonResponse({'reply': reply})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
