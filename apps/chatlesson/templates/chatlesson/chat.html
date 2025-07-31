@@ -3,20 +3,36 @@
 {% block title %}川田先生とのチャット - Kawada Study{% endblock %}
 
 {% block content %}
-<!-- React チャット用コンテナ -->
-<div id="react-chat">
-    <!-- フォールバック：React が読み込まれない場合 -->
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">💬 川田先生との学習チャット</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            React チャットコンポーネントを読み込み中...
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- 左側：川田キャラクター -->
+        <div class="col-md-3 text-center">
+            <img src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-3" style="max-width: 150px;">
+            <h5 class="card-title">川田</h5>
+            <p class="card-text text-muted">ベテランエンジニア</p>
+            <div id="kawada-status" class="mt-2 text-muted">
+                待機中...
+            </div>
+        </div>
+
+        <!-- 右側：チャットUI -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    チャットルーム
+                </div>
+                <div class="card-body" id="chat-log" style="height: 400px; overflow-y: auto;">
+                    <!-- メッセージはここに表示される -->
+                    <div class="d-flex justify-content-start mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0">何か質問ありますか？</p>
                         </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input type="text" id="chat-message-input" class="form-control" placeholder="メッセージを入力...">
+                        <button class="btn btn-primary" id="chat-message-submit">送信</button>
                     </div>
                 </div>
             </div>
@@ -44,5 +60,90 @@
         };
         document.head.appendChild(script);
     });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatLog = document.getElementById('chat-log');
+    const messageInput = document.getElementById('chat-message-input');
+    const submitButton = document.getElementById('chat-message-submit');
+    const kawadaStatus = document.getElementById('kawada-status');
+
+    function addMessage(message, sender) {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.classList.add('d-flex', 'mb-3');
+
+        const messageBubble = document.createElement('div');
+        messageBubble.classList.add('p-3', 'rounded');
+        messageBubble.innerHTML = `<p class="mb-0">${message}</p>`;
+
+        if (sender === 'user') {
+            messageWrapper.classList.add('justify-content-end');
+            messageBubble.classList.add('bg-primary', 'text-white');
+        } else {
+            messageWrapper.classList.add('justify-content-start');
+            messageBubble.classList.add('bg-light');
+        }
+
+        messageWrapper.appendChild(messageBubble);
+        chatLog.appendChild(messageWrapper);
+        chatLog.scrollTop = chatLog.scrollHeight; // 自動スクロール
+    }
+
+    function setLoading(isLoading) {
+        if (isLoading) {
+            kawadaStatus.textContent = '川田、考え中……';
+            submitButton.disabled = true;
+            messageInput.disabled = true;
+        } else {
+            kawadaStatus.textContent = '待機中...';
+            submitButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+    }
+
+    async function sendMessage() {
+        const message = messageInput.value.trim();
+        if (message === '') return;
+
+        addMessage(message, 'user');
+        messageInput.value = '';
+        setLoading(true);
+
+        try {
+            const response = await fetch("{% url 'chatlesson:chat_api' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+
+            const data = await response.json();
+            addMessage(data.reply, 'kawada');
+
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage('すまないが、少し調子が悪いようだ。後でまた試してくれ。', 'kawada');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    submitButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+});
 </script>
 {% endblock %}
