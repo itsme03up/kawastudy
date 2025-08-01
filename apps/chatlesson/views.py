@@ -199,4 +199,4 @@ def chat_react(request):
         "hide_sidebar": True,
         "timestamp": int(time.time()),  # キャッシュバスティング用
     }
-    return render(request, 'chatlesson/chat_react.html', context)
+    return render(request, 'chatlesson/chat.html', context)
