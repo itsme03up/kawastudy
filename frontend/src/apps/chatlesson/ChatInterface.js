@@ -223,7 +223,7 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-container h-100 d-flex flex-column">
-      <div className="card-header bg-white border-bottom">
+      <div className="card-header bg-white">
         <div className="d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
             💬 {getCurrentCharacter().name}との学習チャット
