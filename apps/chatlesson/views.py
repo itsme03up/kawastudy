@@ -191,3 +191,10 @@ def get_chat_history(request):
             return JsonResponse({'error': 'Failed to load chat history'}, status=500)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def chat_react(request):
+    """React版のチャットビュー"""
+    context = {
+        "hide_sidebar": True,
+    }
+    return render(request, 'chatlesson/chat_react.html', context)
