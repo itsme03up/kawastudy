@@ -1,9 +1,28 @@
 {% extends 'base.html' %}
-{% block title %}AWS学習{% endblock %}
+{% block title %}AWS学習コンテンツ{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <h2>☁️ AWS学習コンテンツ</h2>
-    <p>AWSの基礎から実践まで学べます。今後コンテンツを追加予定です。</p>
+    <h2 class="mb-4">☁️ AWS学習ページ</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">AWSコラムを読む</h5>
+                    <p class="card-text">AWSの基礎やサービスについて分かりやすく解説したコラムを読むことができます。</p>
+                    <a href="{% url 'aws:column_list' %}" class="btn btn-outline-primary">コラム一覧へ</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">AWSクイズに挑戦</h5>
+                    <p class="card-text">4択問題でAWSの知識を楽しくチェック！初心者から上級者まで対応。</p>
+                    <a href="{% url 'aws:quiz_list' %}" class="btn btn-outline-success">クイズ一覧へ</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
