@@ -191,24 +191,16 @@ const ChatInterface = () => {
         className={`message-wrapper ${isKawada ? 'bot' : 'user'} mb-3`}
       >
         {isKawada ? (
-          <div className="d-flex align-items-start">
-            <img 
-              src={getCurrentCharacterImage()} 
-              alt="川田先生" 
-              className="rounded-circle me-2"
-              style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-            />
-            <div className="chat-bubble bot-message">
-              <div className="message-text">
-                {message.text}
-              </div>
-              <small className="text-muted d-block mt-1">
-                {message.timestamp.toLocaleTimeString('ja-JP', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-                })}
-              </small>
+          <div className="chat-bubble bot-message">
+            <div className="message-text">
+              {message.text}
             </div>
+            <small className="text-muted d-block mt-1">
+              {message.timestamp.toLocaleTimeString('ja-JP', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+            </small>
           </div>
         ) : (
           <div className="d-flex justify-content-end">
@@ -297,26 +289,20 @@ const ChatInterface = () => {
       </div>
 
       <div 
-        className="flex-1 overflow-auto p-3"
-        style={{ maxHeight: 'calc(100vh - 180px)' }}
+        className="flex-grow-1 overflow-auto p-3"
+        style={{ 
+          background: 'linear-gradient(to bottom, #e9eff5, #d5e0f0)'
+        }}
       >
         {messages.map(renderMessage)}
         
         {isLoading && (
           <div className="message-wrapper bot mb-3">
-            <div className="d-flex align-items-start">
-              <img 
-                src={getCurrentCharacterImage()} 
-                alt="川田先生" 
-                className="rounded-circle me-2"
-                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-              />
-              <div className="chat-bubble bot-message">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+            <div className="chat-bubble bot-message">
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
           </div>
@@ -325,7 +311,12 @@ const ChatInterface = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="border-top bg-light p-3">
+      <div 
+        className="border-top bg-light p-3"
+        style={{ 
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+        }}
+      >
         <div className="input-group">
           <textarea
             className="form-control chat-input"

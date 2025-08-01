@@ -15,11 +15,12 @@
 
     .main-layout-chat {
         display: flex;
-        height: 100vh; /* ビューポート全体の高さを使用 */
-        width: 100vw; /* ビューポート全体の幅を使用 */
-        position: fixed;
-        top: 0;
-        left: 0;
+        height: 100%; /* 親要素の高さに合わせる */
+        width: 100%;
+        /* position: fixed と関連プロパティを削除 */
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
 
     .character-area {
@@ -31,12 +32,14 @@
         align-items: center;
         justify-content: center;
         border-right: 1px solid #ddd;
+        height: 100%; /* 親要素の高さに合わせる */
     }
 
     .chat-area {
         flex: 2;
         display: flex;
         flex-direction: column;
+        height: 100%; /* 親要素の高さに合わせる */
     }
 
     #chat-root {
@@ -46,12 +49,11 @@
         background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
         margin: 0;
         padding: 0;
-        overflow: hidden;
     }
 
     /* React用のスタイル */
     .chat-bubble {
-        max-width: 70%; /* 幅を短くする */
+        max-width: 85%; /* 幅を少し広げて見切れを防ぐ */
         padding: 10px 14px;
         margin: 8px 0;
         border-radius: 16px;
@@ -145,6 +147,15 @@
         border: none;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+
+    /* メッセージエリアのスタイル調整 */
+    .message-wrapper.user {
+        margin-right: 1rem; /* 右側に余白を追加 */
+    }
+
+    .message-wrapper.bot {
+        margin-left: 1rem; /* 左側に余白を追加 */
+    }
 </style>
 {% endblock %}
 
@@ -186,7 +197,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         const chatRoot = document.getElementById('chat-root');
         console.log('Chat root element:', chatRoot);
+        
+        // React バージョン確認
+        console.log('React version check:', {
+            React: typeof React !== 'undefined' ? 'loaded' : 'not loaded',
+            ReactDOM: typeof ReactDOM !== 'undefined' ? 'loaded' : 'not loaded',
+            createRoot: typeof ReactDOM !== 'undefined' && ReactDOM.createRoot ? 'available' : 'not available'
+        });
     });
 </script>
-<script src="{% static 'js/react/chatlesson.bundle.js' %}?v={{ timestamp }}"></script>
+<script src="{% static 'js/react/chatlesson.bundle.js' %}?v=20250801_react18"></script>
 {% endblock %}
