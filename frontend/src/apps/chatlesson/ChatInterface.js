@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { nanoid } from 'nanoid';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
@@ -94,12 +95,15 @@ const ChatInterface = () => {
     }
   };
 
+  // ユニークID生成
+  const generateUniqueId = () => nanoid();
+
   // メッセージ送信
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage = {
-      id: Date.now(),
+      id: generateUniqueId(),
       sender: 'user',
       text: inputMessage,
       timestamp: new Date()
@@ -114,7 +118,7 @@ const ChatInterface = () => {
       const response = await sendChatMessage(inputMessage);
       
       const kawadaMessage = {
-        id: Date.now() + 1,
+        id: generateUniqueId(),
         sender: 'kawada',
         text: response.text,
         timestamp: new Date()
@@ -173,7 +177,7 @@ const ChatInterface = () => {
   const clearChat = () => {
     setMessages([
       {
-        id: 1,
+        id: generateUniqueId(),
         sender: 'kawada',
         text: '新しい話題を始めましょう。何について学びたいですか？',
         timestamp: new Date()
@@ -204,7 +208,7 @@ const ChatInterface = () => {
           </div>
         ) : (
           <div className="d-flex justify-content-end">
-            <div className="ccharacter-chat-bubble">
+            <div className="user-chat-bubble">
               <div className="message-text">
                 {message.text}
               </div>
@@ -312,7 +316,7 @@ const ChatInterface = () => {
       </div>
 
       <div 
-        className="bg-light p-3"
+        className="fixed-input-wrapper bg-light p-3"
         style={{ 
           boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
         }}
@@ -324,7 +328,7 @@ const ChatInterface = () => {
             placeholder="メッセージを入力... (Enterで送信、Shift+Enterで改行)"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             disabled={isLoading}
           />
           <button 

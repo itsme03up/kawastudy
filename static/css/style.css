@@ -89,10 +89,16 @@ body {
 }
 
 .character-area {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid #dee2e6;
-    margin-bottom: 1rem;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    background-color: #f0f4f8;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ddd;
 }
 
 .character-image img {
@@ -263,4 +269,57 @@ body {
     #settingsDropdown + .dropdown-menu {
         min-width: 350px;
     }
+}
+
+.character-chat-bubble {
+    background: #fff;
+    border-radius: 16px 16px 16px 0;
+    padding: 12px 16px;
+    max-width: 70%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    color: #333;
+    font-size: 1rem;
+    word-break: break-word;
+    margin-right: auto;
+}
+
+.user-chat-bubble {
+    background: #e3f2fd;
+    border-radius: 16px 16px 0 16px;
+    padding: 12px 16px;
+    max-width: 70%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    color: #1565c0;
+    font-size: 1rem;
+    word-break: break-word;
+    margin-left: auto;
+}
+
+.main-layout-chat {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 112px) !important; /* ヘッダー+フッター分 */
+    min-height: 0;
+    overflow: hidden;
+    margin-top: 0 !important; /* 余計なマージンをリセット */
+    padding-top: 0 !important; /* 余計なパディングをリセット */
+}
+
+body.full-width-page .main-layout-chat {
+    margin-top: 0 !important; /* bodyのpadding-topを打ち消す */
+    padding-top: 0 !important;
+}
+
+.chat-area {
+    flex: 2;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
+}
+#chat-root {
+    flex: 1;
+    overflow: auto;
 }
