@@ -12,8 +12,8 @@ const ChatInterface = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [kawadaMood, setKawadaMood] = useState('normal'); // normal, thinking, encouraging
-  const [selectedCharacter, setSelectedCharacter] = useState('kawada'); // デフォルトは通常の川田
+  const [kawadaMood, setKawadaMood] = useState('normal');
+  const [selectedCharacter, setSelectedCharacter] = useState('kawada');
   const [showCharacterSelector, setShowCharacterSelector] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -40,7 +40,6 @@ const ChatInterface = () => {
     const savedCharacter = localStorage.getItem('selectedCharacter');
     if (savedCharacter && characterOptions.find(char => char.id === savedCharacter)) {
       setSelectedCharacter(savedCharacter);
-      // 左側パネルも更新
       setTimeout(() => updateLeftPanelCharacter(savedCharacter), 100);
     }
   }, []);
@@ -64,8 +63,6 @@ const ChatInterface = () => {
     setSelectedCharacter(characterId);
     localStorage.setItem('selectedCharacter', characterId);
     setShowCharacterSelector(false);
-    
-    // 左側のキャラクター画像とタイトルも更新
     updateLeftPanelCharacter(characterId);
   };
 
@@ -84,7 +81,6 @@ const ChatInterface = () => {
   const updateLeftPanelCharacter = (characterId) => {
     const character = characterOptions.find(char => char.id === characterId) || characterOptions[0];
     
-    // DOM要素を直接更新
     const characterImage = document.getElementById('character-image');
     const characterName = document.getElementById('character-name');
     
@@ -115,7 +111,6 @@ const ChatInterface = () => {
     setKawadaMood('thinking');
 
     try {
-      // ChatGPT API または模擬応答
       const response = await sendChatMessage(inputMessage);
       
       const kawadaMessage = {
@@ -126,22 +121,9 @@ const ChatInterface = () => {
       };
 
       setMessages(prev => [...prev, kawadaMessage]);
-      setKawadaMood('encouraging');
-      
-      // 一定時間後に通常モードに戻す
-      setTimeout(() => setKawadaMood('normal'), 3000);
-      
+      setKawadaMood('normal');
     } catch (error) {
-      console.error('チャット送信エラー:', error);
-      
-      const errorMessage = {
-        id: Date.now() + 1,
-        sender: 'kawada',
-        text: 'すみません、少し調子が悪いようです。もう一度お話しいただけますか？',
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, errorMessage]);
+      console.error('Failed to send message:', error);
       setKawadaMood('normal');
     } finally {
       setIsLoading(false);
@@ -167,7 +149,6 @@ const ChatInterface = () => {
     } catch (error) {
       console.error('Chat API Error:', error);
       
-      // エラー時のフォールバック応答
       const fallbackResponses = [
         '申し訳ありません。少し調子が悪いようです。',
         'エラーが発生しました。しばらく経ってから再試行してください。',
@@ -210,7 +191,6 @@ const ChatInterface = () => {
         className={`message-wrapper ${isKawada ? 'bot' : 'user'} mb-3`}
       >
         {isKawada ? (
-          // 川田のメッセージ（左側）
           <div className="d-flex align-items-start">
             <img 
               src={getCurrentCharacterImage()} 
@@ -231,7 +211,6 @@ const ChatInterface = () => {
             </div>
           </div>
         ) : (
-          // ユーザーのメッセージ（右側）
           <div className="d-flex justify-content-end">
             <div className="chat-bubble user-message">
               <div className="message-text">
@@ -252,7 +231,6 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-container h-100 d-flex flex-column">
-      {/* チャットヘッダー */}
       <div className="card-header bg-white border-bottom">
         <div className="d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
@@ -264,160 +242,115 @@ const ChatInterface = () => {
             )}
           </h5>
           <div className="d-flex gap-2">
-                  <div className="position-relative character-selector">
-                    <button 
-                      className="btn btn-outline-light btn-sm"
-                      onClick={() => setShowCharacterSelector(!showCharacterSelector)}
-                      title="キャラクター選択"
-                    >
-                      🎭
-                    </button>
-                    
-                    {showCharacterSelector && (
-                      <div 
-                        className="position-absolute bg-white border rounded shadow-sm p-2"
-                        style={{ 
-                          top: '100%', 
-                          right: '0', 
-                          zIndex: 1000, 
-                          minWidth: '200px',
-                          marginTop: '5px'
-                        }}
-                      >
-                        <div className="text-dark small mb-2 fw-bold">キャラクター選択</div>
-                        {characterOptions.map(character => (
-                          <button
-                            key={character.id}
-                            className={`btn btn-sm w-100 mb-1 d-flex align-items-center ${
-                              selectedCharacter === character.id 
-                                ? 'btn-primary' 
-                                : 'btn-outline-secondary'
-                            }`}
-                            onClick={() => handleCharacterChange(character.id)}
-                          >
-                            <img 
-                              src={character.image} 
-                              alt={character.name}
-                              className="rounded-circle me-2"
-                              style={{ width: '20px', height: '20px', objectFit: 'cover' }}
-                            />
-                            <small>{character.name}</small>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <button 
-                    className="btn btn-outline-light btn-sm"
-                    onClick={clearChat}
-                    title="チャットをクリア"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* メッセージエリア */}
-            <div 
-              className="card-body overflow-auto"
-              style={{ height: 'calc(100% - 140px)' }}
-            >
-              {messages.map(renderMessage)}
+            <div className="position-relative character-selector">
+              <button 
+                className="btn btn-outline-primary btn-sm"
+                onClick={() => setShowCharacterSelector(!showCharacterSelector)}
+                title="キャラクター選択"
+              >
+                🎭
+              </button>
               
-              {isLoading && (
-                <div className="d-flex justify-content-start mb-3">
-                  <div className="me-2">
-                    <img 
-                      src={getCurrentCharacterImage()} 
-                      alt="川田先生" 
-                      className="rounded-circle"
-                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                    />
-                  </div>
-                  <div className="bg-light border rounded-3 p-3">
-                    <div className="typing-indicator">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </div>
+              {showCharacterSelector && (
+                <div 
+                  className="position-absolute bg-white border rounded shadow-sm p-2"
+                  style={{ 
+                    top: '100%', 
+                    right: '0', 
+                    zIndex: 1000, 
+                    minWidth: '200px',
+                    marginTop: '5px'
+                  }}
+                >
+                  <div className="text-dark small mb-2 fw-bold">キャラクター選択</div>
+                  {characterOptions.map(character => (
+                    <button
+                      key={character.id}
+                      className={`btn btn-sm w-100 mb-1 d-flex align-items-center ${
+                        selectedCharacter === character.id 
+                          ? 'btn-primary' 
+                          : 'btn-outline-secondary'
+                      }`}
+                      onClick={() => handleCharacterChange(character.id)}
+                    >
+                      <img 
+                        src={character.image} 
+                        alt={character.name}
+                        className="rounded-circle me-2"
+                        style={{ width: '20px', height: '20px', objectFit: 'cover' }}
+                      />
+                      <small>{character.name}</small>
+                    </button>
+                  ))}
                 </div>
               )}
-              
-              <div ref={messagesEndRef} />
             </div>
-
-            {/* 入力エリア */}
-            <div className="card-footer bg-light">
-              <div className="input-group">
-                <textarea
-                  className="form-control"
-                  rows="2"
-                  placeholder="質問や話したいことを入力してください... (Enterで送信、Shift+Enterで改行)"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  disabled={isLoading}
-                />
-                <button 
-                  className="btn btn-primary"
-                  onClick={sendMessage}
-                  disabled={isLoading || !inputMessage.trim()}
-                >
-                  {isLoading ? (
-                    <span className="spinner-border spinner-border-sm" />
-                  ) : (
-                    '送信'
-                  )}
-                </button>
-              </div>
-              <small className="text-muted mt-1 d-block">
-                プログラミング、データベース、ネットワークなど、ITに関する質問をお気軽にどうぞ！
-              </small>
-            </div>
+            <button 
+              className="btn btn-outline-secondary btn-sm"
+              onClick={clearChat}
+              title="チャットをクリア"
+            >
+              🗑️
+            </button>
           </div>
         </div>
       </div>
 
-      <style jsx>{`
-        .typing-indicator {
-          display: flex;
-          gap: 4px;
-        }
+      <div 
+        className="flex-1 overflow-auto p-3"
+        style={{ maxHeight: 'calc(100vh - 180px)' }}
+      >
+        {messages.map(renderMessage)}
         
-        .typing-indicator span {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: #007bff;
-          animation: typing 1.4s infinite ease-in-out;
-        }
+        {isLoading && (
+          <div className="message-wrapper bot mb-3">
+            <div className="d-flex align-items-start">
+              <img 
+                src={getCurrentCharacterImage()} 
+                alt="川田先生" 
+                className="rounded-circle me-2"
+                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+              />
+              <div className="chat-bubble bot-message">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
-        .typing-indicator span:nth-child(2) {
-          animation-delay: 0.2s;
-        }
-        
-        .typing-indicator span:nth-child(3) {
-          animation-delay: 0.4s;
-        }
-        
-        @keyframes typing {
-          0%, 60%, 100% {
-            transform: translateY(0);
-            opacity: 0.5;
-          }
-          30% {
-            transform: translateY(-10px);
-            opacity: 1;
-          }
-        }
-        
-        .message-text {
-          line-height: 1.5;
-          word-wrap: break-word;
-        }
-      `}</style>
+        <div ref={messagesEndRef} />
+      </div>
+
+      <div className="border-top bg-light p-3">
+        <div className="input-group">
+          <textarea
+            className="form-control chat-input"
+            rows="2"
+            placeholder="メッセージを入力... (Enterで送信、Shift+Enterで改行)"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
+          />
+          <button 
+            className="btn send-button ms-2"
+            onClick={sendMessage}
+            disabled={isLoading || !inputMessage.trim()}
+          >
+            {isLoading ? (
+              <span className="spinner-border spinner-border-sm" role="status">
+                <span className="visually-hidden">送信中...</span>
+              </span>
+            ) : (
+              '送信'
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
