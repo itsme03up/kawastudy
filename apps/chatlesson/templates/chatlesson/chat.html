@@ -7,21 +7,22 @@
 <style>
     html, body {
         font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
-        overflow: hidden; /* ページ全体のスクロールを完全に禁止 */
+        overflow: hidden;
         height: 100vh;
         margin: 0;
         padding: 0;
     }
-
     .main-layout-chat {
         display: flex;
-        height: 100vh; /* ビューポート全体の高さを使用 */
-        width: 100vw; /* ビューポート全体の幅を使用 */
-        position: fixed;
-        top: 0;
-        left: 0;
+        height: calc(100vh - 112px); /* ヘッダー・フッター分を除く */
+        width: 100vw;
+        margin-top: 56px;
+        margin-bottom: 56px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        position: relative;
     }
-
     .character-area {
         flex: 1;
         background-color: #f0f4f8;
@@ -31,133 +32,23 @@
         align-items: center;
         justify-content: center;
         border-right: 1px solid #ddd;
+        height: 100%;
     }
-
     .chat-area {
         flex: 2;
         display: flex;
         flex-direction: column;
+        height: 100%;
     }
-
-    .chat-container {
+    #chat-root {
+        height: 100%;
         display: flex;
         flex-direction: column;
-        height: 100%;
         background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
         margin: 0;
         padding: 0;
-        overflow: hidden;
     }
-
-    .card-header {
-        background-color: #fff;
-        border-bottom: 1px solid #ddd;
-        padding: 0.75rem 1.25rem;
-    }
-
-    .chat-log {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1rem;
-        max-height: calc(100vh - 180px); /* ヘッダーと入力エリアの高さを引く */
-    }
-
-    .chat-bubble {
-        max-width: 70%; /* 幅を短くする */
-        padding: 10px 14px;
-        margin: 8px 0;
-        border-radius: 16px;
-        position: relative;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        word-wrap: break-word;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-
-    .user-message {
-        background-color: #dcf8c6;
-        align-self: flex-end;
-        border-bottom-right-radius: 2px;
-    }
-
-    .bot-message {
-        background-color: #ffffff;
-        border: 1px solid #e0e0e0;
-        align-self: flex-start;
-        border-bottom-left-radius: 2px;
-    }
-
-    .chat-footer {
-        padding: 1rem;
-        border-top: 1px solid #ddd;
-        background-color: #f9f9f9;
-        flex-shrink: 0; /* フッターのサイズを固定 */
-        min-height: 80px; /* 最小高さを設定 */
-    }
-
-    .chat-input {
-        border-radius: 20px;
-        border: 1px solid #ccc;
-    }
-    .chat-input:focus {
-        border-color: #409eff;
-        box-shadow: 0 0 0 0.2rem rgba(64, 158, 255, 0.25);
-    }
-
-    .send-button {
-        background-color: #409eff;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: background-color 0.3s;
-    }
-
-    .send-button:hover {
-        background-color: #66b1ff;
-    }
-
-    .send-button:disabled {
-        background-color: #a0cfff;
-        cursor: not-allowed;
-    }
-
-    .message-wrapper {
-        display: flex;
-        margin-bottom: 0.5rem;
-    }
-
-    .message-wrapper.user {
-        justify-content: flex-end;
-    }
-
-    .message-wrapper.bot {
-        justify-content: flex-start;
-    }
-
-    .tts-button {
-        background: none;
-        border: none;
-        color: #409eff;
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: 2px 6px;
-        margin-left: 8px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-    }
-
-    .tts-button:hover {
-        background-color: rgba(64, 158, 255, 0.1);
-    }
-
-    .tts-button:disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    }
+    /* ...既存のチャットUI用CSS... */
 </style>
 {% endblock %}
 
@@ -165,8 +56,8 @@
 <div class="main-layout-chat">
     <!-- 左側: 川田キャライメージ表示エリア -->
     <div class="character-area">
-        <img src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-4" style="max-width: 350px; border-radius: 50%;">
-        <h4 class="card-title">川田</h4>
+        <img id="character-image" src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-4" style="max-width: 350px; border-radius: 50%;">
+        <h4 class="card-title" id="character-name">川田</h4>
         <p class="card-text text-muted">ベテランエンジニア</p>
         <hr class="my-4" style="width: 80%;">
         <div id="kawada-status" class="text-center">
@@ -176,308 +67,15 @@
             <span id="kawada-status-text">待機中...</span>
         </div>
     </div>
-
     <!-- 右側: チャットエリア -->
     <div class="chat-area">
-        <div class="chat-container">
-            <div class="card-header">
-                <h5 class="mb-0">チャットルーム</h5>
-            </div>
-            <div class="chat-log" id="chat-log">
-                <!-- 過去のメッセージと新しいメッセージがここに表示される -->
-            </div>
-            <div class="chat-footer">
-                <div class="input-group">
-                    <input type="text" id="chat-message-input" class="form-control chat-input" placeholder="メッセージを入力...">
-                    <button class="btn send-button" id="chat-message-submit">送信</button>
-                </div>
-            </div>
+        <div id="chat-root">
+            <!-- Reactコンポーネントがここにマウントされます -->
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block react_scripts %}
-{# このページではReactは使用しないため、ブロックを空にする #}
-{% endblock %}
-
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const chatLog = document.getElementById('chat-log');
-    const messageInput = document.getElementById('chat-message-input');
-    const submitButton = document.getElementById('chat-message-submit');
-    const kawadaStatusText = document.getElementById('kawada-status-text');
-    const kawadaStatusSpinner = document.querySelector('#kawada-status .spinner-border');
-
-    // グローバルTTS設定を使用
-    function getTTSSettings() {
-        if (typeof getGlobalTTSSettings === 'function') {
-            return getGlobalTTSSettings();
-        }
-        // フォールバック設定
-        return {
-            autoTTS: true,
-            pitch: 0.6,
-            rate: 0.8
-        };
-    }
-
-    // TTS関連の変数
-    let speechSynthesis = window.speechSynthesis;
-    let currentUtterance = null;
-    let isPlaying = false;
-
-    // 日本語男性音声の設定（Chrome対応強化版）
-    function getJapaneseVoice() {
-        const voices = speechSynthesis.getVoices();
-        
-        console.log('Browser:', navigator.userAgent);
-        console.log('Total voices available:', voices.length);
-        
-        // Chrome/Chromium系での男性音声候補
-        const maleVoicePatterns = [
-            'Google 日本語',
-            'Microsoft Ichiro',
-            'Microsoft Kenji', 
-            'Otoya',
-            'Ichiro',
-            'Kenji',
-            'Male',
-            '男性',
-            'Google Japanese'
-        ];
-        
-        // 1. 明確に男性とわかる音声を検索
-        for (const pattern of maleVoicePatterns) {
-            const voice = voices.find(v => 
-                v.name.includes(pattern) && 
-                (v.lang.includes('ja') || v.lang.includes('JP'))
-            );
-            if (voice) {
-                console.log('Found male voice:', voice.name, voice.lang);
-                return voice;
-            }
-        }
-        
-        // 2. 日本語音声の中から選択（Chromeの場合）
-        const japaneseVoices = voices.filter(voice => 
-            voice.lang.includes('ja') || 
-            voice.lang.includes('JP') ||
-            voice.name.includes('Japanese') ||
-            voice.name.includes('日本')
-        );
-        
-        console.log('Available Japanese voices:', japaneseVoices.map(v => `${v.name} (${v.lang})`));
-        
-        // 3. Google系の音声を優先（通常はより自然）
-        const googleVoice = japaneseVoices.find(v => v.name.includes('Google'));
-        if (googleVoice) {
-            console.log('Selected Google Japanese voice:', googleVoice.name);
-            return googleVoice;
-        }
-        
-        // 4. 最初の日本語音声
-        if (japaneseVoices.length > 0) {
-            console.log('Selected first Japanese voice:', japaneseVoices[0].name);
-            return japaneseVoices[0];
-        }
-        
-        // 5. フォールバック
-        console.log('Using default voice:', voices[0]?.name || 'None');
-        return voices[0];
-    }
-
-    // TTSで音声読み上げ
-    function speakText(text, button) {
-        if (isPlaying) {
-            speechSynthesis.cancel();
-            isPlaying = false;
-            button.textContent = '🔊';
-            return;
-        }
-
-        currentUtterance = new SpeechSynthesisUtterance(text);
-        currentUtterance.voice = getJapaneseVoice();
-        const settings = getTTSSettings();
-        currentUtterance.rate = settings.rate;
-        currentUtterance.pitch = settings.pitch;
-        currentUtterance.volume = 1.0;
-
-        currentUtterance.onstart = function() {
-            isPlaying = true;
-            button.textContent = '⏸️';
-        };
-
-        currentUtterance.onend = function() {
-            isPlaying = false;
-            button.textContent = '🔊';
-        };
-
-        currentUtterance.onerror = function(event) {
-            console.error('TTS Error:', event);
-            isPlaying = false;
-            button.textContent = '🔊';
-        };
-
-        speechSynthesis.speak(currentUtterance);
-    }
-
-    async function loadChatHistory() {
-        try {
-            const response = await fetch("{% url 'chatlesson:chat_history' %}", {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                
-                // チャットログをクリア
-                chatLog.innerHTML = '';
-                
-                // 過去のメッセージがない場合はウェルカムメッセージを表示
-                if (data.messages.length === 0) {
-                    addMessage('何か質問はありますか？', 'bot');
-                } else {
-                    // 過去のメッセージを表示
-                    data.messages.forEach(msg => {
-                        addMessage(msg.message, msg.sender === 'kawada' ? 'bot' : msg.sender);
-                    });
-                }
-            }
-        } catch (error) {
-            console.error('Error loading chat history:', error);
-            // エラーの場合はウェルカムメッセージを表示
-            addMessage('何か質問はありますか？', 'bot');
-        }
-    }
-
-    function addMessage(message, sender, enableTTS = false) {
-        const messageWrapper = document.createElement('div');
-        messageWrapper.classList.add('message-wrapper', sender);
-
-        const messageBubble = document.createElement('div');
-        messageBubble.classList.add('chat-bubble');
-        messageBubble.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        
-        const p = document.createElement('p');
-        p.classList.add('mb-0');
-        p.textContent = message;
-        messageBubble.appendChild(p);
-
-        // 川田のメッセージにTTSボタンを追加
-        if (sender === 'bot') {
-            const ttsButton = document.createElement('button');
-            ttsButton.classList.add('tts-button');
-            ttsButton.textContent = '🔊';
-            ttsButton.title = '音声で聞く';
-            ttsButton.onclick = function() {
-                speakText(message, ttsButton);
-            };
-            messageBubble.appendChild(ttsButton);
-
-            // 新しいメッセージの場合は自動で読み上げ
-            const settings = getTTSSettings();
-            if (enableTTS && settings.autoTTS && 'speechSynthesis' in window) {
-                setTimeout(() => {
-                    speakText(message, ttsButton);
-                }, 500); // 少し遅延させて自然に
-            }
-        }
-
-        messageWrapper.appendChild(messageBubble);
-        chatLog.appendChild(messageWrapper);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    }
-
-    function setLoading(isLoading) {
-        if (isLoading) {
-            submitButton.disabled = true;
-            submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 送信中...`;
-            messageInput.disabled = true;
-            kawadaStatusText.textContent = '川田、考え中……';
-            kawadaStatusSpinner.style.display = 'inline-block';
-        } else {
-            submitButton.disabled = false;
-            submitButton.innerHTML = '送信';
-            messageInput.disabled = false;
-            messageInput.focus();
-            kawadaStatusText.textContent = '待機中...';
-            kawadaStatusSpinner.style.display = 'none';
-        }
-    }
-
-    async function sendMessage() {
-        const message = messageInput.value.trim();
-        if (message === '') return;
-
-        addMessage(message, 'user');
-        messageInput.value = '';
-        setLoading(true);
-
-        try {
-            const response = await fetch("{% url 'chatlesson:chat_api' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ message: message })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ reply: 'サーバーエラーが発生しました。' }));
-                throw new Error(errorData.reply || 'Network response was not ok.');
-            }
-
-            const data = await response.json();
-            addMessage(data.reply, 'bot', true); // 新しいメッセージは自動読み上げ有効
-
-        } catch (error) {
-            console.error('Error:', error);
-            addMessage(error.message || 'すまないが、少し調子が悪いようだ。後でまた試してくれ。', 'bot');
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    submitButton.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    
-    // 初期化
-    setLoading(false);
-    
-    // 音声リストが読み込まれるまで待機
-    if ('speechSynthesis' in window) {
-        speechSynthesis.onvoiceschanged = function() {
-            const voices = speechSynthesis.getVoices();
-            console.log('Available TTS voices:');
-            voices.forEach((voice, index) => {
-                console.log(`${index}: ${voice.name} (${voice.lang}) - ${voice.gender || 'Unknown gender'}`);
-            });
-            
-            const selectedVoice = getJapaneseVoice();
-            console.log('Selected voice for Kawada:', selectedVoice?.name || 'None');
-        };
-    }
-    
-    // チャット履歴を読み込み
-    loadChatHistory();
-    
-    // ページ読み込み時に過去の会話履歴を読み込む
-    loadChatHistory();
-});
-</script>
-
-<!-- React チャットコンポーネントの読み込み -->
-<div id="chat-root"></div>
 <script src="{% static 'js/react/chatlesson.bundle.js' %}"></script>
 {% endblock %}
