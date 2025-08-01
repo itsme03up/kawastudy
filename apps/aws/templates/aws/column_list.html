@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}AWSコラム一覧{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">AWSコラム一覧</h2>
+    {% for col in columns %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">{{ col.title }}</h4>
+                <p class="card-text">{{ col.summary }}</p>
+                <pre style="white-space: pre-wrap;">{{ col.body }}</pre>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
