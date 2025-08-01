@@ -323,3 +323,30 @@ body.full-width-page .main-layout-chat {
     flex: 1;
     overflow: auto;
 }
+
+const [messages, setMessages] = useState([
+  {
+    id: 1,
+    sender: 'kawada',
+    text: 'こんにちは！川田です。今日はどのような勉強をしたいですか？',
+    timestamp: new Date()
+  },
+  {
+    id: 2,
+    sender: 'user',
+    text: 'SQLについて教えてください！',
+    timestamp: new Date()
+  }
+]);
+
+.fixed-input-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0; /* ←ここを修正 */
+    right: 0;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 0.5rem;
+}
