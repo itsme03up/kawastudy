@@ -191,7 +191,7 @@ const ChatInterface = () => {
         className={`message-wrapper ${isKawada ? 'bot' : 'user'} mb-3`}
       >
         {isKawada ? (
-          <div className="chat-bubble bot-message">
+          <div className="character-chat-bubble">
             <div className="message-text">
               {message.text}
             </div>
