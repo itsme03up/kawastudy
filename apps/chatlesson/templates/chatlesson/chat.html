@@ -5,74 +5,91 @@
 
 {% block extra_css %}
 <style>
-    html, body {
-        font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
-        overflow: hidden;
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-    }
-    .main-layout-chat {
-        display: flex;
-        height: calc(100vh - 112px); /* ヘッダー・フッター分を除く */
-        width: 100vw;
-        margin-top: 56px;
-        margin-bottom: 56px;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        position: relative;
-    }
-    .character-area {
-        flex: 1;
-        background-color: #f0f4f8;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-right: 1px solid #ddd;
-        height: 100%;
-    }
-    .chat-area {
-        flex: 2;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    #chat-root {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
-        margin: 0;
-        padding: 0;
-    }
-    /* ...既存のチャットUI用CSS... */
+  /* ベーステンプレートの余白をリセット */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
+  }
+  /* チャット画面全体 */
+  .main-layout-chat {
+    display: flex;
+    position: absolute;
+    top: 56px;    /* ナビバーの高さ */
+    bottom: 56px; /* フッターの高さ */
+    left: 0;
+    right: 0;
+    overflow: hidden;
+  }
+  /* 左側キャラクターエリア */
+  .character-area {
+    flex: 1;
+    background-color: #f0f4f8;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ddd;
+  }
+  /* 右側チャットエリア */
+  .chat-area {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(to bottom, #e9eff5, #d5e0f0);
+  }
+  /* Reactコンポーネントマウント領域 */
+  #chat-root {
+    flex: 1;
+    overflow: auto;
+  }
+  /* 固定入力エリア */
+  .fixed-input-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 33.3333%; /* 左1/3から */
+    right: 0;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 0.5rem;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 <div class="main-layout-chat">
-    <!-- 左側: 川田キャライメージ表示エリア -->
-    <div class="character-area">
-        <img id="character-image" src="{% static 'img/kawada.png' %}" alt="川田先生" class="img-fluid mb-4" style="max-width: 350px; border-radius: 50%;">
-        <h4 class="card-title" id="character-name">川田</h4>
-        <p class="card-text text-muted">ベテランエンジニア</p>
-        <hr class="my-4" style="width: 80%;">
-        <div id="kawada-status" class="text-center">
-            <div class="spinner-border spinner-border-sm text-primary" role="status" style="display: none;">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <span id="kawada-status-text">待機中...</span>
-        </div>
+  <!-- 左側: キャラクター -->
+  <div class="character-area">
+    <img id="character-image" src="{% static 'img/kawada.png' %}" alt="川田先生"
+         class="img-fluid mb-4" style="max-width:350px;border-radius:50%;">
+    <h4 id="character-name" class="card-title">川田</h4>
+    <p class="text-muted">ベテランエンジニア</p>
+    <hr class="my-4" style="width:80%;">
+    <div id="kawada-status" class="text-center">
+      <div class="spinner-border spinner-border-sm text-primary" role="status" style="display:none;"></div>
+      <span id="kawada-status-text">待機中...</span>
     </div>
-    <!-- 右側: チャットエリア -->
-    <div class="chat-area">
-        <div id="chat-root">
-            <!-- Reactコンポーネントがここにマウントされます -->
-        </div>
+  </div>
+
+  <!-- 右側: Reactチャット -->
+  <div class="chat-area">
+    <div id="chat-root">
+      <!-- React の ChatInterface がここに描画されます -->
     </div>
+    <div class="fixed-input-wrapper">
+      <textarea class="form-control chat-input"
+                rows="2"
+                placeholder="メッセージを入力… (Enter で送信、Shift+Enter で改行)"></textarea>
+      <button class="btn send-button">送信</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
