@@ -13,7 +13,18 @@ const ChatInterface = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [kawadaMood, setKawadaMood] = useState('normal'); // normal, thinking, encouraging
+  const [selectedCharacter, setSelectedCharacter] = useState('kawada'); // デフォルトは通常の川田
+  const [showCharacterSelector, setShowCharacterSelector] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // キャラクター画像の選択肢
+  const characterOptions = [
+    { id: 'kawada', name: '川田（デフォルト）', image: '/static/img/kawada.png' },
+    { id: 'kawada-normal', name: '川田（ドライ）', image: '/static/img/kawada-normal.png' },
+    { id: 'kawada-cheerful', name: '川田（明るい）', image: '/static/img/kawada-cheerful.png' },
+    { id: 'kawada-gentle', name: '川田（優しい）', image: '/static/img/kawada-gentle.png' },
+    { id: 'kawada-thinking', name: '川田（考え中）', image: '/static/img/kawada-thinking.png' }
+  ];
 
   // メッセージエリアを自動スクロール
   const scrollToBottom = () => {
@@ -23,6 +34,46 @@ const ChatInterface = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // ローカルストレージからキャラクター設定を読み込み
+  useEffect(() => {
+    const savedCharacter = localStorage.getItem('selectedCharacter');
+    if (savedCharacter && characterOptions.find(char => char.id === savedCharacter)) {
+      setSelectedCharacter(savedCharacter);
+    }
+  }, []);
+
+  // キャラクターセレクター外クリックで閉じる
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showCharacterSelector && !event.target.closest('.character-selector')) {
+        setShowCharacterSelector(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCharacterSelector]);
+
+  // キャラクター変更時にローカルストレージに保存
+  const handleCharacterChange = (characterId) => {
+    setSelectedCharacter(characterId);
+    localStorage.setItem('selectedCharacter', characterId);
+    setShowCharacterSelector(false);
+  };
+
+  // 現在選択されているキャラクターの情報を取得
+  const getCurrentCharacter = () => {
+    return characterOptions.find(char => char.id === selectedCharacter) || characterOptions[0];
+  };
+
+  // 現在選択されているキャラクターの画像パスを取得
+  const getCurrentCharacterImage = () => {
+    const character = getCurrentCharacter();
+    return character.image;
+  };
 
   // メッセージ送信
   const sendMessage = async () => {
@@ -76,21 +127,34 @@ const ChatInterface = () => {
 
   // チャットメッセージ送信（API呼び出し）
   const sendChatMessage = async (message) => {
-    // 実際の実装ではChatGPT APIを呼び出す
-    // ここではダミーレスポンスを返す
-    await new Promise(resolve => setTimeout(resolve, 1500)); // 応答遅延をシミュレート
-    
-    const responses = [
-      'それは興味深い質問ですね。詳しく説明させていただきます。',
-      'なるほど、そのトピックについて一緒に考えてみましょう。',
-      'とても良い着眼点です！その通りです。',
-      'そのような疑問を持つことは、学習において非常に重要です。',
-      'その問題について、段階的に解説してみますね。'
-    ];
-    
-    return {
-      text: responses[Math.floor(Math.random() * responses.length)]
-    };
+    try {
+      const response = await axios.post('/chatlesson/api/', {
+        message: message,
+        character: selectedCharacter
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+        }
+      });
+      
+      return {
+        text: response.data.reply
+      };
+    } catch (error) {
+      console.error('Chat API Error:', error);
+      
+      // エラー時のフォールバック応答
+      const fallbackResponses = [
+        '申し訳ありません。少し調子が悪いようです。',
+        'エラーが発生しました。しばらく経ってから再試行してください。',
+        '川田、今回は上手く答えられませんでした。'
+      ];
+      
+      return {
+        text: fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]
+      };
+    }
   };
 
   // Enterキーでメッセージ送信
@@ -125,7 +189,7 @@ const ChatInterface = () => {
         {isKawada && (
           <div className="me-2">
             <img 
-              src="/static/img/kawada.png" 
+              src={getCurrentCharacterImage()} 
               alt="川田先生" 
               className="rounded-circle"
               style={{ width: '40px', height: '40px', objectFit: 'cover' }}
@@ -183,20 +247,65 @@ const ChatInterface = () => {
             <div className="card-header bg-primary text-white">
               <div className="d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">
-                  💬 川田先生との学習チャット
+                  💬 {getCurrentCharacter().name}との学習チャット
                   {kawadaMood === 'thinking' && (
                     <span className="ms-2">
                       <small>(考え中...)</small>
                     </span>
                   )}
                 </h5>
-                <button 
-                  className="btn btn-outline-light btn-sm"
-                  onClick={clearChat}
-                  title="チャットをクリア"
-                >
-                  🗑️
-                </button>
+                <div className="d-flex gap-2">
+                  <div className="position-relative character-selector">
+                    <button 
+                      className="btn btn-outline-light btn-sm"
+                      onClick={() => setShowCharacterSelector(!showCharacterSelector)}
+                      title="キャラクター選択"
+                    >
+                      🎭
+                    </button>
+                    
+                    {showCharacterSelector && (
+                      <div 
+                        className="position-absolute bg-white border rounded shadow-sm p-2"
+                        style={{ 
+                          top: '100%', 
+                          right: '0', 
+                          zIndex: 1000, 
+                          minWidth: '200px',
+                          marginTop: '5px'
+                        }}
+                      >
+                        <div className="text-dark small mb-2 fw-bold">キャラクター選択</div>
+                        {characterOptions.map(character => (
+                          <button
+                            key={character.id}
+                            className={`btn btn-sm w-100 mb-1 d-flex align-items-center ${
+                              selectedCharacter === character.id 
+                                ? 'btn-primary' 
+                                : 'btn-outline-secondary'
+                            }`}
+                            onClick={() => handleCharacterChange(character.id)}
+                          >
+                            <img 
+                              src={character.image} 
+                              alt={character.name}
+                              className="rounded-circle me-2"
+                              style={{ width: '20px', height: '20px', objectFit: 'cover' }}
+                            />
+                            <small>{character.name}</small>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button 
+                    className="btn btn-outline-light btn-sm"
+                    onClick={clearChat}
+                    title="チャットをクリア"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -211,7 +320,7 @@ const ChatInterface = () => {
                 <div className="d-flex justify-content-start mb-3">
                   <div className="me-2">
                     <img 
-                      src="/static/img/kawada.png" 
+                      src={getCurrentCharacterImage()} 
                       alt="川田先生" 
                       className="rounded-circle"
                       style={{ width: '40px', height: '40px', objectFit: 'cover' }}

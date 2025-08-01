@@ -25,11 +25,12 @@ else:
     print("API Key: Not set")
 
 
-def get_kawada_reply(user_message):
+def get_kawada_reply(user_message, mode="dry"):
     """
     ユーザーのメッセージを川田語で返す
+    mode: "dry", "cheerful", "gentle" のいずれか
     """
-    system_prompt = kawada_prompt.get_system_prompt()
+    system_prompt = kawada_prompt.get_system_prompt(mode=mode)
 
     # APIキーが設定されていない場合は、固定の応答を返す
     if not os.environ.get("OPENAI_API_KEY"):
@@ -104,6 +105,7 @@ def chat_api(request):
         try:
             data = json.loads(request.body)
             user_message = data.get('message')
+            character_id = data.get('character', 'kawada')  # デフォルトは通常の川田
 
             if not user_message:
                 return JsonResponse({'error': 'Message not provided'}, status=400)
@@ -114,8 +116,19 @@ def chat_api(request):
             # ユーザーメッセージを保存
             save_message(chat_session, 'user', user_message)
             
-            # 川田の返答を取得
-            reply = get_kawada_reply(user_message)
+            # キャラクターIDからモードを決定
+            mode_mapping = {
+                'kawada': 'dry',
+                'kawada-normal': 'dry',
+                'kawada-cheerful': 'cheerful',
+                'kawada-gentle': 'gentle',
+                'kawada-thinking': 'dry'  # 考え中も基本はドライモード
+            }
+            
+            mode = mode_mapping.get(character_id, 'dry')
+            
+            # 川田の返答を取得（選択されたモードで）
+            reply = get_kawada_reply(user_message, mode=mode)
             
             # 川田の返答を保存
             save_message(chat_session, 'kawada', reply)
