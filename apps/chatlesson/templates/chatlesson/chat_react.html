@@ -156,6 +156,11 @@
     .message-wrapper.bot {
         margin-left: 1rem; /* 左側に余白を追加 */
     }
+
+    /* Reactが生成する不要なラッパーを非表示にする */
+    #chat-root > .chat-container > .border-top.bg-light.p-3 {
+        display: none !important;
+    }
 </style>
 {% endblock %}
 
