@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.chatlesson',
     'apps.sqlquiz',
     'apps.linuxfun',
+    'apps.aws',
 ]
 
 MIDDLEWARE = [

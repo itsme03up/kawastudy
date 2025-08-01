@@ -25,4 +25,5 @@ urlpatterns = [
     path('chat/', include('apps.chatlesson.urls')),
     path('sqlquiz/', include('apps.sqlquiz.urls')),
     path('linux/', include('apps.linuxfun.urls')),
+    path('aws/', include('apps.aws.urls')),
 ]
