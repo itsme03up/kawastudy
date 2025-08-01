@@ -204,7 +204,7 @@ const ChatInterface = () => {
           </div>
         ) : (
           <div className="d-flex justify-content-end">
-            <div className="chat-bubble user-message">
+            <div className="ccharacter-chat-bubble">
               <div className="message-text">
                 {message.text}
               </div>
@@ -298,7 +298,7 @@ const ChatInterface = () => {
         
         {isLoading && (
           <div className="message-wrapper bot mb-3">
-            <div className="chat-bubble bot-message">
+            <div className="character-chat-bubble">
               <div className="typing-indicator">
                 <span></span>
                 <span></span>
