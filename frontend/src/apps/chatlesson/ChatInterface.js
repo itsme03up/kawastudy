@@ -312,7 +312,7 @@ const ChatInterface = () => {
       </div>
 
       <div 
-        className="border-top bg-light p-3"
+        className="bg-light p-3"
         style={{ 
           boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
         }}
