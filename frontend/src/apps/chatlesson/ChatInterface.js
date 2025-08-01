@@ -40,6 +40,8 @@ const ChatInterface = () => {
     const savedCharacter = localStorage.getItem('selectedCharacter');
     if (savedCharacter && characterOptions.find(char => char.id === savedCharacter)) {
       setSelectedCharacter(savedCharacter);
+      // 左側パネルも更新
+      setTimeout(() => updateLeftPanelCharacter(savedCharacter), 100);
     }
   }, []);
 
@@ -62,6 +64,9 @@ const ChatInterface = () => {
     setSelectedCharacter(characterId);
     localStorage.setItem('selectedCharacter', characterId);
     setShowCharacterSelector(false);
+    
+    // 左側のキャラクター画像とタイトルも更新
+    updateLeftPanelCharacter(characterId);
   };
 
   // 現在選択されているキャラクターの情報を取得
@@ -73,6 +78,24 @@ const ChatInterface = () => {
   const getCurrentCharacterImage = () => {
     const character = getCurrentCharacter();
     return character.image;
+  };
+
+  // 左側パネルのキャラクター表示を更新
+  const updateLeftPanelCharacter = (characterId) => {
+    const character = characterOptions.find(char => char.id === characterId) || characterOptions[0];
+    
+    // DOM要素を直接更新
+    const characterImage = document.getElementById('character-image');
+    const characterName = document.getElementById('character-name');
+    
+    if (characterImage) {
+      characterImage.src = character.image;
+      characterImage.alt = character.name;
+    }
+    
+    if (characterName) {
+      characterName.textContent = character.name.replace('川田（', '').replace('）', '');
+    }
   };
 
   // メッセージ送信
@@ -184,53 +207,42 @@ const ChatInterface = () => {
     return (
       <div 
         key={message.id}
-        className={`d-flex mb-3 ${isKawada ? 'justify-content-start' : 'justify-content-end'}`}
+        className={`message-wrapper ${isKawada ? 'bot' : 'user'} mb-3`}
       >
-        {isKawada && (
-          <div className="me-2">
+        {isKawada ? (
+          // 川田のメッセージ（左側）
+          <div className="d-flex align-items-start">
             <img 
               src={getCurrentCharacterImage()} 
               alt="川田先生" 
-              className="rounded-circle"
+              className="rounded-circle me-2"
               style={{ width: '40px', height: '40px', objectFit: 'cover' }}
             />
-          </div>
-        )}
-        
-        <div 
-          className={`max-width-70 ${isKawada ? 'me-auto' : 'ms-auto'}`}
-          style={{ maxWidth: '70%' }}
-        >
-          <div 
-            className={`p-3 rounded-3 ${
-              isKawada 
-                ? 'bg-light border' 
-                : 'bg-primary text-white'
-            }`}
-          >
-            <div className="message-text">
-              {message.text}
+            <div className="chat-bubble bot-message">
+              <div className="message-text">
+                {message.text}
+              </div>
+              <small className="text-muted d-block mt-1">
+                {message.timestamp.toLocaleTimeString('ja-JP', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </small>
             </div>
-            <small 
-              className={`d-block mt-1 ${
-                isKawada ? 'text-muted' : 'text-white-50'
-              }`}
-            >
-              {message.timestamp.toLocaleTimeString('ja-JP', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </small>
           </div>
-        </div>
-        
-        {!isKawada && (
-          <div className="ms-2">
-            <div 
-              className="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
-              style={{ width: '40px', height: '40px' }}
-            >
-              You
+        ) : (
+          // ユーザーのメッセージ（右側）
+          <div className="d-flex justify-content-end">
+            <div className="chat-bubble user-message">
+              <div className="message-text">
+                {message.text}
+              </div>
+              <small className="d-block mt-1" style={{ opacity: 0.7 }}>
+                {message.timestamp.toLocaleTimeString('ja-JP', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </small>
             </div>
           </div>
         )}
@@ -239,22 +251,19 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="container my-5">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card shadow-lg" style={{ height: '600px' }}>
-            {/* チャットヘッダー */}
-            <div className="card-header bg-primary text-white">
-              <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">
-                  💬 {getCurrentCharacter().name}との学習チャット
-                  {kawadaMood === 'thinking' && (
-                    <span className="ms-2">
-                      <small>(考え中...)</small>
-                    </span>
-                  )}
-                </h5>
-                <div className="d-flex gap-2">
+    <div className="chat-container h-100 d-flex flex-column">
+      {/* チャットヘッダー */}
+      <div className="card-header bg-white border-bottom">
+        <div className="d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">
+            💬 {getCurrentCharacter().name}との学習チャット
+            {kawadaMood === 'thinking' && (
+              <span className="ms-2">
+                <small>(考え中...)</small>
+              </span>
+            )}
+          </h5>
+          <div className="d-flex gap-2">
                   <div className="position-relative character-selector">
                     <button 
                       className="btn btn-outline-light btn-sm"
