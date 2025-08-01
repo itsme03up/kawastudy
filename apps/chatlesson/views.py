@@ -194,7 +194,9 @@ def get_chat_history(request):
 
 def chat_react(request):
     """React版のチャットビュー"""
+    import time
     context = {
         "hide_sidebar": True,
+        "timestamp": int(time.time()),  # キャッシュバスティング用
     }
     return render(request, 'chatlesson/chat_react.html', context)

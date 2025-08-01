@@ -128,7 +128,7 @@ const ChatInterface = () => {
   // チャットメッセージ送信（API呼び出し）
   const sendChatMessage = async (message) => {
     try {
-      const response = await axios.post('/chatlesson/api/', {
+      const response = await axios.post('/chat/api/', {
         message: message,
         character: selectedCharacter
       }, {

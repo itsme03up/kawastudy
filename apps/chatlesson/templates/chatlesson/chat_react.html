@@ -73,5 +73,13 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/react/chatlesson.bundle.js' %}"></script>
+<script>
+    console.log('Loading chatlesson React component...');
+    // デバッグ用: DOM要素の確認
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatRoot = document.getElementById('chat-root');
+        console.log('Chat root element:', chatRoot);
+    });
+</script>
+<script src="{% static 'js/react/chatlesson.bundle.js' %}?v={{ timestamp }}"></script>
 {% endblock %}
