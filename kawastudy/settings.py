@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.sqlquiz',
     'apps.linuxfun',
     'apps.aws',
+    'apps.cstudy',  # C言語学習アプリを追加
 ]
 
 MIDDLEWARE = [
