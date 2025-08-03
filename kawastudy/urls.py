@@ -21,9 +21,10 @@ from apps.core import views as core_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', core_views.home, name='home'),
-    path('typing/', include('apps.typinggame.urls')),
+    path('typing/', include('apps.typinggame.urls')),   
     path('chat/', include('apps.chatlesson.urls')),
     path('sqlquiz/', include('apps.sqlquiz.urls')),
     path('linux/', include('apps.linuxfun.urls')),
     path('aws/', include('apps.aws.urls')),
+    path('cstudy/', include('apps.cstudy.urls')),
 ]

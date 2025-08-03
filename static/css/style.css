@@ -324,21 +324,6 @@ body.full-width-page .main-layout-chat {
     overflow: auto;
 }
 
-const [messages, setMessages] = useState([
-  {
-    id: 1,
-    sender: 'kawada',
-    text: 'こんにちは！川田です。今日はどのような勉強をしたいですか？',
-    timestamp: new Date()
-  },
-  {
-    id: 2,
-    sender: 'user',
-    text: 'SQLについて教えてください！',
-    timestamp: new Date()
-  }
-]);
-
 .fixed-input-wrapper {
     position: absolute;
     bottom: 0;
