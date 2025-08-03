@@ -1,66 +1,58 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}C言語入門{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/cstudy.css' %}">
+{% endblock %}
+
 {% block content %}
-<header>
+<header class="page-header">
     <h1>C言語入門</h1>
     <p>川田と一緒にC言語の基本を学びましょう！</p>
 </header>
 
-<main>
-    <section class="intro">
-        <h2>はじめに</h2>
-        <p>このページでは、C言語の基本を川田と一緒に学んでいきます。</p>
-        <ul>
-            <li>main関数って？</li>
-            <li>printfの使い方</li>
-            <li>改行と出力</li>
-            <li>文字と数値の扱い</li>
-            <li>文字コードの基礎</li>
-        </ul>
-    </section>
+<main class="main-content">
+    <div class="card">
+        <section class="intro">
+            <h2>はじめに</h2>
+            <p>このページでは、C言語の基本を川田と一緒に学んでいきます。</p>
+            <ul>
+                <li>main関数って？</li>
+                <li>printfの使い方</li>
+                <li>改行と出力</li>
+                <li>文字と数値の扱い</li>
+                <li>文字コードの基礎</li>
+            </ul>
+        </section>
+    </div>
 
-    <section class="lesson">
-        <h2>1. main関数とprintf</h2>
-        <pre><code>
+    <div class="card">
+        <section class="lesson">
+            <h2>1. main関数とprintf</h2>
+            <pre><code>
 #include &lt;stdio.h&gt;
 
 int main(void) {
     printf("こんにちは、C言語！\n");
     return 0;
 }
-        </code></pre>
-        <button id="try-run">このコードを試す</button>
-         <pre id="run-output" class="run-output"></pre>
-    </section>
+            </code></pre>
+            <button id="try-run">このコードを試す</button>
+            <pre id="run-output" class="run-output"></pre>
+        </section>
+    </div>
 
-    <section class="kawada-comment">
-        <h3>川田語コメント</h3>
-        <blockquote>
-            main関数はC言語の玄関です。<br>
-            printfで「こんにちは！」と出してみましょう。<br>
-            打鍵ミスにはご注意を……。
-        </blockquote>
-    </section>
-
-    <!-- クイズやヒント表示エリアなど、追加要素はここに -->
+    <div class="card">
+        <section class="kawada-comment">
+            <h3>川田語コメント</h3>
+            <blockquote>
+                main関数はC言語の玄関です。<br>
+                printfで「こんにちは！」と出してみましょう。<br>
+                打鍵ミスにはご注意を……。
+            </blockquote>
+        </section>
+    </div>
 </main>
-
-<script>
-document.getElementById('try-run').addEventListener('click', async () => {
-  // lesson セクション内の <code> 要素からソースを取得
-  const code = document.querySelector('.lesson code').innerText.trim();
-  // サーバーの API エンドポイントに POST
-  const resp = await fetch("{% url 'cstudy:run_code' %}", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ source: code })
-  });
-  const data = await resp.json();
-  // 実行結果を出力エリアにセット
-  document.getElementById('run-output').textContent = data.stdout || data.stderr;
-});
-</script>
-
 {% endblock %}

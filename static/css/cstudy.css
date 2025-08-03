@@ -196,6 +196,16 @@ body {
     padding-left: 1rem;
 }
 
+.run-output {
+  background: #222;
+  color: #0f0;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+}
+
+
 /* レスポンシブ */
 @media (max-width: 768px) {
     .main-layout {
