@@ -32,12 +32,13 @@ int main(void) {
 }
         </code></pre>
         <button id="try-run">このコードを試す</button>
+         <pre id="run-output" class="run-output"></pre>
     </section>
 
     <section class="kawada-comment">
         <h3>川田語コメント</h3>
         <blockquote>
-            川田、「main関数はC言語の玄関」でした。<br>
+            main関数はC言語の玄関です。<br>
             printfで「こんにちは！」と出してみましょう。<br>
             打鍵ミスにはご注意を……。
         </blockquote>
@@ -45,4 +46,21 @@ int main(void) {
 
     <!-- クイズやヒント表示エリアなど、追加要素はここに -->
 </main>
+
+<script>
+document.getElementById('try-run').addEventListener('click', async () => {
+  // lesson セクション内の <code> 要素からソースを取得
+  const code = document.querySelector('.lesson code').innerText.trim();
+  // サーバーの API エンドポイントに POST
+  const resp = await fetch("{% url 'cstudy:run_code' %}", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ source: code })
+  });
+  const data = await resp.json();
+  // 実行結果を出力エリアにセット
+  document.getElementById('run-output').textContent = data.stdout || data.stderr;
+});
+</script>
+
 {% endblock %}
