@@ -8,8 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('C言語学習ページを初期化します');
         console.log('lessonData:', lessonData);
         initCStudyPage();
-        initNavigation();
-        initCodeRunButtons();
+        initNaviga    // 川田のコメントにデフォルトコードを設定
+    if (lesson.code) {
+        const editor = document.getElementById(`code-editor-${lessonId}`);
+        if (editor) {
+            editor.value = lesson.code;
+        }
+    }  initCodeRunButtons();
     }
 });
 
@@ -57,21 +62,6 @@ function changeFontSize() {
     localStorage.setItem('fontSize', size);
 }
         
-        utterance.pitch = globalTTSSettings.pitch;
-        utterance.rate = globalTTSSettings.rate;
-        utterance.volume = 1.0;
-        
-        speechSynthesis.speak(utterance);
-    } else {
-        alert('お使いのブラウザは音声合成に対応していません。');
-    }
-}
-
-// グローバルTTS設定を取得する関数（他のページから使用可能）
-function getGlobalTTSSettings() {
-    return globalTTSSettings;
-}
-
 // CSS変数でフォントサイズを設定
 const style = document.createElement('style');
 style.textContent = `
@@ -451,13 +441,6 @@ function runUserCode(lessonId) {
                 
                 // レッスン完了処理
                 markLessonCompleted(lessonId);
-                
-                // 川田の成功コメント
-                if (globalTTSSettings.autoTTS) {
-                    setTimeout(() => {
-                        speakKawadaComment(result.kawadaComment);
-                    }, 1000);
-                }
                 
             }, 600);
         }, 800);
