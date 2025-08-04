@@ -81,3 +81,60 @@
     </div>
 </main>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+// C言語学習セッションの開始
+document.addEventListener('DOMContentLoaded', function() {
+    // スケジューラーが利用可能な場合のみ実行
+    if (window.kawadaScheduler) {
+        kawadaScheduler.startSession('cstudy', 'C言語入門');
+    }
+    
+    // レッスンボタンのクリック時にレッスン情報を更新
+    document.querySelectorAll('.lesson-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const lessonName = this.querySelector('.lesson-title').textContent;
+            if (window.kawadaScheduler) {
+                kawadaScheduler.currentLesson = `C言語 - ${lessonName}`;
+            }
+        });
+    });
+    
+    // 学習完了時のイベント
+    window.addEventListener('beforeunload', function() {
+        if (window.kawadaScheduler && kawadaScheduler.isRecording) {
+            // 進捗に応じて完了判定
+            const progressElement = document.getElementById('progress-text');
+            const progressText = progressElement ? progressElement.textContent : '';
+            const isCompleted = progressText.includes('100%') || 
+                               document.querySelectorAll('.lesson-btn.completed').length > 0;
+            
+            kawadaScheduler.endSession(isCompleted);
+        }
+    });
+});
+
+// 既存のC言語学習スクリプトを拡張
+// lesson completion時にスケジューラーに通知
+function markLessonCompleted(lessonId) {
+    // 既存の完了処理...
+    
+    // スケジューラーに完了を通知
+    if (window.kawadaScheduler) {
+        kawadaScheduler.showKawadaMessage(
+            "お疲れさまでした！", 
+            "レッスンを完了しましたね！川田もとても嬉しいです💕", 
+            'cheerful'
+        );
+    }
+}
+
+// 川田のリアクション表示関数
+function showKawadaReaction(type, message) {
+    if (window.kawadaScheduler) {
+        kawadaScheduler.showKawadaMessage("川田より", message, type);
+    }
+}
+</script>
+{% endblock %}
