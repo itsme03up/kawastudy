@@ -106,15 +106,6 @@ function changeFontSize() {
     localStorage.setItem('fontSize', size);
 }
 
-    const fontSizeSelect = document.getElementById('font-size');
-    if (!fontSizeSelect) return;
-    
-    const size = fontSizeSelect.value;
-    document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/g, '');
-    document.documentElement.classList.add(`font-size-${size}`);
-    localStorage.setItem('fontSize', size);
-}
-
 function saveTTSSettings() {
     localStorage.setItem('ttsSettings', JSON.stringify(globalTTSSettings));
 }
