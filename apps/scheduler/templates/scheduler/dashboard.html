@@ -1,522 +1,335 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}川田からのお誘い - スケジューラー{% endblock %}
+{% block title %}学習スケジューラー - ダッシュボード{% endblock %}
 
 {% block body_class %}scheduler-dashboard{% endblock %}
 
 {% block extra_css %}
 <style>
-.scheduler-dashboard {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 2rem 0;
+body.scheduler-dashboard .main-content {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
 }
 
-.dashboard-container {
+body.scheduler-dashboard .container-fluid {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0;
 }
 
 .dashboard-header {
     text-align: center;
-    color: white;
+    color: #2c3e50;
     margin-bottom: 3rem;
 }
 
 .dashboard-header h1 {
     font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+    color: #34495e;
+    font-weight: 600;
 }
 
-.dashboard-grid {
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #74b9ff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
 }
 
-.card {
+.section-card {
     background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
+    border-radius: 15px;
+    padding: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.card-header {
+.section-header {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    font-size: 1.3rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    gap: 1rem;
 }
 
-.card-icon {
-    font-size: 2rem;
-    margin-right: 1rem;
+.section-header .icon {
+    font-size: 1.5rem;
 }
 
-.card-title {
-    font-size: 1.4rem;
+.section-content {
+    padding: 2rem;
+}
+
+.schedule-list, .message-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.schedule-item, .message-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.schedule-item:last-child, .message-item:last-child {
+    border-bottom: none;
+}
+
+.schedule-info, .message-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule-title, .message-sender {
+    font-weight: 600;
+    color: #34495e;
+}
+
+.schedule-time, .message-preview {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.schedule-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+}
+
+.status-completed { background-color: #2ecc71; }
+.status-upcoming { background-color: #f1c40f; }
+.status-pending { background-color: #e74c3c; }
+
+.message-unread .message-sender {
     font-weight: bold;
-    color: #333;
+    color: #2c3e50;
 }
 
-.kawada-invitation {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+.empty-state {
+    text-align: center;
+    padding: 3rem 0;
+    color: #6c757d;
+}
+
+.empty-state .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.btn-primary-gradient {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
     border: none;
     color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.kawada-invitation .card-title {
+.btn-primary-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.section-footer {
+    padding: 1.5rem 2rem;
+    background-color: #f8f9fa;
+    text-align: right;
+    border-top: 1px solid #e9ecef;
+}
+
+.kawada-motivation-card {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
     color: white;
-}
-
-.kawada-section {
+    border-radius: 15px;
+    padding: 2rem;
     display: flex;
     align-items: center;
     gap: 2rem;
+    margin-bottom: 2rem;
 }
 
-.kawada-avatar {
-    width: 120px;
-    height: 120px;
+.kawada-avatar img {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    flex-shrink: 0;
+    border: 3px solid white;
 }
 
-.kawada-message {
-    flex: 1;
-}
-
-.kawada-message h3 {
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
-    color: white;
-}
-
-.kawada-message p {
+.kawada-quote p {
+    margin: 0;
     font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
+    font-style: italic;
 }
 
-.suggestion-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 2px solid white;
-    padding: 0.8rem 2rem;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-.suggestion-btn:hover {
-    background: white;
-    color: #ff9a9e;
-    text-decoration: none;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1rem;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #667eea;
-    display: block;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: #666;
+.kawada-quote footer {
+    text-align: right;
     margin-top: 0.5rem;
-}
-
-.calendar-week {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.day-cell {
-    padding: 1rem;
-    text-align: center;
-    border-radius: 10px;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.day-cell.today {
-    background: #667eea;
-    color: white;
-}
-
-.day-cell.has-schedule {
-    background: #ff9a9e;
-    color: white;
-}
-
-.day-cell:hover {
-    transform: scale(1.05);
-}
-
-.day-number {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.day-label {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-.schedule-item {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    border-left: 4px solid #667eea;
-}
-
-.schedule-time {
-    font-weight: bold;
-    color: #667eea;
-}
-
-.schedule-title {
-    margin: 0.5rem 0;
-    font-weight: bold;
-}
-
-.schedule-app {
-    color: #666;
     font-size: 0.9rem;
+    opacity: 0.8;
 }
 
-.message-item {
-    background: #fff3cd;
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    border-left: 4px solid #ffc107;
-    position: relative;
-}
+/* Font Awesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-.message-item.unread {
-    background: #d1ecf1;
-    border-color: #17a2b8;
-}
-
-.message-kawada {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #ffc107;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
-
-.message-title {
-    font-weight: bold;
-    margin: 0;
-}
-
-.message-content {
-    margin: 0;
-    line-height: 1.5;
-}
-
-.message-time {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 0.5rem;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.btn-primary {
-    background: #667eea;
-    color: white;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    background: #5a6fd8;
-    text-decoration: none;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: #667eea;
-    padding: 1rem 2rem;
-    border: 2px solid #667eea;
-    border-radius: 30px;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background: #667eea;
-    color: white;
-    text-decoration: none;
-}
-
-@media (max-width: 768px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .kawada-section {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .calendar-week {
-        grid-template-columns: repeat(7, 1fr);
-        gap: 0.25rem;
-    }
-    
-    .day-cell {
-        padding: 0.5rem;
-        font-size: 0.8rem;
-    }
-}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <h1>💕 川田からのお誘い</h1>
-        <p>一緒に楽しく学習しませんか？</p>
+<div class="dashboard-header">
+    <h1>学習ダッシュボード</h1>
+    <p>こんにちは、{{ user.username }}さん！川田と一緒に学習を進めましょう。</p>
+</div>
+
+<div class="kawada-motivation-card">
+    <div class="kawada-avatar">
+        <img src="{% static 'img/kawada-cheerful.png' %}" alt="川田（応援）">
     </div>
-
-    <div class="dashboard-grid">
-        <!-- 川田からのお誘いメッセージ -->
-        <div class="card kawada-invitation">
-            <div class="kawada-section">
-                <div class="kawada-avatar">
-                    {% if invitation_message.expression == 'cheerful' %}🥰
-                    {% elif invitation_message.expression == 'smile' %}😊
-                    {% elif invitation_message.expression == 'thinking' %}🤔
-                    {% elif invitation_message.expression == 'gentle' %}😌
-                    {% elif invitation_message.expression == 'sad' %}😢
-                    {% else %}😊{% endif %}
-                </div>
-                <div class="kawada-message">
-                    <h3>{{ invitation_message.title }}</h3>
-                    <p>{{ invitation_message.content }}</p>
-                    <a href="{% url 'scheduler:create_schedule' %}?app={{ invitation_message.suggestion }}" class="suggestion-btn">
-                        スケジュールを立てる 💕
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- 学習統計 -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-icon">📊</span>
-                <span class="card-title">学習統計</span>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-number">{{ stats.current_streak }}</span>
-                    <span class="stat-label">連続日数</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ stats.total_sessions }}</span>
-                    <span class="stat-label">総セッション</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ stats.total_minutes }}</span>
-                    <span class="stat-label">総学習時間(分)</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">{{ stats.total_study_days }}</span>
-                    <span class="stat-label">学習日数</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 今週のスケジュール -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-icon">📅</span>
-                <span class="card-title">今週のスケジュール</span>
-            </div>
-            
-            <div class="calendar-week">
-                {% for date in week_dates %}
-                <div class="day-cell {% if date == today %}today{% endif %}">
-                    <div class="day-number">{{ date.day }}</div>
-                    <div class="day-label">
-                        {% if date.weekday == 0 %}月
-                        {% elif date.weekday == 1 %}火
-                        {% elif date.weekday == 2 %}水
-                        {% elif date.weekday == 3 %}木
-                        {% elif date.weekday == 4 %}金
-                        {% elif date.weekday == 5 %}土
-                        {% else %}日{% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            {% for schedule in weekly_schedules %}
-            <div class="schedule-item">
-                <div class="schedule-time">{{ schedule.scheduled_date|date:"m/d H:i" }}</div>
-                <div class="schedule-title">{{ schedule.title }}</div>
-                <div class="schedule-app">{{ schedule.get_app_name_display }}</div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; color: #666; margin: 2rem 0;">
-                今週はまだスケジュールがありません<br>
-                川田と一緒に予定を立てませんか？ 💕
-            </p>
-            {% endfor %}
-        </div>
-
-        <!-- 川田からのメッセージ -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-icon">💌</span>
-                <span class="card-title">川田からのメッセージ</span>
-            </div>
-            
-            {% for message in unread_messages %}
-            <div class="message-item unread">
-                <div class="message-kawada">
-                    <div class="message-avatar">
-                        {% if message.kawada_expression == 'cheerful' %}🥰
-                        {% elif message.kawada_expression == 'smile' %}😊
-                        {% elif message.kawada_expression == 'thinking' %}🤔
-                        {% elif message.kawada_expression == 'gentle' %}😌
-                        {% elif message.kawada_expression == 'sad' %}😢
-                        {% else %}😊{% endif %}
-                    </div>
-                    <h4 class="message-title">{{ message.title }}</h4>
-                </div>
-                <p class="message-content">{{ message.content }}</p>
-                <div class="message-time">{{ message.created_at|date:"m/d H:i" }}</div>
-            </div>
-            {% empty %}
-            <p style="text-align: center; color: #666; margin: 2rem 0;">
-                新しいメッセージはありません<br>
-                学習を始めると川田からメッセージが届きますよ 😊
-            </p>
-            {% endfor %}
-
-            {% if unread_messages %}
-            <div style="text-align: center; margin-top: 1rem;">
-                <a href="{% url 'scheduler:messages' %}" class="btn-secondary">
-                    すべてのメッセージを見る
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="action-buttons">
-        <a href="{% url 'scheduler:create_schedule' %}" class="btn-primary">
-            📅 新しいスケジュールを作成
-        </a>
-        <a href="{% url 'scheduler:messages' %}" class="btn-secondary">
-            💌 メッセージ一覧を見る
-        </a>
+    <div class="kawada-quote">
+        <p>"{{ daily_message }}"</p>
+        <footer>- 川田</footer>
     </div>
 </div>
 
-<script>
-// 未読メッセージの定期チェック
-function checkUnreadMessages() {
-    fetch('{% url "scheduler:get_unread_messages" %}')
-        .then(response => response.json())
-        .then(data => {
-            if (data.messages && data.messages.length > 0) {
-                // 新しいメッセージがある場合の処理
-                console.log('新しいメッセージがあります:', data.messages.length);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+        <div class="stat-number">{{ stats.completed_sessions }}</div>
+        <div class="stat-label">完了セッション</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-number">{{ stats.total_hours|floatformat:1 }}</div>
+        <div class="stat-label">合計学習時間</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-running"></i></div>
+        <div class="stat-number">{{ stats.current_streak }}</div>
+        <div class="stat-label">継続日数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+        <div class="stat-number">{{ stats.longest_streak }}</div>
+        <div class="stat-label">最長継続日数</div>
+    </div>
+</div>
 
-// 5分ごとにチェック
-setInterval(checkUnreadMessages, 5 * 60 * 1000);
+<div class="main-grid">
+    <div class="section-card">
+        <div class="section-header">
+            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+            <span>今後の学習予定</span>
+        </div>
+        <div class="section-content">
+            {% if upcoming_schedules %}
+                <ul class="schedule-list">
+                    {% for schedule in upcoming_schedules %}
+                    <li class="schedule-item">
+                        <div class="schedule-info">
+                            <span class="schedule-title">{{ schedule.title }}</span>
+                            <span class="schedule-time">{{ schedule.start_time|date:"Y/m/d H:i" }} - {{ schedule.end_time|date:"H:i" }}</span>
+                        </div>
+                        <span class="schedule-status status-upcoming">予定</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon"><i class="fas fa-calendar-plus"></i></div>
+                    <p>今後の予定はありません。</p>
+                    <p>新しい学習計画を立てましょう！</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-footer">
+            <a href="{% url 'scheduler:create_schedule' %}" class="btn btn-primary-gradient">
+                <i class="fas fa-plus"></i> 新しい予定を作成
+            </a>
+        </div>
+    </div>
 
-// メッセージクリック時の既読処理
-document.querySelectorAll('.message-item.unread').forEach(item => {
-    item.addEventListener('click', function() {
-        const messageId = this.dataset.messageId;
-        if (messageId) {
-            fetch(`{% url 'scheduler:mark_message_read' 0 %}`.replace('0', messageId), {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    this.classList.remove('unread');
-                }
-            });
-        }
-    });
-});
-</script>
+    <div class="section-card">
+        <div class="section-header">
+            <span class="icon"><i class="fas fa-envelope"></i></span>
+            <span>川田からのメッセージ</span>
+        </div>
+        <div class="section-content">
+            {% if recent_messages %}
+                <ul class="message-list">
+                    {% for message in recent_messages %}
+                    <li class="message-item {% if not message.is_read %}message-unread{% endif %}">
+                        <div class="message-info">
+                            <span class="message-sender">川田</span>
+                            <span class="message-preview">{{ message.content|truncatechars:30 }}</span>
+                        </div>
+                        <small class="text-muted">{{ message.sent_at|timesince }}前</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon"><i class="fas fa-comment-slash"></i></div>
+                    <p>メッセージはまだありません。</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-footer">
+            <a href="{% url 'scheduler:messages' %}" class="btn btn-primary-gradient">
+                <i class="fas fa-inbox"></i> すべてのメッセージを見る
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}
