@@ -5,7 +5,7 @@ app_name = 'scheduler'
 
 urlpatterns = [
     path('', views.scheduler_dashboard, name='dashboard'),
-    path('schedule/', views.create_schedule, name='create_schedule'),
+    path('create/', views.create_schedule, name='create_schedule'),
     path('messages/', views.kawada_messages, name='messages'),
     path('messages/<int:message_id>/read/', views.mark_message_read, name='mark_message_read'),
     path('api/study-session/', views.record_study_session, name='record_study_session'),
