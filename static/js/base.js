@@ -1,6 +1,25 @@
-// 共通JavaScript機能
+// グローバルTTS設定
+let globalTTSSettings = {
+    autoTTS: true,
+    pitch: 0.6,
+    rate: 0.8
+};
+
+// すべての初期化を統合
 document.addEventListener('DOMContentLoaded', function() {
-    // ダークモード切り替え
+    console.log('ページが読み込まれました');
+    console.log('body classes:', document.body.className);
+    
+    // C言語学習ページの初期化
+    if (document.body.classList.contains('cstudy-page')) {
+        console.log('C言語学習ページを初期化します');
+        initCStudyPage();
+        initNavigation();
+        initCodeRunButtons();
+    }
+});
+
+function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         // 保存されたテーマを復元
@@ -20,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // フォントサイズ変更
+}
+
+function initFontSize() {
     const fontSizeSelect = document.getElementById('font-size');
     if (fontSizeSelect) {
         // 保存されたフォントサイズを復元
@@ -31,17 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         fontSizeSelect.addEventListener('change', changeFontSize);
     }
-});
+}
 
-// グローバルTTS設定
-let globalTTSSettings = {
-    autoTTS: true,
-    pitch: 0.6,
-    rate: 0.8
-};
-
-// TTS設定の初期化
-document.addEventListener('DOMContentLoaded', function() {
+function initTTSSettings() {
     // 保存された設定を復元
     const savedSettings = localStorage.getItem('ttsSettings');
     if (savedSettings) {
@@ -82,9 +94,18 @@ document.addEventListener('DOMContentLoaded', function() {
             saveTTSSettings();
         });
     }
-});
+}
 
 function changeFontSize() {
+    const fontSizeSelect = document.getElementById('font-size');
+    if (!fontSizeSelect) return;
+    
+    const size = fontSizeSelect.value;
+    document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/g, '');
+    document.documentElement.classList.add(`font-size-${size}`);
+    localStorage.setItem('fontSize', size);
+}
+
     const fontSizeSelect = document.getElementById('font-size');
     if (!fontSizeSelect) return;
     
@@ -176,8 +197,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// C言語学習ページ専用機能
-document.addEventListener('DOMContentLoaded', function() {
+function initCodeRunButtons() {
     // C言語コード実行ボタンの処理
     const tryRunButton = document.getElementById('try-run');
     if (tryRunButton) {
@@ -192,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
             runCCode('try-run-2', 'run-output-2', 2);
         });
     }
-});
+}
 
 // C言語コードを実行する関数（シミュレーション）
 function runCCode(buttonId, outputId, exampleNumber) {
@@ -273,164 +293,6 @@ function speakKawadaComment(text) {
     }
 }
 
-// ===== C言語学習ページのナビゲーション機能 =====
-
-// 学習進捗管理
-let learningProgress = {
-    completedSections: JSON.parse(localStorage.getItem('cstudy-progress') || '[]'),
-    currentSection: 'intro'
-};
-
-// 学習ナビゲーション機能の初期化
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.body.classList.contains('cstudy-page')) {
-        initLearningNavigation();
-    }
-});
-
-function initLearningNavigation() {
-    // 進捗表示の初期化
-    updateProgressDisplay();
-    
-    // 目次リンクのイベントリスナー
-    document.querySelectorAll('.toc-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetSection = this.getAttribute('data-section');
-            scrollToSection(targetSection);
-            updateCurrentSection(targetSection);
-        });
-    });
-    
-    // セクションナビゲーションボタン
-    document.querySelectorAll('.prev-section-btn, .next-section-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const targetSection = this.getAttribute('data-target');
-            scrollToSection(targetSection);
-            updateCurrentSection(targetSection);
-        });
-    });
-    
-    // 完了ボタン
-    document.querySelectorAll('.mark-complete-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const section = this.getAttribute('data-section');
-            toggleSectionComplete(section);
-        });
-        
-        // 既に完了済みの場合の表示更新
-        const section = btn.getAttribute('data-section');
-        if (learningProgress.completedSections.includes(section)) {
-            btn.textContent = '✅ 完了済み';
-            btn.classList.add('completed');
-        }
-    });
-    
-    // スクロール監視
-    setupScrollSpy();
-}
-
-function scrollToSection(sectionId) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
-}
-
-function updateCurrentSection(sectionId) {
-    learningProgress.currentSection = sectionId;
-    
-    // 目次の現在セクション表示を更新
-    document.querySelectorAll('.toc-link').forEach(link => {
-        link.classList.remove('current');
-        if (link.getAttribute('data-section') === sectionId) {
-            link.classList.add('current');
-        }
-    });
-}
-
-function toggleSectionComplete(sectionId) {
-    const index = learningProgress.completedSections.indexOf(sectionId);
-    const btn = document.querySelector(`[data-section="${sectionId}"]`);
-    
-    if (index === -1) {
-        // 完了に設定
-        learningProgress.completedSections.push(sectionId);
-        btn.textContent = '✅ 完了済み';
-        btn.classList.add('completed');
-        
-        // 川田のコメント
-        if (globalTTSSettings.autoTTS) {
-            setTimeout(() => {
-                speakKawadaComment('お疲れ様です！このセクションを完了しましたね。順調な学習ペースです！');
-            }, 500);
-        }
-    } else {
-        // 完了を取り消し
-        learningProgress.completedSections.splice(index, 1);
-        btn.textContent = '✅ 完了にする';
-        btn.classList.remove('completed');
-    }
-    
-    // 進捗を保存・更新
-    localStorage.setItem('cstudy-progress', JSON.stringify(learningProgress.completedSections));
-    updateProgressDisplay();
-    updateTOCCompletion();
-}
-
-function updateProgressDisplay() {
-    const totalSections = 4; // intro, lesson1, lesson2, kawada-comment
-    const completedCount = learningProgress.completedSections.length;
-    const percentage = Math.round((completedCount / totalSections) * 100);
-    
-    const progressBar = document.getElementById('learning-progress-bar');
-    const progressText = document.getElementById('progress-text');
-    
-    if (progressBar && progressText) {
-        progressBar.style.width = `${percentage}%`;
-        progressText.textContent = `進捗: ${percentage}% (${completedCount}/${totalSections})`;
-    }
-}
-
-function updateTOCCompletion() {
-    document.querySelectorAll('.toc-link').forEach(link => {
-        const section = link.getAttribute('data-section');
-        if (learningProgress.completedSections.includes(section)) {
-            link.classList.add('completed');
-        } else {
-            link.classList.remove('completed');
-        }
-    });
-}
-
-function setupScrollSpy() {
-    const sections = ['intro', 'lesson1', 'lesson2', 'kawada-comment'];
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const sectionId = entry.target.id;
-                if (sections.includes(sectionId)) {
-                    updateCurrentSection(sectionId);
-                }
-            }
-        });
-    }, {
-        threshold: 0.3,
-        rootMargin: '-120px 0px -50% 0px'
-    });
-    
-    sections.forEach(sectionId => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            observer.observe(element);
-        }
-    });
-}
-
 // ===== C言語学習ページの新機能 =====
 
 // 学習レッスンデータ
@@ -452,25 +314,40 @@ const lessonData = {
     },
     hello: {
         title: "1️⃣ Hello World プログラム",
-        content: `
-            <h2>初めてのC言語プログラム</h2>
-            <p>プログラミングの第一歩は「Hello World」を出力することです。</p>
-            <pre><code>#include &lt;stdio.h&gt;
+        code: `#include <stdio.h>
 
 int main(void) {
     printf("Hello, World!\\n");
     return 0;
-}</code></pre>
-            <button class="try-run-button" onclick="runCode('hello')">▶️ 実行してみる</button>
-            <div id="output-hello" class="run-output"></div>
+}`,
+        content: `
+            <h2>初めてのC言語プログラム</h2>
+            <p>プログラミングの第一歩は「Hello World」を出力することです。下のコードを編集して実行してみましょう！</p>
             
-            <h3>解説</h3>
-            <ul>
-                <li><code>#include &lt;stdio.h&gt;</code> - 標準入出力ライブラリを読み込み</li>
-                <li><code>int main(void)</code> - プログラムの開始点</li>
-                <li><code>printf()</code> - 文字列を出力する関数</li>
-                <li><code>return 0;</code> - プログラムの正常終了</li>
-            </ul>
+            <div class="code-editor-section">
+                <h3>📝 コードエディター</h3>
+                <textarea id="code-editor-hello" class="code-editor" spellcheck="false"></textarea>
+                <div class="editor-buttons">
+                    <button class="reset-code-btn" onclick="resetCode('hello')">🔄 リセット</button>
+                    <button class="try-run-button" onclick="runUserCode('hello')">▶️ 実行してみる</button>
+                </div>
+                <div id="output-hello" class="run-output"></div>
+            </div>
+            
+            <div class="explanation-section">
+                <h3>📚 解説</h3>
+                <ul>
+                    <li><code>#include &lt;stdio.h&gt;</code> - 標準入出力ライブラリを読み込み</li>
+                    <li><code>int main(void)</code> - プログラムの開始点</li>
+                    <li><code>printf()</code> - 文字列を出力する関数</li>
+                    <li><code>return 0;</code> - プログラムの正常終了</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4>💡 チャレンジ</h4>
+                    <p>「Hello, World!」の部分を「こんにちは、世界！」に変更してみましょう。</p>
+                </div>
+            </div>
         `,
         kawadaComment: "おめでとうございます！最初のプログラムが動きましたね。printf関数は画面に文字を表示する魔法の呪文です！"
     },
@@ -534,13 +411,6 @@ int main(void) {
     }
 };
 
-// C言語学習ページの初期化
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.body.classList.contains('cstudy-page')) {
-        initCStudyPage();
-    }
-});
-
 // 学習進捗管理
 let studyProgress = {
     completedLessons: JSON.parse(localStorage.getItem('cstudy-completed') || '[]'),
@@ -548,14 +418,21 @@ let studyProgress = {
 };
 
 function initCStudyPage() {
+    console.log('C言語学習ページを初期化中...');
+    
     // 初期レッスンを表示
     showLesson('intro');
     updateProgress();
     
     // レッスンボタンのイベントリスナー
-    document.querySelectorAll('.lesson-btn').forEach(btn => {
+    const lessonButtons = document.querySelectorAll('.lesson-btn');
+    console.log('レッスンボタンの数:', lessonButtons.length);
+    
+    lessonButtons.forEach((btn, index) => {
+        console.log(`ボタン ${index + 1}:`, btn.getAttribute('data-lesson'));
         btn.addEventListener('click', function() {
             const lessonId = this.getAttribute('data-lesson');
+            console.log('レッスンボタンがクリックされました:', lessonId);
             showLesson(lessonId);
             
             // アクティブ状態を更新
@@ -566,18 +443,41 @@ function initCStudyPage() {
 }
 
 function showLesson(lessonId) {
+    console.log('レッスンを表示中:', lessonId);
     const lesson = lessonData[lessonId];
-    if (!lesson) return;
+    if (!lesson) {
+        console.error('レッスンが見つかりません:', lessonId);
+        return;
+    }
     
+    console.log('レッスンデータ:', lesson);
     studyProgress.currentLesson = lessonId;
     
     // コンテンツエリアを更新
     const contentArea = document.getElementById('lesson-content');
-    contentArea.innerHTML = lesson.content;
+    if (contentArea) {
+        contentArea.innerHTML = lesson.content;
+        console.log('コンテンツエリアを更新しました');
+    } else {
+        console.error('lesson-contentエリアが見つかりません');
+    }
     
     // 川田のコメントを更新
     const kawadaComment = document.getElementById('kawada-comment');
-    kawadaComment.innerHTML = `<p>${lesson.kawadaComment}</p>`;
+    if (kawadaComment) {
+        kawadaComment.innerHTML = `<p>${lesson.kawadaComment}</p>`;
+        console.log('川田のコメントを更新しました');
+    } else {
+        console.error('kawada-commentエリアが見つかりません');
+    }
+    
+    // コードエディターにデフォルトコードを設定
+    if (lesson.code) {
+        const editor = document.getElementById(`code-editor-${lessonId}`);
+        if (editor) {
+            editor.value = lesson.code;
+        }
+    }
     
     // 川田のコメントを音声で読み上げ
     if (globalTTSSettings.autoTTS) {
@@ -587,11 +487,19 @@ function showLesson(lessonId) {
     }
 }
 
-function runCode(lessonId) {
+// ユーザーのコードを実行する関数
+function runUserCode(lessonId) {
+    const editor = document.getElementById(`code-editor-${lessonId}`);
     const outputElement = document.getElementById(`output-${lessonId}`);
-    const button = document.querySelector(`button[onclick="runCode('${lessonId}')"]`);
+    const button = document.querySelector(`button[onclick="runUserCode('${lessonId}')"]`);
     
-    if (!outputElement || !button) return;
+    if (!editor || !outputElement || !button) return;
+    
+    const userCode = editor.value.trim();
+    if (!userCode) {
+        alert('コードを入力してください！');
+        return;
+    }
     
     // ボタンを無効化
     button.disabled = true;
@@ -609,24 +517,12 @@ function runCode(lessonId) {
             outputElement.textContent += '$ ./program\n';
             
             setTimeout(() => {
-                let result = '';
+                let result = simulateCodeExecution(lessonId, userCode);
                 
-                switch(lessonId) {
-                    case 'hello':
-                        result = 'Hello, World!\n';
-                        break;
-                    case 'variables':
-                        result = 'a = 10, b = 20\na + b = 30\n';
-                        break;
-                    case 'input':
-                        result = '好きな数字を入力してください: 42\n入力された数字は 42 です\n2倍すると 84 になります\n';
-                        break;
-                }
-                
-                outputElement.textContent += result;
+                outputElement.textContent += result.output;
                 outputElement.textContent += '\n✅ プログラムが正常に終了しました (終了コード: 0)';
                 
-                // ボタンを復活 & レッスン完了
+                // ボタンを復活
                 button.disabled = false;
                 button.textContent = '▶️ 実行してみる';
                 
@@ -636,7 +532,7 @@ function runCode(lessonId) {
                 // 川田の成功コメント
                 if (globalTTSSettings.autoTTS) {
                     setTimeout(() => {
-                        speakKawadaComment('素晴らしい！プログラムが正常に動作しました。よくできましたね！');
+                        speakKawadaComment(result.kawadaComment);
                     }, 1000);
                 }
                 
@@ -645,41 +541,219 @@ function runCode(lessonId) {
     }, 500);
 }
 
-function markLessonCompleted(lessonId) {
-    if (!studyProgress.completedLessons.includes(lessonId)) {
-        studyProgress.completedLessons.push(lessonId);
-        localStorage.setItem('cstudy-completed', JSON.stringify(studyProgress.completedLessons));
+// コードリセット関数
+function resetCode(lessonId) {
+    const lesson = lessonData[lessonId];
+    const editor = document.getElementById(`code-editor-${lessonId}`);
+    
+    if (lesson && lesson.code && editor) {
+        editor.value = lesson.code;
         
-        // UI更新
-        const btn = document.querySelector(`[data-lesson="${lessonId}"]`);
-        if (btn) {
-            btn.classList.add('completed');
-            const status = btn.querySelector('.completion-status');
-            if (status) status.textContent = '✅';
+        if (globalTTSSettings.autoTTS) {
+            speakKawadaComment('コードをリセットしました。また挑戦してみてくださいね！');
         }
-        
-        updateProgress();
     }
 }
 
-function updateProgress() {
-    const totalLessons = Object.keys(lessonData).length;
+// コード実行シミュレーション
+function simulateCodeExecution(lessonId, userCode) {
+    let output = '';
+    let kawadaComment = '';
+    
+    // 簡単なパターンマッチングでアウトプットを予測
+    if (userCode.includes('printf') && userCode.includes('Hello')) {
+        output = 'Hello, World!\n';
+        kawadaComment = '素晴らしい！Hello Worldプログラムが動きました！';
+    } else if (userCode.includes('printf') && userCode.includes('こんにちは')) {
+        output = 'こんにちは、世界！\n';
+        kawadaComment = '日本語での出力、ナイスです！';
+    } else if (userCode.includes('int') && userCode.includes('+')) {
+        output = 'a = 10, b = 20\na + b = 30\n';
+        kawadaComment = '計算プログラムが正常に動作しています！算数は得意ですね。';
+    } else if (userCode.includes('scanf')) {
+        output = '好きな数字を入力してください: 42\n入力された数字は 42 です\n2倍すると 84 になります\n';
+        kawadaComment = '入力プログラムが完璧です！ユーザーとの対話ができていますね。';
+    } else if (userCode.includes('printf')) {
+        output = '(カスタム出力)\n';
+        kawadaComment = 'おお、独自のプログラムを作りましたね！創造性が光っています！';
+    } else {
+        output = 'プログラムを実行しました。\n';
+        kawadaComment = 'コードが実行されました。さらなる改善を目指しましょう！';
+    }
+    
+    return { output, kawadaComment };
+}
+
+// 川田のコメントを音声で読み上げる関数
+function speakKawadaComment(text) {
+    if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // 利用可能な音声から最適なものを選択
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        utterance.pitch = globalTTSSettings.pitch;
+        utterance.rate = globalTTSSettings.rate;
+        utterance.volume = 1.0;
+        
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// ===== C言語学習ページのナビゲーション機能 =====
+
+function initNavigation() {
+    if (document.body.classList.contains('cstudy-page')) {
+        initLearningNavigation();
+    }
+}
+
+function initLearningNavigation() {
+    // 進捗表示の初期化
+    updateProgressDisplay();
+    
+    // 目次リンクのイベントリスナー
+    document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetSection = this.getAttribute('data-section');
+            scrollToSection(targetSection);
+            updateCurrentSection(targetSection);
+        });
+    });
+    
+    // セクションナビゲーションボタン
+    document.querySelectorAll('.prev-section-btn, .next-section-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-target');
+            scrollToSection(targetSection);
+            updateCurrentSection(targetSection);
+        });
+    });
+    
+    // 完了ボタン
+    document.querySelectorAll('.mark-complete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            toggleSectionComplete(section);
+        });
+        
+        // 既に完了済みの場合の表示更新
+        const section = btn.getAttribute('data-section');
+        if (studyProgress.completedLessons.includes(section)) {
+            btn.textContent = '✅ 完了済み';
+            btn.classList.add('completed');
+        }
+    });
+    
+    // スクロール監視
+    setupScrollSpy();
+}
+
+function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+function updateCurrentSection(sectionId) {
+    studyProgress.currentLesson = sectionId;
+    
+    // 目次の現在セクション表示を更新
+    document.querySelectorAll('.toc-link').forEach(link => {
+        link.classList.remove('current');
+        if (link.getAttribute('data-section') === sectionId) {
+            link.classList.add('current');
+        }
+    });
+}
+
+function toggleSectionComplete(sectionId) {
+    const index = studyProgress.completedLessons.indexOf(sectionId);
+    const btn = document.querySelector(`[data-section="${sectionId}"]`);
+    
+    if (index === -1) {
+        // 完了に設定
+        studyProgress.completedLessons.push(sectionId);
+        btn.textContent = '✅ 完了済み';
+        btn.classList.add('completed');
+        
+        // 川田のコメント
+        if (globalTTSSettings.autoTTS) {
+            setTimeout(() => {
+                speakKawadaComment('お疲れ様です！このセクションを完了しましたね。順調な学習ペースです！');
+            }, 500);
+        }
+    } else {
+        // 完了を取り消し
+        studyProgress.completedLessons.splice(index, 1);
+        btn.textContent = '✅ 完了にする';
+        btn.classList.remove('completed');
+    }
+    
+    // 進捗を保存・更新
+    localStorage.setItem('cstudy-completed', JSON.stringify(studyProgress.completedLessons));
+    updateProgressDisplay();
+    updateTOCCompletion();
+}
+
+function updateProgressDisplay() {
+    const totalSections = 4; // intro, lesson1, lesson2, kawada-comment
     const completedCount = studyProgress.completedLessons.length;
-    const percentage = Math.round((completedCount / totalLessons) * 100);
+    const percentage = Math.round((completedCount / totalSections) * 100);
     
     const progressBar = document.getElementById('learning-progress-bar');
     const progressText = document.getElementById('progress-text');
     
-    if (progressBar) progressBar.style.width = `${percentage}%`;
-    if (progressText) progressText.textContent = `進捗: ${percentage}% (${completedCount}/${totalLessons})`;
+    if (progressBar && progressText) {
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `進捗: ${percentage}% (${completedCount}/${totalSections})`;
+    }
+}
+
+function updateTOCCompletion() {
+    document.querySelectorAll('.toc-link').forEach(link => {
+        const section = link.getAttribute('data-section');
+        if (studyProgress.completedLessons.includes(section)) {
+            link.classList.add('completed');
+        } else {
+            link.classList.remove('completed');
+        }
+    });
+}
+
+function setupScrollSpy() {
+    const sections = ['intro', 'lesson1', 'lesson2', 'kawada-comment'];
     
-    // 完了状態をボタンに反映
-    studyProgress.completedLessons.forEach(lessonId => {
-        const btn = document.querySelector(`[data-lesson="${lessonId}"]`);
-        if (btn) {
-            btn.classList.add('completed');
-            const status = btn.querySelector('.completion-status');
-            if (status) status.textContent = '✅';
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                if (sections.includes(sectionId)) {
+                    updateCurrentSection(sectionId);
+                }
+            }
+        });
+    }, {
+        threshold: 0.3,
+        rootMargin: '-120px 0px -50% 0px'
+    });
+    
+    sections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            observer.observe(element);
         }
     });
 }
