@@ -263,27 +263,27 @@ function runCCode(buttonId, outputId, exampleNumber) {
 }
 
 // 川田のコメントを音声で読み上げる関数
-function speakKawadaComment(text) {
-    if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
-        const utterance = new SpeechSynthesisUtterance(text);
+// function speakKawadaComment(text) {
+//     if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
+//         const utterance = new SpeechSynthesisUtterance(text);
         
-        // 利用可能な音声から最適なものを選択
-        const voices = speechSynthesis.getVoices();
-        const japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
+//         // 利用可能な音声から最適なものを選択
+//         const voices = speechSynthesis.getVoices();
+//         const japaneseVoice = voices.find(voice => 
+//             voice.lang.includes('ja') || voice.name.includes('Japanese')
+//         );
         
-        if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
-        }
+//         if (japaneseVoice) {
+//             utterance.voice = japaneseVoice;
+//         }
         
-        utterance.pitch = globalTTSSettings.pitch;
-        utterance.rate = globalTTSSettings.rate;
-        utterance.volume = 1.0;
+//         utterance.pitch = globalTTSSettings.pitch;
+//         utterance.rate = globalTTSSettings.rate;
+//         utterance.volume = 1.0;
         
-        speechSynthesis.speak(utterance);
-    }
-}
+//         speechSynthesis.speak(utterance);
+//     }
+// }
 
 // ===== C言語学習ページの新機能 =====
 
