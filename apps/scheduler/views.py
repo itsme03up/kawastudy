@@ -94,7 +94,10 @@ def create_schedule(request):
         ('typinggame', 'タイピングゲーム'),
     ]
     
-    context = {'apps_choices': apps_choices}
+    context = {
+        'apps_choices': apps_choices,
+        'today': timezone.now().date()
+    }
     return render(request, 'scheduler/create_schedule.html', context)
 
 
@@ -102,6 +105,13 @@ def create_schedule(request):
 def kawada_messages(request):
     """川田からのメッセージ一覧"""
     messages_list = KawadaMessage.objects.filter(user=request.user)
+    
+    # フィルタリング
+    filter_type = request.GET.get('filter', 'all')
+    if filter_type == 'unread':
+        messages_list = messages_list.filter(is_read=False)
+    elif filter_type in ['encouragement', 'invitation', 'congratulations', 'reminder', 'welcome_back']:
+        messages_list = messages_list.filter(message_type=filter_type)
     
     context = {'messages': messages_list}
     return render(request, 'scheduler/messages.html', context)
