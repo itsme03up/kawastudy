@@ -251,11 +251,11 @@ function runCCode(buttonId, outputId, exampleNumber) {
                 }
                 
                 // 川田のコメントを音声で読み上げ（TTS設定に従う）
-                if (globalTTSSettings.autoTTS) {
-                    setTimeout(() => {
-                        speakKawadaComment(kawadaComment);
-                    }, 1000);
-                }
+                // if (globalTTSSettings.autoTTS) {
+                //     setTimeout(() => {
+                //         speakKawadaComment(kawadaComment);
+                //     }, 1000);
+                // }
                 
             }, 500);
         }, 800);
