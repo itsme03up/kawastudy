@@ -24,7 +24,7 @@
             </div>
 
             <div class="menu-section">
-                <h3>� 学習メニュー</h3>
+                <h3>📚 学習メニュー</h3>
                 <ul class="lesson-list">
                     <li>
                         <button class="lesson-btn active" data-lesson="intro">
@@ -71,90 +71,6 @@
                 <!-- 動的にコンテンツが挿入される -->
             </div>
         </div>
-    </div>
-</main>
-{% endblock %}
-    <div class="card" id="intro">
-        <section class="intro">
-            <h2>📖 はじめに</h2>
-            <p>このページでは、C言語の基本を川田と一緒に学んでいきます。</p>
-            <ul>
-                <li>main関数って？</li>
-                <li>printfの使い方</li>
-                <li>改行と出力</li>
-                <li>文字と数値の扱い</li>
-                <li>文字コードの基礎</li>
-            </ul>
-            <div class="section-actions">
-                <button class="mark-complete-btn" data-section="intro">✅ 完了にする</button>
-                <button class="next-section-btn" data-target="lesson1">次へ ➡️</button>
-            </div>
-        </section>
-    </div>
-
-    <div class="card" id="lesson1">
-        <section class="lesson">
-            <h2>1️⃣ main関数とprintf</h2>
-            <pre><code>
-#include &lt;stdio.h&gt;
-
-int main(void) {
-    printf("こんにちは、C言語！\n");
-    return 0;
-}
-            </code></pre>
-            <button id="try-run">このコードを試す</button>
-            <pre id="run-output" class="run-output"></pre>
-            <div class="section-actions">
-                <button class="prev-section-btn" data-target="intro">⬅️ 前へ</button>
-                <button class="mark-complete-btn" data-section="lesson1">✅ 完了にする</button>
-                <button class="next-section-btn" data-target="lesson2">次へ ➡️</button>
-            </div>
-        </section>
-    </div>
-
-    <div class="card" id="lesson2">
-        <section class="lesson">
-            <h2>2️⃣ 変数と計算</h2>
-            <pre><code>
-#include &lt;stdio.h&gt;
-
-int main(void) {
-    int a = 10;
-    int b = 20;
-    int sum = a + b;
-    
-    printf("a = %d, b = %d\n", a, b);
-    printf("a + b = %d\n", sum);
-    return 0;
-}
-            </code></pre>
-            <button id="try-run-2" class="try-run-button">このコードを試す</button>
-            <pre id="run-output-2" class="run-output"></pre>
-            <div class="section-actions">
-                <button class="prev-section-btn" data-target="lesson1">⬅️ 前へ</button>
-                <button class="mark-complete-btn" data-section="lesson2">✅ 完了にする</button>
-                <button class="next-section-btn" data-target="kawada-comment">次へ ➡️</button>
-            </div>
-        </section>
-    </div>
-
-    <div class="card" id="kawada-comment">
-        <section class="kawada-comment">
-            <h3>💬 川田語コメント</h3>
-            <blockquote>
-                main関数はC言語の玄関です。<br>
-                printfで「こんにちは！」と出してみましょう。<br>
-                打鍵ミスにはご注意を……。<br><br>
-                変数は箱のようなものです。<br>
-                intは整数を入れる箱、%dで中身を表示できます。<br>
-                計算結果も変数に保存できるのです。
-            </blockquote>
-            <div class="section-actions">
-                <button class="prev-section-btn" data-target="lesson2">⬅️ 前へ</button>
-                <button class="mark-complete-btn" data-section="kawada-comment">✅ 完了にする</button>
-            </div>
-        </section>
     </div>
 </main>
 {% endblock %}
