@@ -171,40 +171,10 @@ function runCCode(buttonId, outputId, exampleNumber) {
                     button.textContent = 'このコードを試す';
                 }
                 
-                // 川田のコメントを音声で読み上げ（TTS設定に従う）
-                // if (globalTTSSettings.autoTTS) {
-                //     setTimeout(() => {
-                //         speakKawadaComment(kawadaComment);
-                //     }, 1000);
-                // }
-                
             }, 500);
         }, 800);
     }, 600);
 }
-
-// 川田のコメントを音声で読み上げる関数
-// function speakKawadaComment(text) {
-//     if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
-//         const utterance = new SpeechSynthesisUtterance(text);
-        
-//         // 利用可能な音声から最適なものを選択
-//         const voices = speechSynthesis.getVoices();
-//         const japaneseVoice = voices.find(voice => 
-//             voice.lang.includes('ja') || voice.name.includes('Japanese')
-//         );
-        
-//         if (japaneseVoice) {
-//             utterance.voice = japaneseVoice;
-//         }
-        
-//         utterance.pitch = globalTTSSettings.pitch;
-//         utterance.rate = globalTTSSettings.rate;
-//         utterance.volume = 1.0;
-        
-//         speechSynthesis.speak(utterance);
-//     }
-// }
 
 // ===== C言語学習ページの新機能 =====
 
@@ -212,6 +182,12 @@ function runCCode(buttonId, outputId, exampleNumber) {
 const lessonData = {
     intro: {
         title: "📖 C言語について",
+        code: `#include <stdio.h>
+
+int main(void) {
+    printf("C言語の世界へようこそ！\\n");
+    return 0;
+}`,
         content: `
             <h2>C言語とは？</h2>
             <p>C言語は1972年にデニス・リッチーによって開発されたプログラミング言語です。</p>
@@ -222,6 +198,16 @@ const lessonData = {
                 <li>ハードウェアに近い制御が可能</li>
             </ul>
             <p>まずは簡単なプログラムから始めてみましょう！</p>
+            
+            <div class="code-editor-section">
+                <h3>📝 コードエディター</h3>
+                <textarea id="code-editor-intro" class="code-editor" spellcheck="false"></textarea>
+                <div class="editor-buttons">
+                    <button class="reset-code-btn" onclick="resetCode('intro')">🔄 リセット</button>
+                    <button class="try-run-button" onclick="runUserCode('intro')">▶️ 実行してみる</button>
+                </div>
+                <div id="output-intro" class="run-output"></div>
+            </div>
         `,
         kawadaComment: "C言語はプログラミングの基礎中の基礎です。しっかり学んで、コンピューターと仲良くなりましょう！"
     },
@@ -266,10 +252,7 @@ int main(void) {
     },
     variables: {
         title: "2️⃣ 変数と計算",
-        content: `
-            <h2>変数を使った計算</h2>
-            <p>変数は値を保存する「箱」のようなものです。</p>
-            <pre><code>#include &lt;stdio.h&gt;
+        code: `#include <stdio.h>
 
 int main(void) {
     int a = 10;
@@ -279,25 +262,40 @@ int main(void) {
     printf("a = %d, b = %d\\n", a, b);
     printf("a + b = %d\\n", sum);
     return 0;
-}</code></pre>
-            <button class="try-run-button" onclick="runCode('variables')">▶️ 実行してみる</button>
-            <div id="output-variables" class="run-output"></div>
+}`,
+        content: `
+            <h2>変数を使った計算</h2>
+            <p>変数は値を保存する「箱」のようなものです。</p>
             
-            <h3>解説</h3>
-            <ul>
-                <li><code>int</code> - 整数型の変数</li>
-                <li><code>%d</code> - 整数を表示するフォーマット指定子</li>
-                <li>変数は値を計算に使える</li>
-            </ul>
+            <div class="code-editor-section">
+                <h3>📝 コードエディター</h3>
+                <textarea id="code-editor-variables" class="code-editor" spellcheck="false"></textarea>
+                <div class="editor-buttons">
+                    <button class="reset-code-btn" onclick="resetCode('variables')">🔄 リセット</button>
+                    <button class="try-run-button" onclick="runUserCode('variables')">▶️ 実行してみる</button>
+                </div>
+                <div id="output-variables" class="run-output"></div>
+            </div>
+            
+            <div class="explanation-section">
+                <h3>📚 解説</h3>
+                <ul>
+                    <li><code>int</code> - 整数型の変数</li>
+                    <li><code>%d</code> - 整数を表示するフォーマット指定子</li>
+                    <li>変数は値を計算に使える</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4>💡 チャレンジ</h4>
+                    <p>変数aとbの値を変更して、違う計算をしてみましょう。掛け算（*）や引き算（-）も試してみてください。</p>
+                </div>
+            </div>
         `,
         kawadaComment: "変数は料理のボウルのようなものです。材料（値）を入れて、混ぜ合わせて（計算して）、美味しい結果を作り出せます！"
     },
     input: {
         title: "3️⃣ 入力と出力",
-        content: `
-            <h2>ユーザーからの入力</h2>
-            <p>scanf関数を使ってユーザーから値を入力してもらいましょう。</p>
-            <pre><code>#include &lt;stdio.h&gt;
+        code: `#include <stdio.h>
 
 int main(void) {
     int number;
@@ -309,18 +307,83 @@ int main(void) {
     printf("2倍すると %d になります\\n", number * 2);
     
     return 0;
-}</code></pre>
-            <button class="try-run-button" onclick="runCode('input')">▶️ 実行してみる</button>
-            <div id="output-input" class="run-output"></div>
+}`,
+        content: `
+            <h2>ユーザーからの入力</h2>
+            <p>scanf関数を使ってユーザーから値を入力してもらいましょう。</p>
             
-            <h3>解説</h3>
-            <ul>
-                <li><code>scanf()</code> - ユーザーからの入力を受け取る</li>
-                <li><code>&number</code> - 変数のアドレスを指定</li>
-                <li>インタラクティブなプログラムが作れる</li>
-            </ul>
+            <div class="code-editor-section">
+                <h3>📝 コードエディター</h3>
+                <textarea id="code-editor-input" class="code-editor" spellcheck="false"></textarea>
+                <div class="editor-buttons">
+                    <button class="reset-code-btn" onclick="resetCode('input')">🔄 リセット</button>
+                    <button class="try-run-button" onclick="runUserCode('input')">▶️ 実行してみる</button>
+                </div>
+                <div id="output-input" class="run-output"></div>
+            </div>
+            
+            <div class="explanation-section">
+                <h3>📚 解説</h3>
+                <ul>
+                    <li><code>scanf()</code> - ユーザーからの入力を受け取る</li>
+                    <li><code>&number</code> - 変数のアドレスを指定</li>
+                    <li>インタラクティブなプログラムが作れる</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4>💡 チャレンジ</h4>
+                    <p>2つの数字を入力して足し算をするプログラムに変更してみましょう。</p>
+                </div>
+            </div>
         `,
         kawadaComment: "入力機能があると、プログラムが会話できるようになります！ユーザーとコンピューターの架け橋ですね。"
+    },
+    strings: {
+        title: "4️⃣ 文字列と配列",
+        code: `#include <stdio.h>
+
+int main(void) {
+    char name[] = "Kawada";
+    char greeting[50];
+    
+    printf("こんにちは、%sさん！\\n", name);
+    
+    // 文字列のコピー
+    sprintf(greeting, "ようこそ、%sさん！", name);
+    printf("%s\\n", greeting);
+    
+    return 0;
+}`,
+        content: `
+            <h2>文字列とは？</h2>
+            <p>C言語では文字列はchar型の配列として扱います。</p>
+            
+            <div class="code-editor-section">
+                <h3>📝 コードエディター</h3>
+                <textarea id="code-editor-strings" class="code-editor" spellcheck="false"></textarea>
+                <div class="editor-buttons">
+                    <button class="reset-code-btn" onclick="resetCode('strings')">🔄 リセット</button>
+                    <button class="try-run-button" onclick="runUserCode('strings')">▶️ 実行してみる</button>
+                </div>
+                <div id="output-strings" class="run-output"></div>
+            </div>
+            
+            <div class="explanation-section">
+                <h3>📚 解説</h3>
+                <ul>
+                    <li><code>char name[]</code> - 文字列を格納する配列</li>
+                    <li><code>%s</code> - 文字列を表示するフォーマット指定子</li>
+                    <li><code>sprintf()</code> - 文字列を別の文字列に書き込む</li>
+                    <li>文字列は最後にヌル文字（\\0）が付く</li>
+                </ul>
+                
+                <div class="tip-box">
+                    <h4>💡 チャレンジ</h4>
+                    <p>nameの値を自分の名前に変更してみましょう。また、新しい文字列変数を作って表示してみてください。</p>
+                </div>
+            </div>
+        `,
+        kawadaComment: "文字列の扱いもできて、見事です！C言語の配列操作が理解できていますね。"
     }
 };
 
@@ -391,13 +454,6 @@ function showLesson(lessonId) {
             editor.value = lesson.code;
         }
     }
-    
-    // 川田のコメントを音声で読み上げ
-    if (globalTTSSettings.autoTTS) {
-        setTimeout(() => {
-            speakKawadaComment(lesson.kawadaComment);
-        }, 500);
-    }
 }
 
 // ユーザーのコードを実行する関数
@@ -454,10 +510,6 @@ function resetCode(lessonId) {
     
     if (lesson && lesson.code && editor) {
         editor.value = lesson.code;
-        
-        if (globalTTSSettings.autoTTS) {
-            speakKawadaComment('コードをリセットしました。また挑戦してみてくださいね！');
-        }
     }
 }
 
@@ -479,6 +531,9 @@ function simulateCodeExecution(lessonId, userCode) {
     } else if (userCode.includes('scanf')) {
         output = '好きな数字を入力してください: 42\n入力された数字は 42 です\n2倍すると 84 になります\n';
         kawadaComment = '入力プログラムが完璧です！ユーザーとの対話ができていますね。';
+    } else if (userCode.includes('char') && userCode.includes('name')) {
+        output = 'こんにちは、Kawadaさん！\nようこそ、Kawadaさん！\n';
+        kawadaComment = '文字列の扱いもできて、見事です！C言語の配列操作が理解できていますね。';
     } else if (userCode.includes('printf')) {
         output = '(カスタム出力)\n';
         kawadaComment = 'おお、独自のプログラムを作りましたね！創造性が光っています！';
@@ -571,13 +626,6 @@ function toggleSectionComplete(sectionId) {
         studyProgress.completedLessons.push(sectionId);
         btn.textContent = '✅ 完了済み';
         btn.classList.add('completed');
-        
-        // 川田のコメント
-        if (globalTTSSettings.autoTTS) {
-            setTimeout(() => {
-                speakKawadaComment('お疲れ様です！このセクションを完了しましたね。順調な学習ペースです！');
-            }, 500);
-        }
     } else {
         // 完了を取り消し
         studyProgress.completedLessons.splice(index, 1);
@@ -592,7 +640,7 @@ function toggleSectionComplete(sectionId) {
 }
 
 function updateProgressDisplay() {
-    const totalSections = 4; // intro, lesson1, lesson2, kawada-comment
+    const totalSections = 5; // intro, hello, variables, input, strings
     const completedCount = studyProgress.completedLessons.length;
     const percentage = Math.round((completedCount / totalSections) * 100);
     
