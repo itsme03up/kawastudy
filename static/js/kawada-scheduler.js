@@ -250,7 +250,7 @@ class KawadaScheduler {
                 position: fixed;
                 top: 80px;
                 right: 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
                 color: white;
                 padding: 1rem;
                 border-radius: 15px;
@@ -409,7 +409,7 @@ class KawadaScheduler {
                     this.endSession(false);
                     this.showKawadaMessage(
                         "お疲れさまでした", 
-                        "30分お疲れさまでした。また今度一緒に学習しましょうね💕", 
+                        "30分お疲れさまでした。また今度一緒に学習しましょうね�", 
                         'gentle'
                     );
                 }
