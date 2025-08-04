@@ -414,7 +414,7 @@ function initCStudyPage() {
     
     // 初期レッスンを表示
     showLesson('intro');
-    updateProgress();
+    updateProgressDisplay();
     
     // レッスンボタンのイベントリスナー
     const lessonButtons = document.querySelectorAll('.lesson-btn');
@@ -576,29 +576,6 @@ function simulateCodeExecution(lessonId, userCode) {
     return { output, kawadaComment };
 }
 
-// 川田のコメントを音声で読み上げる関数
-function speakKawadaComment(text) {
-    if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        
-        // 利用可能な音声から最適なものを選択
-        const voices = speechSynthesis.getVoices();
-        const japaneseVoice = voices.find(voice => 
-            voice.lang.includes('ja') || voice.name.includes('Japanese')
-        );
-        
-        if (japaneseVoice) {
-            utterance.voice = japaneseVoice;
-        }
-        
-        utterance.pitch = globalTTSSettings.pitch;
-        utterance.rate = globalTTSSettings.rate;
-        utterance.volume = 1.0;
-        
-        speechSynthesis.speak(utterance);
-    }
-}
-
 // ===== C言語学習ページのナビゲーション機能 =====
 
 function initNavigation() {
@@ -749,3 +726,18 @@ function setupScrollSpy() {
         }
     });
 }
+
+// ===== メイン初期化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('ページが読み込まれました');
+    console.log('body classes:', document.body.className);
+    
+    // C言語学習ページの初期化
+    if (document.body.classList.contains('cstudy-page')) {
+        console.log('C言語学習ページを初期化します');
+        console.log('lessonData:', lessonData);
+        initCStudyPage();
+        initNavigation();
+        initCodeRunButtons();
+    }
+});

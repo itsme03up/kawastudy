@@ -541,54 +541,58 @@ body.cstudy-page {
 
 .lesson-btn {
     width: 100%;
+    border: none;
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
+    gap: 1rem;
 }
 
 .lesson-btn:hover {
-    background: #e9ecef;
-    border-color: #007acc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: #e3f2fd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .lesson-btn.active {
-    background: #007acc;
-    color: #fff;
-    border-color: #007acc;
+    background: #2196f3;
+    color: white;
 }
 
-.lesson-btn.completed {
-    background: #d4edda;
-    border-color: #28a745;
-}
-
-.lesson-btn.completed .completion-status {
-    color: #28a745;
-    font-weight: bold;
+.lesson-btn.active:hover {
+    background: #1976d2;
 }
 
 .lesson-icon {
-    margin-right: 0.75rem;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
 .lesson-title {
-    flex: 1;
     font-weight: 500;
+    flex: 1;
 }
 
 .completion-status {
-    margin-left: 0.5rem;
     font-size: 1.2rem;
-    color: #6c757d;
+    color: #4caf50;
+}
+
+.lesson-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lesson-list li {
+    margin-bottom: 0;
 }
 
 /* 川田のコメント */
