@@ -11,26 +11,69 @@
     <p>川田と一緒にC言語の基本を学びましょう！</p>
 </header>
 
-<!-- 学習プログレス -->
-<div class="learning-progress">
-    <div class="progress-container">
-        <div class="progress-bar" id="learning-progress-bar"></div>
-    </div>
-    <span class="progress-text" id="progress-text">進捗: 0%</span>
-</div>
-
-<!-- 目次ナビゲーション -->
-<div class="table-of-contents">
-    <h3>🔖 学習メニュー</h3>
-    <ul class="toc-list">
-        <li><a href="#intro" class="toc-link" data-section="intro">📖 はじめに</a></li>
-        <li><a href="#lesson1" class="toc-link" data-section="lesson1">1️⃣ main関数とprintf</a></li>
-        <li><a href="#lesson2" class="toc-link" data-section="lesson2">2️⃣ 変数と計算</a></li>
-        <li><a href="#kawada-comment" class="toc-link" data-section="kawada-comment">💬 川田語コメント</a></li>
-    </ul>
-</div>
-
 <main class="main-content">
+    <div class="cstudy-layout">
+        <!-- 左側：学習メニュー -->
+        <div class="lesson-menu">
+            <div class="progress-section">
+                <h3>📊 学習進捗</h3>
+                <div class="progress-container">
+                    <div class="progress-bar" id="learning-progress-bar"></div>
+                </div>
+                <span class="progress-text" id="progress-text">進捗: 0%</span>
+            </div>
+
+            <div class="menu-section">
+                <h3>� 学習メニュー</h3>
+                <ul class="lesson-list">
+                    <li>
+                        <button class="lesson-btn active" data-lesson="intro">
+                            <span class="lesson-icon">📖</span>
+                            <span class="lesson-title">はじめに</span>
+                            <span class="completion-status">○</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="lesson-btn" data-lesson="hello">
+                            <span class="lesson-icon">1️⃣</span>
+                            <span class="lesson-title">Hello World</span>
+                            <span class="completion-status">○</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="lesson-btn" data-lesson="variables">
+                            <span class="lesson-icon">2️⃣</span>
+                            <span class="lesson-title">変数と計算</span>
+                            <span class="completion-status">○</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="lesson-btn" data-lesson="input">
+                            <span class="lesson-icon">3️⃣</span>
+                            <span class="lesson-title">入力と出力</span>
+                            <span class="completion-status">○</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="kawada-section">
+                <h3>💬 川田からのコメント</h3>
+                <div class="kawada-comment" id="kawada-comment">
+                    <p>学習したい項目をクリックしてください！</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右側：コンパイラーエリア -->
+        <div class="compiler-area">
+            <div class="lesson-content" id="lesson-content">
+                <!-- 動的にコンテンツが挿入される -->
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
     <div class="card" id="intro">
         <section class="intro">
             <h2>📖 はじめに</h2>

@@ -1,0 +1,456 @@
+// Kawastudy - 統合JavaScript機能
+
+// ===== グローバル変数 =====
+let globalTTSSettings = {
+    autoTTS: true,
+    pitch: 0.6,
+    rate: 0.8
+};
+
+let learningProgress = {
+    completedSections: JSON.parse(localStorage.getItem('cstudy-progress') || '[]'),
+    currentSection: 'intro'
+};
+
+// ===== メイン初期化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Kawastudy JavaScript initialized');
+    
+    // 共通機能の初期化
+    initThemeToggle();
+    initFontSizeSettings();
+    initTTSSettings();
+    
+    // C言語学習ページ専用機能
+    if (document.body.classList.contains('cstudy-page')) {
+        initCStudyFeatures();
+    }
+});
+
+// ===== 共通機能 =====
+
+// テーマ切り替え機能
+function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+    
+    // 保存されたテーマを復元
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.checked = true;
+    }
+    
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
+
+// フォントサイズ設定
+function initFontSizeSettings() {
+    const fontSizeSelect = document.getElementById('font-size');
+    if (!fontSizeSelect) return;
+    
+    // 保存されたフォントサイズを復元
+    const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+    fontSizeSelect.value = savedFontSize;
+    changeFontSize();
+    
+    fontSizeSelect.addEventListener('change', changeFontSize);
+}
+
+function changeFontSize() {
+    const fontSizeSelect = document.getElementById('font-size');
+    if (!fontSizeSelect) return;
+    
+    const size = fontSizeSelect.value;
+    document.documentElement.className = document.documentElement.className.replace(/font-size-\w+/g, '');
+    document.documentElement.classList.add(`font-size-${size}`);
+    localStorage.setItem('fontSize', size);
+}
+
+// TTS設定の初期化
+function initTTSSettings() {
+    // 保存された設定を復元
+    const savedSettings = localStorage.getItem('ttsSettings');
+    if (savedSettings) {
+        globalTTSSettings = JSON.parse(savedSettings);
+    }
+    
+    // UI要素の初期化
+    initTTSControls();
+}
+
+function initTTSControls() {
+    const autoTTSCheckbox = document.getElementById('global-auto-tts');
+    const pitchSlider = document.getElementById('global-pitch');
+    const rateSlider = document.getElementById('global-rate');
+    const pitchValue = document.getElementById('global-pitch-value');
+    const rateValue = document.getElementById('global-rate-value');
+    
+    if (autoTTSCheckbox) {
+        autoTTSCheckbox.checked = globalTTSSettings.autoTTS;
+        autoTTSCheckbox.addEventListener('change', function() {
+            globalTTSSettings.autoTTS = this.checked;
+            saveTTSSettings();
+        });
+    }
+    
+    if (pitchSlider) {
+        pitchSlider.value = globalTTSSettings.pitch;
+        if (pitchValue) pitchValue.textContent = globalTTSSettings.pitch;
+        pitchSlider.addEventListener('input', function() {
+            globalTTSSettings.pitch = parseFloat(this.value);
+            if (pitchValue) pitchValue.textContent = this.value;
+            saveTTSSettings();
+        });
+    }
+    
+    if (rateSlider) {
+        rateSlider.value = globalTTSSettings.rate;
+        if (rateValue) rateValue.textContent = globalTTSSettings.rate;
+        rateSlider.addEventListener('input', function() {
+            globalTTSSettings.rate = parseFloat(this.value);
+            if (rateValue) rateValue.textContent = this.value;
+            saveTTSSettings();
+        });
+    }
+}
+
+function saveTTSSettings() {
+    localStorage.setItem('ttsSettings', JSON.stringify(globalTTSSettings));
+}
+
+function testGlobalVoice() {
+    if ('speechSynthesis' in window) {
+        const testText = "川田です。音声のテストをしています。設定は正常に動作しています。";
+        const utterance = new SpeechSynthesisUtterance(testText);
+        
+        // 利用可能な音声から最適なものを選択
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        utterance.pitch = globalTTSSettings.pitch;
+        utterance.rate = globalTTSSettings.rate;
+        utterance.volume = 1.0;
+        
+        speechSynthesis.speak(utterance);
+    } else {
+        alert('お使いのブラウザは音声合成に対応していません。');
+    }
+}
+
+function getGlobalTTSSettings() {
+    return globalTTSSettings;
+}
+
+// 川田のコメントを音声で読み上げる関数
+function speakKawadaComment(text) {
+    if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        utterance.pitch = globalTTSSettings.pitch;
+        utterance.rate = globalTTSSettings.rate;
+        utterance.volume = 1.0;
+        
+        speechSynthesis.speak(utterance);
+    }
+}
+
+// ===== C言語学習ページ専用機能 =====
+
+function initCStudyFeatures() {
+    console.log('Initializing C Study features');
+    
+    // コード実行機能
+    initCodeExecution();
+    
+    // 学習ナビゲーション機能
+    initLearningNavigation();
+}
+
+function initCodeExecution() {
+    const tryRunButton = document.getElementById('try-run');
+    if (tryRunButton) {
+        tryRunButton.addEventListener('click', function() {
+            runCCode('try-run', 'run-output', 1);
+        });
+    }
+    
+    const tryRunButton2 = document.getElementById('try-run-2');
+    if (tryRunButton2) {
+        tryRunButton2.addEventListener('click', function() {
+            runCCode('try-run-2', 'run-output-2', 2);
+        });
+    }
+}
+
+function runCCode(buttonId, outputId, exampleNumber) {
+    const outputElement = document.getElementById(outputId);
+    if (!outputElement) return;
+    
+    // ボタンを無効化
+    const button = document.getElementById(buttonId);
+    if (button) {
+        button.disabled = true;
+        button.textContent = '実行中...';
+    }
+    
+    // 実行開始メッセージ
+    outputElement.textContent = 'コンパイル中...\n';
+    outputElement.style.display = 'block';
+    
+    // 実際のコンパイル・実行をシミュレート
+    setTimeout(() => {
+        outputElement.textContent += 'gcc -o example example.c\n';
+        
+        setTimeout(() => {
+            outputElement.textContent += './example\n';
+            
+            setTimeout(() => {
+                let result = '';
+                let kawadaComment = '';
+                
+                if (exampleNumber === 1) {
+                    result = 'こんにちは、C言語！\n';
+                    kawadaComment = 'おお、見事に動きましたね！C言語の第一歩、完璧です！';
+                } else if (exampleNumber === 2) {
+                    result = 'a = 10, b = 20\na + b = 30\n';
+                    kawadaComment = '変数と計算、バッチリですね！プログラミングの基本が身についています！';
+                }
+                
+                outputElement.textContent += result;
+                outputElement.textContent += '\nプログラムが正常に終了しました。（終了コード：0）';
+                
+                // ボタンを復活
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'このコードを試す';
+                }
+                
+                // 川田のコメントを音声で読み上げ（TTS設定に従う）
+                if (globalTTSSettings.autoTTS) {
+                    setTimeout(() => {
+                        speakKawadaComment(kawadaComment);
+                    }, 1000);
+                }
+                
+            }, 500);
+        }, 800);
+    }, 600);
+}
+
+function initLearningNavigation() {
+    // 進捗表示の初期化
+    updateProgressDisplay();
+    
+    // 目次リンクのイベントリスナー
+    document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetSection = this.getAttribute('data-section');
+            scrollToSection(targetSection);
+            updateCurrentSection(targetSection);
+        });
+    });
+    
+    // セクションナビゲーションボタン
+    document.querySelectorAll('.prev-section-btn, .next-section-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-target');
+            scrollToSection(targetSection);
+            updateCurrentSection(targetSection);
+        });
+    });
+    
+    // 完了ボタン
+    document.querySelectorAll('.mark-complete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            toggleSectionComplete(section);
+        });
+        
+        // 既に完了済みの場合の表示更新
+        const section = btn.getAttribute('data-section');
+        if (learningProgress.completedSections.includes(section)) {
+            btn.textContent = '✅ 完了済み';
+            btn.classList.add('completed');
+        }
+    });
+    
+    // 初期化時に目次の完了状態を更新
+    updateTOCCompletion();
+    
+    // スクロール監視
+    setupScrollSpy();
+}
+
+function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+}
+
+function updateCurrentSection(sectionId) {
+    learningProgress.currentSection = sectionId;
+    
+    // 目次の現在セクション表示を更新
+    document.querySelectorAll('.toc-link').forEach(link => {
+        link.classList.remove('current');
+        if (link.getAttribute('data-section') === sectionId) {
+            link.classList.add('current');
+        }
+    });
+}
+
+function toggleSectionComplete(sectionId) {
+    const index = learningProgress.completedSections.indexOf(sectionId);
+    const btn = document.querySelector(`[data-section="${sectionId}"]`);
+    
+    if (index === -1) {
+        // 完了に設定
+        learningProgress.completedSections.push(sectionId);
+        btn.textContent = '✅ 完了済み';
+        btn.classList.add('completed');
+        
+        // 川田のコメント
+        if (globalTTSSettings.autoTTS) {
+            setTimeout(() => {
+                speakKawadaComment('お疲れ様です！このセクションを完了しましたね。順調な学習ペースです！');
+            }, 500);
+        }
+    } else {
+        // 完了を取り消し
+        learningProgress.completedSections.splice(index, 1);
+        btn.textContent = '✅ 完了にする';
+        btn.classList.remove('completed');
+    }
+    
+    // 進捗を保存・更新
+    localStorage.setItem('cstudy-progress', JSON.stringify(learningProgress.completedSections));
+    updateProgressDisplay();
+    updateTOCCompletion();
+}
+
+function updateProgressDisplay() {
+    const totalSections = 4; // intro, lesson1, lesson2, kawada-comment
+    const completedCount = learningProgress.completedSections.length;
+    const percentage = Math.round((completedCount / totalSections) * 100);
+    
+    const progressBar = document.getElementById('learning-progress-bar');
+    const progressText = document.getElementById('progress-text');
+    
+    if (progressBar && progressText) {
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `進捗: ${percentage}% (${completedCount}/${totalSections})`;
+    }
+}
+
+function updateTOCCompletion() {
+    document.querySelectorAll('.toc-link').forEach(link => {
+        const section = link.getAttribute('data-section');
+        if (learningProgress.completedSections.includes(section)) {
+            link.classList.add('completed');
+        } else {
+            link.classList.remove('completed');
+        }
+    });
+}
+
+function setupScrollSpy() {
+    const sections = ['intro', 'lesson1', 'lesson2', 'kawada-comment'];
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                if (sections.includes(sectionId)) {
+                    updateCurrentSection(sectionId);
+                }
+            }
+        });
+    }, {
+        threshold: 0.3,
+        rootMargin: '-120px 0px -50% 0px'
+    });
+    
+    sections.forEach(sectionId => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            observer.observe(element);
+        }
+    });
+}
+
+// ===== CSS動的スタイル =====
+const style = document.createElement('style');
+style.textContent = `
+    :root {
+        --font-size-multiplier: 1;
+    }
+    
+    .font-size-small {
+        --font-size-multiplier: 0.9;
+    }
+    
+    .font-size-medium {
+        --font-size-multiplier: 1;
+    }
+    
+    .font-size-large {
+        --font-size-multiplier: 1.1;
+    }
+    
+    body {
+        font-size: calc(1rem * var(--font-size-multiplier));
+    }
+    
+    [data-theme="dark"] {
+        --bs-body-bg: #121212;
+        --bs-body-color: #e8e8e8;
+        --bs-card-bg: #1e1e1e;
+        --bs-border-color: #404040;
+    }
+    
+    [data-theme="dark"] .card {
+        background-color: var(--bs-card-bg);
+        border-color: var(--bs-border-color);
+        color: var(--bs-body-color);
+    }
+    
+    [data-theme="dark"] .navbar-light {
+        background-color: #1e1e1e !important;
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+    
+    [data-theme="dark"] .navbar-light .navbar-brand,
+    [data-theme="dark"] .navbar-light .nav-link {
+        color: var(--bs-body-color) !important;
+    }
+`;
+document.head.appendChild(style);

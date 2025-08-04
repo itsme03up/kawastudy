@@ -345,7 +345,7 @@ body.full-width-page .main-layout-chat {
   box-sizing: border-box;
 }
 
-.cstudy-page body {
+body.cstudy-page {
   font-family: 'Noto Sans JP', sans-serif;
   line-height: 1.6;
   background-color: #f9f9f9;
@@ -357,6 +357,8 @@ body.full-width-page .main-layout-chat {
   color: #fff;
   padding: 2rem 1rem;
   text-align: center;
+  position: relative;
+  z-index: 102; /* ナビゲーション要素より上に */
 }
 
 .cstudy-page header h1 {
@@ -465,4 +467,385 @@ body.full-width-page .main-layout-chat {
   display: none; /* 初期状態では非表示 */
   font-family: 'Courier New', monospace;
   border: 1px solid #333;
+}
+
+/* ===== C言語学習ページの新レイアウト ===== */
+
+/* メインレイアウト */
+.cstudy-layout {
+    display: flex;
+    gap: 2rem;
+    min-height: 70vh;
+}
+
+/* 左側：学習メニュー */
+.lesson-menu {
+    flex: 0 0 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.progress-section,
+.menu-section,
+.kawada-section {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.progress-section h3,
+.menu-section h3,
+.kawada-section h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+/* プログレスバー */
+.progress-container {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #007acc, #0056b3);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* 学習メニュー */
+.lesson-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.lesson-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.lesson-btn:hover {
+    background: #e9ecef;
+    border-color: #007acc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lesson-btn.active {
+    background: #007acc;
+    color: #fff;
+    border-color: #007acc;
+}
+
+.lesson-btn.completed {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.lesson-btn.completed .completion-status {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.lesson-icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.lesson-title {
+    flex: 1;
+    font-weight: 500;
+}
+
+.completion-status {
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+/* 川田のコメント */
+.kawada-comment {
+    background: #f0f8ff;
+    border-left: 4px solid #007acc;
+    padding: 1rem;
+    border-radius: 4px;
+    font-style: italic;
+    color: #495057;
+}
+
+/* 右側：コンパイラーエリア */
+.compiler-area {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.lesson-content h2 {
+    color: #007acc;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 0.5rem;
+}
+
+.lesson-content pre {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 1.5rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    border: 1px solid #333;
+}
+
+.lesson-content .try-run-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin: 1rem 0;
+}
+
+.lesson-content .try-run-button:hover:not(:disabled) {
+    background-color: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.lesson-content .try-run-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+.lesson-content .run-output {
+    background: #1a1a1a;
+    color: #00ff00;
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    white-space: pre-wrap;
+    display: none;
+    font-family: 'Courier New', monospace;
+    border: 1px solid #333;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1024px) {
+    .cstudy-layout {
+        flex-direction: column;
+    }
+    
+    .lesson-menu {
+        flex: none;
+        order: 2;
+    }
+    
+    .compiler-area {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .lesson-menu {
+        gap: 1rem;
+    }
+    
+    .progress-section,
+    .menu-section,
+    .kawada-section {
+        padding: 1rem;
+    }
+    
+    .compiler-area {
+        padding: 1rem;
+    }
+    
+    .lesson-btn {
+        padding: 0.75rem;
+    }
+}
+
+.table-of-contents h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.toc-list li {
+    flex: 1;
+    min-width: 200px;
+}
+
+.toc-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #495057;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.toc-link:hover {
+    background: #007acc;
+    color: #fff;
+    border-color: #007acc;
+    text-decoration: none;
+}
+
+.toc-link.completed {
+    background: #28a745;
+    color: #fff;
+    border-color: #28a745;
+}
+
+.toc-link.current {
+    background: #ffc107;
+    color: #212529;
+    border-color: #ffc107;
+    font-weight: 600;
+}
+
+/* セクションアクション */
+.section-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.prev-section-btn,
+.next-section-btn,
+.mark-complete-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.prev-section-btn,
+.next-section-btn {
+    background: #6c757d;
+    color: #fff;
+}
+
+.prev-section-btn:hover,
+.next-section-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.mark-complete-btn {
+    background: #28a745;
+    color: #fff;
+}
+
+.mark-complete-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.mark-complete-btn.completed {
+    background: #6c757d;
+    cursor: default;
+}
+
+.mark-complete-btn.completed:hover {
+    transform: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .learning-progress {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .table-of-contents {
+        margin: 1rem;
+        position: static;
+    }
+    
+    .toc-list {
+        flex-direction: column;
+    }
+    
+    .toc-list li {
+        min-width: auto;
+    }
+    
+    .section-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .prev-section-btn,
+    .next-section-btn,
+    .mark-complete-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
