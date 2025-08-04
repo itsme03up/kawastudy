@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body class="full-width-page">
+<body class="full-width-page {% block body_class %}{% endblock %}">
     {% include 'components/navigation.html' %}
     
     <div class="main-layout">

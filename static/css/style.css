@@ -335,3 +335,134 @@ body.full-width-page .main-layout-chat {
     display: flex;
     gap: 0.5rem;
 }
+
+/* ===== C言語学習ページ専用スタイル ===== */
+
+/* C言語学習ページのリセット */
+.cstudy-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.cstudy-page body {
+  font-family: 'Noto Sans JP', sans-serif;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.cstudy-page header {
+  background-color: #004080;
+  color: #fff;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.cstudy-page header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.cstudy-page header p {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.cstudy-page main {
+  width: 100%;
+  margin: 0;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.cstudy-page section.intro,
+.cstudy-page section.lesson,
+.cstudy-page section.kawada-comment {
+  margin-bottom: 2rem;
+}
+
+.cstudy-page section.intro h2,
+.cstudy-page section.lesson h2,
+.cstudy-page section.kawada-comment h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #004080;
+}
+
+.cstudy-page section.intro p {
+  margin-bottom: 1rem;
+}
+
+.cstudy-page section.intro ul {
+  list-style: disc inside;
+}
+
+.cstudy-page section.intro ul li {
+  margin-bottom: 0.5rem;
+}
+
+.cstudy-page pre {
+  background: #272822;
+  color: #f8f8f2;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.cstudy-page button#try-run,
+.cstudy-page .try-run-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cstudy-page button#try-run:hover:not(:disabled),
+.cstudy-page .try-run-button:hover:not(:disabled) {
+  background-color: #005fa3;
+}
+
+.cstudy-page button#try-run:disabled,
+.cstudy-page .try-run-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.cstudy-page section.kawada-comment blockquote {
+  border-left: 4px solid #004080;
+  padding-left: 1rem;
+  color: #555;
+  font-style: italic;
+  background: #f0f8ff;
+  border-radius: 4px;
+}
+
+.cstudy-page footer {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.875rem;
+  color: #777;
+}
+
+.cstudy-page .run-output {
+  background: #222;
+  color: #0f0;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+  display: none; /* 初期状態では非表示 */
+  font-family: 'Courier New', monospace;
+  border: 1px solid #333;
+}

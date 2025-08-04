@@ -3,9 +3,7 @@
 
 {% block title %}C言語入門{% endblock %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/cstudy.css' %}">
-{% endblock %}
+{% block body_class %}cstudy-page{% endblock %}
 
 {% block content %}
 <header class="page-header">
@@ -45,12 +43,36 @@ int main(void) {
     </div>
 
     <div class="card">
+        <section class="lesson">
+            <h2>2. 変数と計算</h2>
+            <pre><code>
+#include &lt;stdio.h&gt;
+
+int main(void) {
+    int a = 10;
+    int b = 20;
+    int sum = a + b;
+    
+    printf("a = %d, b = %d\n", a, b);
+    printf("a + b = %d\n", sum);
+    return 0;
+}
+            </code></pre>
+            <button id="try-run-2" class="try-run-button">このコードを試す</button>
+            <pre id="run-output-2" class="run-output"></pre>
+        </section>
+    </div>
+
+    <div class="card">
         <section class="kawada-comment">
             <h3>川田語コメント</h3>
             <blockquote>
                 main関数はC言語の玄関です。<br>
                 printfで「こんにちは！」と出してみましょう。<br>
-                打鍵ミスにはご注意を……。
+                打鍵ミスにはご注意を……。<br><br>
+                変数は箱のようなものです。<br>
+                intは整数を入れる箱、%dで中身を表示できます。<br>
+                計算結果も変数に保存できるのです。
             </blockquote>
         </section>
     </div>

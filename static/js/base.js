@@ -175,3 +175,100 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// C言語学習ページ専用機能
+document.addEventListener('DOMContentLoaded', function() {
+    // C言語コード実行ボタンの処理
+    const tryRunButton = document.getElementById('try-run');
+    if (tryRunButton) {
+        tryRunButton.addEventListener('click', function() {
+            runCCode('try-run', 'run-output', 1);
+        });
+    }
+    
+    const tryRunButton2 = document.getElementById('try-run-2');
+    if (tryRunButton2) {
+        tryRunButton2.addEventListener('click', function() {
+            runCCode('try-run-2', 'run-output-2', 2);
+        });
+    }
+});
+
+// C言語コードを実行する関数（シミュレーション）
+function runCCode(buttonId, outputId, exampleNumber) {
+    const outputElement = document.getElementById(outputId);
+    if (!outputElement) return;
+    
+    // ボタンを無効化
+    const button = document.getElementById(buttonId);
+    if (button) {
+        button.disabled = true;
+        button.textContent = '実行中...';
+    }
+    
+    // 実行開始メッセージ
+    outputElement.textContent = 'コンパイル中...\n';
+    outputElement.style.display = 'block';
+    
+    // 実際のコンパイル・実行をシミュレート
+    setTimeout(() => {
+        outputElement.textContent += 'gcc -o example example.c\n';
+        
+        setTimeout(() => {
+            outputElement.textContent += './example\n';
+            
+            setTimeout(() => {
+                let result = '';
+                let kawadaComment = '';
+                
+                if (exampleNumber === 1) {
+                    result = 'こんにちは、C言語！\n';
+                    kawadaComment = 'おお、見事に動きましたね！C言語の第一歩、完璧です！';
+                } else if (exampleNumber === 2) {
+                    result = 'a = 10, b = 20\na + b = 30\n';
+                    kawadaComment = '変数と計算、バッチリですね！プログラミングの基本が身についています！';
+                }
+                
+                outputElement.textContent += result;
+                outputElement.textContent += '\nプログラムが正常に終了しました。（終了コード：0）';
+                
+                // ボタンを復活
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'このコードを試す';
+                }
+                
+                // 川田のコメントを音声で読み上げ（TTS設定に従う）
+                if (globalTTSSettings.autoTTS) {
+                    setTimeout(() => {
+                        speakKawadaComment(kawadaComment);
+                    }, 1000);
+                }
+                
+            }, 500);
+        }, 800);
+    }, 600);
+}
+
+// 川田のコメントを音声で読み上げる関数
+function speakKawadaComment(text) {
+    if ('speechSynthesis' in window && globalTTSSettings.autoTTS) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // 利用可能な音声から最適なものを選択
+        const voices = speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice => 
+            voice.lang.includes('ja') || voice.name.includes('Japanese')
+        );
+        
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+        
+        utterance.pitch = globalTTSSettings.pitch;
+        utterance.rate = globalTTSSettings.rate;
+        utterance.volume = 1.0;
+        
+        speechSynthesis.speak(utterance);
+    }
+}
