@@ -8,7 +8,7 @@
 {% block extra_css %}
 <style>
 .create-schedule {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
     padding: 2rem 0;
 }
@@ -21,44 +21,48 @@
 
 .schedule-header {
     text-align: center;
-    color: white;
+    color: #2c3e50;
     margin-bottom: 2rem;
 }
 
 .schedule-header h1 {
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: #34495e;
+    font-weight: 600;
 }
 
 .schedule-form {
     background: white;
-    border-radius: 20px;
+    border-radius: 15px;
     padding: 2.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
 }
 
 .kawada-greeting {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: 12px;
     margin-bottom: 2rem;
     color: white;
     display: flex;
     align-items: center;
     gap: 1rem;
+    border: 2px solid #ddd;
 }
 
 .kawada-avatar {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .kawada-text {
@@ -68,11 +72,13 @@
 .kawada-text h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
+    font-weight: 600;
 }
 
 .kawada-text p {
     margin: 0;
-    opacity: 0.9;
+    opacity: 0.95;
+    font-size: 0.95rem;
 }
 
 .form-group {
@@ -81,8 +87,8 @@
 
 .form-label {
     display: block;
-    font-weight: bold;
-    color: #333;
+    font-weight: 600;
+    color: #2c3e50;
     margin-bottom: 0.5rem;
     font-size: 1rem;
 }
@@ -90,17 +96,18 @@
 .form-control {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
     box-sizing: border-box;
+    color: #495057;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #74b9ff;
+    box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
 }
 
 .datetime-group {
@@ -127,22 +134,23 @@
 .app-option label {
     display: block;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     background: #f8f9fa;
+    color: #495057;
 }
 
 .app-option label:hover {
-    border-color: #667eea;
-    background: #f0f4ff;
+    border-color: #74b9ff;
+    background: #e3f2fd;
 }
 
 .app-option input[type="radio"]:checked + label {
-    border-color: #667eea;
-    background: #667eea;
+    border-color: #74b9ff;
+    background: #74b9ff;
     color: white;
 }
 
@@ -154,7 +162,7 @@
 
 .app-name {
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .submit-section {
@@ -163,31 +171,33 @@
 }
 
 .btn-submit {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
     color: white;
     padding: 1rem 3rem;
     border: none;
-    border-radius: 30px;
+    border-radius: 25px;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-block;
+    box-shadow: 0 3px 10px rgba(116, 185, 255, 0.3);
 }
 
 .btn-submit:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(255, 154, 158, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
 }
 
 .btn-cancel {
     background: transparent;
-    color: #667eea;
+    color: #6c757d;
     padding: 1rem 2rem;
-    border: 2px solid #667eea;
-    border-radius: 30px;
-    font-weight: bold;
+    border: 2px solid #6c757d;
+    border-radius: 25px;
+    font-weight: 600;
     text-decoration: none;
     display: inline-block;
     margin-left: 1rem;
@@ -195,7 +205,7 @@
 }
 
 .btn-cancel:hover {
-    background: #667eea;
+    background: #6c757d;
     color: white;
     text-decoration: none;
 }
@@ -203,14 +213,16 @@
 .suggested-times {
     background: #f8f9fa;
     padding: 1rem;
-    border-radius: 10px;
+    border-radius: 8px;
     margin-top: 0.5rem;
+    border: 1px solid #e9ecef;
 }
 
 .suggested-times h4 {
     margin: 0 0 0.5rem 0;
     font-size: 0.9rem;
-    color: #666;
+    color: #6c757d;
+    font-weight: 600;
 }
 
 .time-suggestions {
@@ -220,17 +232,20 @@
 }
 
 .time-suggestion {
-    background: #667eea;
+    background: #74b9ff;
     color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 500;
+    border: 1px solid #74b9ff;
 }
 
 .time-suggestion:hover {
-    background: #5a6fd8;
+    background: #0984e3;
+    border-color: #0984e3;
     transform: scale(1.05);
 }
 
@@ -263,16 +278,16 @@
 {% block content %}
 <div class="schedule-container">
     <div class="schedule-header">
-        <h1>💕 川田との学習デート</h1>
-        <p>一緒に楽しい学習時間を計画しましょう</p>
+        <h1>� 川田との学習予定</h1>
+        <p>一緒に計画的な学習時間を作りましょう</p>
     </div>
 
     <div class="schedule-form">
         <div class="kawada-greeting">
-            <div class="kawada-avatar">🥰</div>
+            <div class="kawada-avatar">😊</div>
             <div class="kawada-text">
-                <h3>わあ、スケジュールを立ててくれるんですね！</h3>
-                <p>川田もとても楽しみです💕 どんな学習をしましょうか？</p>
+                <h3>一緒に学習計画を立てましょう！</h3>
+                <p>継続的な学習で着実に成長していきましょうね</p>
             </div>
         </div>
 
@@ -359,7 +374,7 @@
 
             <div class="submit-section">
                 <button type="submit" class="btn-submit">
-                    💕 川田とデートの約束をする
+                    � 学習予定を作成する
                 </button>
                 <a href="{% url 'scheduler:dashboard' %}" class="btn-cancel">
                     キャンセル
@@ -397,12 +412,12 @@ function setTime(time) {
 document.getElementById('scheduleForm').addEventListener('submit', function(e) {
     const kawadaText = document.querySelector('.kawada-text');
     kawadaText.innerHTML = `
-        <h3>きゃー！約束してくれるんですね！💕</h3>
-        <p>川田、とってもうれしいです！楽しみに待ってますね〜</p>
+        <h3>学習予定が決まりましたね！</h3>
+        <p>計画的な学習で着実に成長していきましょう</p>
     `;
     
     const kawadaAvatar = document.querySelector('.kawada-avatar');
-    kawadaAvatar.textContent = '😍';
+    kawadaAvatar.textContent = '�';
 });
 
 // アプリ選択時の川田のリアクション
@@ -417,23 +432,23 @@ document.querySelectorAll('input[name="app_name"]').forEach(radio => {
                 emoji: '🤓'
             },
             'sqlquiz': {
-                text: 'SQLクイズ！データベースの腕前を見せてくださいね🗄️',
-                emoji: '😤'
+                text: 'SQLクイズ！データベースの知識を深めていきましょう🗄️',
+                emoji: '�'
             },
             'chatlesson': {
-                text: 'ChatLesson！川田と楽しくおしゃべりしながら学習しましょう💬',
+                text: 'ChatLesson！楽しく会話しながら学習しましょう💬',
                 emoji: '😊'
             },
             'linuxfun': {
-                text: 'Linux！コマンドラインマスターを目指しましょう🐧',
+                text: 'Linux！コマンドラインをマスターしていきましょう🐧',
                 emoji: '😎'
             },
             'aws': {
-                text: 'AWS！クラウドの世界へ一緒に飛び込みましょう☁️',
-                emoji: '🚀'
+                text: 'AWS！クラウド技術を一緒に学習しましょう☁️',
+                emoji: '🤓'
             },
             'typinggame': {
-                text: 'タイピング！指の運動も大切ですよね⌨️',
+                text: 'タイピング！基礎スキルを鍛えていきましょう⌨️',
                 emoji: '💪'
             }
         };
@@ -442,7 +457,7 @@ document.querySelectorAll('input[name="app_name"]').forEach(radio => {
         if (reaction) {
             kawadaText.innerHTML = `
                 <h3>${reaction.text}</h3>
-                <p>一緒に頑張りましょうね💕</p>
+                <p>計画的に学習を進めていきましょう</p>
             `;
             kawadaAvatar.textContent = reaction.emoji;
         }

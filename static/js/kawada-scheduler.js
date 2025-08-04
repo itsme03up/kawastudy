@@ -117,15 +117,15 @@ class KawadaScheduler {
     }
 
     /**
-     * 川田からの応援メッセージを表示
+     * 川田からの励ましメッセージを表示
      */
     showKawadaEncouragement() {
         const encouragements = [
             "一緒に頑張りましょう！💪",
             "今日も素敵な学習時間ですね✨",
             "川田も応援しています📚",
-            "きっと成長できますよ💕",
-            "楽しく学習しましょうね😊"
+            "きっと成長できますよ�",
+            "計画的に学習を進めましょう�"
         ];
         
         const message = encouragements[Math.floor(Math.random() * encouragements.length)];
@@ -137,7 +137,7 @@ class KawadaScheduler {
      */
     showKawadaMessage(title, content, expression = 'normal') {
         const expressions = {
-            'cheerful': '🥰',
+            'cheerful': '😊',
             'smile': '😊',
             'normal': '😊',
             'thinking': '🤔',
@@ -176,7 +176,7 @@ class KawadaScheduler {
         notification.className = 'message-notification';
         notification.innerHTML = `
             <div class="notification-content">
-                <span class="notification-icon">💌</span>
+                <span class="notification-icon">�</span>
                 <span class="notification-text">川田から${count}件の新しいメッセージ</span>
             </div>
             <a href="/schedule/messages/" class="notification-link">確認する</a>
