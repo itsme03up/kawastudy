@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // C言語学習ページの初期化
     if (document.body.classList.contains('cstudy-page')) {
         console.log('C言語学習ページを初期化します');
+        console.log('lessonData:', lessonData);
         initCStudyPage();
         initNavigation();
         initCodeRunButtons();
