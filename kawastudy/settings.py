@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.linuxfun',
     'apps.aws',
     'apps.cstudy',  # C言語学習アプリを追加
+    'apps.scheduler',  # 川田スケジューラーアプリを追加
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}新しいスケジュール作成 - 川田との学習デート{% endblock %}
+
+{% block body_class %}create-schedule{% endblock %}
+
+{% block extra_css %}
+<style>
+.create-schedule {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.schedule-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.schedule-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.schedule-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.schedule-form {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.kawada-greeting {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.kawada-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.kawada-text {
+    flex: 1;
+}
+
+.kawada-text h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.kawada-text p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.datetime-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.app-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.app-option {
+    position: relative;
+}
+
+.app-option input[type="radio"] {
+    display: none;
+}
+
+.app-option label {
+    display: block;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.app-option label:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.app-option input[type="radio"]:checked + label {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.app-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.app-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.submit-section {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: white;
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 154, 158, 0.3);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #667eea;
+    padding: 1rem 2rem;
+    border: 2px solid #667eea;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+}
+
+.suggested-times {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+}
+
+.suggested-times h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.time-suggestions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.time-suggestion {
+    background: #667eea;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-suggestion:hover {
+    background: #5a6fd8;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .schedule-form {
+        padding: 1.5rem;
+    }
+    
+    .datetime-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .app-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .kawada-greeting {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .btn-cancel {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="schedule-container">
+    <div class="schedule-header">
+        <h1>💕 川田との学習デート</h1>
+        <p>一緒に楽しい学習時間を計画しましょう</p>
+    </div>
+
+    <div class="schedule-form">
+        <div class="kawada-greeting">
+            <div class="kawada-avatar">🥰</div>
+            <div class="kawada-text">
+                <h3>わあ、スケジュールを立ててくれるんですね！</h3>
+                <p>川田もとても楽しみです💕 どんな学習をしましょうか？</p>
+            </div>
+        </div>
+
+        <form method="post" id="scheduleForm">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label" for="title">📝 タイトル</label>
+                <input type="text" 
+                       id="title" 
+                       name="title" 
+                       class="form-control" 
+                       placeholder="例：SQLクイズで腕試し、C言語の復習など"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="description">📖 説明（任意）</label>
+                <textarea id="description" 
+                          name="description" 
+                          class="form-control" 
+                          rows="3"
+                          placeholder="学習の詳細や目標を記入してください"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🎯 学習内容</label>
+                <div class="app-selector">
+                    {% for app_code, app_name in apps_choices %}
+                    <div class="app-option">
+                        <input type="radio" 
+                               id="app_{{ app_code }}" 
+                               name="app_name" 
+                               value="{{ app_code }}"
+                               {% if request.GET.app == app_code %}checked{% endif %}>
+                        <label for="app_{{ app_code }}">
+                            <span class="app-icon">
+                                {% if app_code == 'cstudy' %}💻
+                                {% elif app_code == 'sqlquiz' %}🗄️
+                                {% elif app_code == 'chatlesson' %}💬
+                                {% elif app_code == 'linuxfun' %}🐧
+                                {% elif app_code == 'aws' %}☁️
+                                {% elif app_code == 'typinggame' %}⌨️
+                                {% else %}📚{% endif %}
+                            </span>
+                            <span class="app-name">{{ app_name }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📅 日時</label>
+                <div class="datetime-group">
+                    <div>
+                        <input type="date" 
+                               id="scheduled_date" 
+                               name="scheduled_date" 
+                               class="form-control"
+                               min="{{ today|date:'Y-m-d' }}"
+                               required>
+                    </div>
+                    <div>
+                        <input type="time" 
+                               id="scheduled_time" 
+                               name="scheduled_time" 
+                               class="form-control"
+                               required>
+                    </div>
+                </div>
+                
+                <div class="suggested-times">
+                    <h4>🕐 おすすめの時間帯</h4>
+                    <div class="time-suggestions">
+                        <span class="time-suggestion" onclick="setTime('09:00')">朝活 9:00</span>
+                        <span class="time-suggestion" onclick="setTime('12:00')">お昼 12:00</span>
+                        <span class="time-suggestion" onclick="setTime('15:00')">午後 15:00</span>
+                        <span class="time-suggestion" onclick="setTime('18:00')">夕方 18:00</span>
+                        <span class="time-suggestion" onclick="setTime('21:00')">夜 21:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="btn-submit">
+                    💕 川田とデートの約束をする
+                </button>
+                <a href="{% url 'scheduler:dashboard' %}" class="btn-cancel">
+                    キャンセル
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// 今日の日付をデフォルトに設定
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const dateInput = document.getElementById('scheduled_date');
+    if (!dateInput.value) {
+        dateInput.value = tomorrow.toISOString().split('T')[0];
+    }
+    
+    // デフォルトの時間を設定
+    const timeInput = document.getElementById('scheduled_time');
+    if (!timeInput.value) {
+        timeInput.value = '21:00';
+    }
+});
+
+// 時間提案のクリック処理
+function setTime(time) {
+    document.getElementById('scheduled_time').value = time;
+}
+
+// フォーム送信時の川田のリアクション
+document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+    const kawadaText = document.querySelector('.kawada-text');
+    kawadaText.innerHTML = `
+        <h3>きゃー！約束してくれるんですね！💕</h3>
+        <p>川田、とってもうれしいです！楽しみに待ってますね〜</p>
+    `;
+    
+    const kawadaAvatar = document.querySelector('.kawada-avatar');
+    kawadaAvatar.textContent = '😍';
+});
+
+// アプリ選択時の川田のリアクション
+document.querySelectorAll('input[name="app_name"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const kawadaText = document.querySelector('.kawada-text');
+        const kawadaAvatar = document.querySelector('.kawada-avatar');
+        
+        const reactions = {
+            'cstudy': {
+                text: 'C言語ですね！プログラミングの基本をしっかり学びましょう💻',
+                emoji: '🤓'
+            },
+            'sqlquiz': {
+                text: 'SQLクイズ！データベースの腕前を見せてくださいね🗄️',
+                emoji: '😤'
+            },
+            'chatlesson': {
+                text: 'ChatLesson！川田と楽しくおしゃべりしながら学習しましょう💬',
+                emoji: '😊'
+            },
+            'linuxfun': {
+                text: 'Linux！コマンドラインマスターを目指しましょう🐧',
+                emoji: '😎'
+            },
+            'aws': {
+                text: 'AWS！クラウドの世界へ一緒に飛び込みましょう☁️',
+                emoji: '🚀'
+            },
+            'typinggame': {
+                text: 'タイピング！指の運動も大切ですよね⌨️',
+                emoji: '💪'
+            }
+        };
+        
+        const reaction = reactions[this.value];
+        if (reaction) {
+            kawadaText.innerHTML = `
+                <h3>${reaction.text}</h3>
+                <p>一緒に頑張りましょうね💕</p>
+            `;
+            kawadaAvatar.textContent = reaction.emoji;
+        }
+    });
+});
+</script>
+{% endblock %}
