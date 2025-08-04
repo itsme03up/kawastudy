@@ -223,7 +223,7 @@ function runCCode(buttonId, outputId, exampleNumber) {
                 
                 if (exampleNumber === 1) {
                     result = 'こんにちは、C言語！\n';
-                    kawadaComment = 'おお、見事に動きましたね！C言語の第一歩、完璧です！';
+                    kawadaComment = 'おお、見事に動きましたね！完璧です！';
                 } else if (exampleNumber === 2) {
                     result = 'a = 10, b = 20\na + b = 30\n';
                     kawadaComment = '変数と計算、バッチリですね！プログラミングの基本が身についています！';
