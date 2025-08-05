@@ -39,6 +39,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
+    background-color: #4a5d23; /* フォールバック背景色 */
     background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
     background-size: cover;
     background-position: center;
@@ -53,7 +54,7 @@ body {
     top: 12%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 100;
     transition: all 0.3s ease;
 }
 
@@ -66,6 +67,7 @@ body {
     background: white;
     transition: all 0.3s ease;
     object-fit: cover;
+    display: block;
 }
 
 .progress-bar {
