@@ -171,8 +171,9 @@ LOGOUT_REDIRECT_URL = '/'
 
 # allauth設定 (新しいバージョンの設定形式)
 ACCOUNT_LOGIN_METHODS = ['email']
-ACCOUNT_SIGNUP_FIELDS = ['email']
+ACCOUNT_SIGNUP_FIELDS = ['email']  # ACCOUNT_LOGIN_METHODSと一致させる
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # 開発環境ではメール認証を無効化
+ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを必須に
 SOCIALACCOUNT_AUTO_SIGNUP = True
 
 # 開発環境でのメール設定
