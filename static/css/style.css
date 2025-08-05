@@ -338,8 +338,8 @@ body.full-width-page .main-layout-chat {
 
 /* ===== C言語学習ページ専用スタイル ===== */
 
-/* C言語学習ページのリセット */
-.cstudy-page * {
+/* C言語学習ページのリセット - サイドバー除外 */
+.cstudy-page .main-content * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -348,8 +348,18 @@ body.full-width-page .main-layout-chat {
 body.cstudy-page {
   font-family: 'Noto Sans JP', sans-serif;
   line-height: 1.6;
-  background-color: #f9f9f9;
   color: #333;
+  /* background-color は削除してデフォルトを使用 */
+}
+
+/* サイドバーのスタイルをcstudyページでも維持 */
+body.cstudy-page .sidebar-fixed {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+body.cstudy-page .character-area {
+  background-color: transparent;
 }
 
 .cstudy-page header {
@@ -372,13 +382,17 @@ body.cstudy-page {
   margin-bottom: 1rem;
 }
 
-.cstudy-page main {
-  width: 100%;
-  margin: 0;
+.cstudy-page .main-content {
+  /* 通常のmain-contentスタイルを継承 */
   padding: 2rem;
+  overflow-y: auto;
+}
+
+.cstudy-page .container-fluid {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 2rem;
 }
 
 .cstudy-page section.intro,
