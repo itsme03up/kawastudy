@@ -34,40 +34,19 @@ body {
     overflow: hidden;
 }
 
-.nature-left, .nature-right, .path {
+.path {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    filter: grayscale(30%) brightness(0.9);
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-.nature-left {
-    background: #5f7c33 url('{% static "img/parallax/tiles/grasstile.png" %}') repeat;
-    background-size: 150px 150px;
-    z-index: 1;
-    animation: sway 8s ease-in-out infinite alternate;
-}
-
-.nature-right {
-    background: #4a5d23 url('{% static "img/parallax/tiles/mudtile.png" %}') repeat;
-    background-size: 120px 120px;
-    z-index: 2;
-    opacity: 0.7;
-    animation: sway 10s ease-in-out infinite alternate-reverse;
-}
-
-.path {
-    background-color: rgba(212, 199, 161, 0.8);
     background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 3;
-    opacity: 0.9;
+    transform: translateZ(0);
+    will-change: transform;
+    z-index: 1;
 }
 
 @keyframes sway {
@@ -83,7 +62,7 @@ body {
 
 .character-sticky {
     position: fixed;
-    top: 10%;
+    top: 15%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -288,8 +267,6 @@ body {
 {% block content %}
 <div class="parallax-container">
     <div class="background-container">
-        <div class="nature-left"></div>
-        <div class="nature-right"></div>
         <div class="path"></div>
     </div>
 
@@ -516,14 +493,9 @@ function handleScroll() {
     const progressBar = document.getElementById('progress-bar');
     progressBar.style.transform = `scaleX(${progress})`;
     
-    // パララックス効果 - 背景レイヤーを異なる速度で動かす
-    const leftNature = document.querySelector('.nature-left');
-    const rightNature = document.querySelector('.nature-right');
+    // パララックス効果 - 背景を動かす
     const pathLayer = document.querySelector('.path');
-    
-    leftNature.style.transform = `translateY(${scrollY * 0.2}px)`;
-    rightNature.style.transform = `translateY(${scrollY * 0.4}px)`;
-    pathLayer.style.transform = `translateY(${scrollY * 0.6}px)`;
+    pathLayer.style.transform = `translateY(${scrollY * 0.3}px)`;
     
     // 特殊効果の表示制御
     const specialEffect = document.getElementById('special-effect');
