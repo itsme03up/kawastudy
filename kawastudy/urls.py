@@ -21,6 +21,7 @@ from apps.core import views as core_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', core_views.home, name='home'),
+    path('accounts/', include('allauth.urls')),  # django-allauth用
     path('typing/', include('apps.typinggame.urls')),   
     path('chat/', include('apps.chatlesson.urls')),
     path('sqlquiz/', include('apps.sqlquiz.urls')),
