@@ -31,6 +31,21 @@
                     🐧 Linux
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.app_name == 'aws' %}active{% endif %}" href="{% url 'aws:index' %}">
+                    ☁️ AWS
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.app_name == 'cstudy' %}active{% endif %}" href="{% url 'cstudy:index' %}">
+                    💻 C言語
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.app_name == 'scheduler' %}active{% endif %}" href="{% url 'scheduler:dashboard' %}">
+                    📅 スケジュール
+                </a>
+            </li>
         </ul>
     </div>
 </aside>
