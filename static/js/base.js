@@ -3,18 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('ページが読み込まれました');
     console.log('body classes:', document.body.className);
     
-    // C言語学習ページの初期化
-    if (document.body.classList.contains('cstudy-page')) {
+    // C言語学習ページの初期化（パララックスページは除外）
+    if (document.body.classList.contains('cstudy-page') && 
+        !document.body.classList.contains('cstudy-parallax-page')) {
         console.log('C言語学習ページを初期化します');
-        console.log('lessonData:', lessonData);
         initCStudyPage();
-        initNaviga    // 川田のコメントにデフォルトコードを設定
-    if (lesson.code) {
-        const editor = document.getElementById(`code-editor-${lessonId}`);
-        if (editor) {
-            editor.value = lesson.code;
-        }
-    }  initCodeRunButtons();
+        initCodeRunButtons();
     }
 });
 

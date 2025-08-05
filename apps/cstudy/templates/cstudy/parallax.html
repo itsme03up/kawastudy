@@ -3,6 +3,8 @@
 
 {% block title %}C言語学習 - パララックス体験{% endblock %}
 
+{% block body_class %}cstudy-parallax-page{% endblock %}
+
 {% block head %}
 <style>
 * {
@@ -337,6 +339,11 @@ let completedQuizzes = new Set();
 
 // API呼び出し関数
 async function fetchLessonData() {
+    if (lessonData.length > 0) {
+        console.log('Lesson data already loaded, skipping...');
+        return;
+    }
+    
     try {
         const response = await fetch('/cstudy/api/lessons/');
         if (response.ok) {
@@ -367,6 +374,11 @@ async function fetchLessonData() {
 }
 
 async function fetchQuizData() {
+    if (quizData.length > 0) {
+        console.log('Quiz data already loaded, skipping...');
+        return;
+    }
+    
     try {
         const response = await fetch('/cstudy/api/quizzes/');
         if (response.ok) {
