@@ -84,6 +84,12 @@ class UserStats(models.Model):
         
         self.last_study_date = today
         self.save()
+    
+    def get_days_since_last_study(self):
+        """最後の学習日からの経過日数を取得"""
+        if not self.last_study_date:
+            return None
+        return (timezone.now().date() - self.last_study_date).days
 
 class StudySession(models.Model):
     """学習セッションの記録"""

@@ -11,6 +11,19 @@ class KawadaSchedulerManager:
         self.user = user
         self.stats, _ = UserStats.objects.get_or_create(user=user)
     
+    def get_daily_motivational_message(self):
+        """ユーザーの状況に応じた日替わりメッセージを生成"""
+        # ここでは簡易的にランダムなメッセージを返すが、
+        # 実際には学習履歴や継続日数に応じて変化させると良い
+        messages = [
+            "今日の学習も一緒に頑張りましょう！",
+            "新しい知識を身につけるのは楽しいですね！",
+            "一歩一歩、着実に進んでいきましょう。",
+            "あなたの努力は、必ず未来の力になります。",
+            "困ったことがあれば、いつでも聞いてくださいね。",
+        ]
+        return random.choice(messages)
+    
     def generate_invitation_message(self):
         """学習頻度に応じたお誘いメッセージを生成"""
         days_since_last = self.stats.get_days_since_last_study()
