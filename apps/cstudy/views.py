@@ -14,6 +14,10 @@ def test_parallax(request):
     """パララックステストページ"""
     return render(request, "cstudy/test_parallax.html")
 
+def simple_parallax(request):
+    """シンプルなパララックス学習ページ"""
+    return render(request, 'cstudy/simple_parallax.html')
+
 def lesson_data(request):
     """学習セクションデータAPI"""
     if request.method != 'GET':
