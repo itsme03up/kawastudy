@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}C言語学習 - パララックス体験{% endblock %}
+
+{% block head %}
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.parallax-container {
+    position: relative;
+    height: 400vh; /* 長いスクロール可能領域 */
+    width: 100%;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    z-index: 1;
+}
+
+.nature-left, .nature-right {
+    width: 30vw;
+    height: 100vh;
+    background-image: 
+        linear-gradient(45deg, #4a5d23 25%, transparent 25%),
+        linear-gradient(-45deg, #4a5d23 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #4a5d23 75%),
+        linear-gradient(-45deg, transparent 75%, #4a5d23 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    background-color: #5f7c33;
+    filter: grayscale(60%) brightness(0.8);
+    transform: translateZ(0);
+}
+
+.nature-left {
+    background-image: 
+        radial-gradient(circle at 30% 40%, #3d4a1f 20%, transparent 21%),
+        radial-gradient(circle at 70% 80%, #3d4a1f 15%, transparent 16%),
+        linear-gradient(180deg, #4a5d23 0%, #5f7c33 100%);
+}
+
+.nature-right {
+    background-image: 
+        radial-gradient(circle at 60% 30%, #3d4a1f 18%, transparent 19%),
+        radial-gradient(circle at 20% 70%, #3d4a1f 22%, transparent 23%),
+        linear-gradient(180deg, #4a5d23 0%, #5f7c33 100%);
+}
+
+.path {
+    width: 40vw;
+    height: 100vh;
+    background: linear-gradient(180deg, #d4c7a1 0%, #c2b595 50%, #b5a888 100%);
+    background-image: 
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px),
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 6px);
+    position: relative;
+    z-index: 2;
+}
+
+.character-sticky {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.kawada-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.content-popup {
+    position: fixed;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 400px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+    border: 2px solid #e0e0e0;
+}
+
+.content-popup.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.content-popup.left {
+    left: 5vw;
+    top: 50%;
+    transform: translateY(-50%) translateX(-20px);
+}
+
+.content-popup.right {
+    right: 5vw;
+    top: 50%;
+    transform: translateY(-50%) translateX(20px);
+}
+
+.content-popup.visible.left,
+.content-popup.visible.right {
+    transform: translateY(-50%) translateX(0);
+}
+
+.popup-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.popup-code {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    margin: 10px 0;
+    border-left: 4px solid #007acc;
+}
+
+.warning-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    max-width: 500px;
+    text-align: center;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: all 0.4s ease;
+}
+
+.warning-popup.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.warning-popup h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.warning-popup p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.quiz-options {
+    list-style: none;
+    padding: 0;
+}
+
+.quiz-option {
+    background: rgba(255,255,255,0.2);
+    margin: 10px 0;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    border: 2px solid transparent;
+}
+
+.quiz-option:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.5);
+}
+
+.kawada-speech {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    transition: all 0.4s ease;
+    max-width: 80%;
+    text-align: center;
+}
+
+.kawada-speech.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.scroll-indicator {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+}
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    z-index: 30;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.1s ease;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="parallax-container">
+    <div class="background-container">
+        <div class="nature-left"></div>
+        <div class="path">
+            <div class="character-sticky">
+                <img src="{% static 'img/kawada-default.png' %}" 
+                     alt="川田先生" 
+                     class="kawada-avatar" 
+                     id="kawada-avatar">
+            </div>
+        </div>
+        <div class="nature-right"></div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar"></div>
+    
+    <div class="scroll-indicator">
+        スクロールして学習を進めよう
+    </div>
+
+    <!-- コンテンツポップアップのコンテナ -->
+    <div id="content-container"></div>
+
+    <!-- Warning問題ポップアップ -->
+    <div id="warning-popup" class="warning-popup">
+        <h2>⚠ Warning!</h2>
+        <p id="quiz-question"></p>
+        <ul id="quiz-options" class="quiz-options"></ul>
+    </div>
+
+    <!-- 川田のセリフ表示 -->
+    <div id="kawada-speech" class="kawada-speech"></div>
+</div>
+
+<script>
+// 学習データとクイズデータを格納する変数
+let lessonData = [];
+let quizData = [];
+let currentQuizIndex = 0;
+let completedQuizzes = new Set();
+
+// API呼び出し関数
+async function fetchLessonData() {
+    try {
+        const response = await fetch('/cstudy/api/lessons/');
+        if (response.ok) {
+            lessonData = await response.json();
+            console.log('Lesson data loaded:', lessonData.length, 'sections');
+        }
+    } catch (error) {
+        console.error('Failed to fetch lesson data:', error);
+        // フォールバックデータ
+        lessonData = [
+            {
+                id: 1, position: 300, side: 'left', type: 'text',
+                content: 'C言語へようこそ！川田と一緒に学んでいきましょう🌟',
+                kawada_emotion: 'cheerful'
+            },
+            {
+                id: 2, position: 700, side: 'right', type: 'code',
+                content: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!");\n    return 0;\n}',
+                kawada_emotion: 'default'
+            },
+            {
+                id: 3, position: 1200, side: 'left', type: 'text',
+                content: 'printf関数を使って文字を表示します。川田、これとても大事なんです！',
+                kawada_emotion: 'thinking'
+            }
+        ];
+    }
+}
+
+async function fetchQuizData() {
+    try {
+        const response = await fetch('/cstudy/api/quizzes/');
+        if (response.ok) {
+            quizData = await response.json();
+            console.log('Quiz data loaded:', quizData.length, 'quizzes');
+        }
+    } catch (error) {
+        console.error('Failed to fetch quiz data:', error);
+        // フォールバックデータ
+        quizData = [
+            {
+                id: 1,
+                question: 'セミコロンが必要なのはどれ？',
+                options: ['int a = 10', 'int b = 20;', 'printf("Hello")'],
+                correct_answer: 1,
+                explanation: 'C言語では文の終わりにセミコロンが必要です',
+                kawada_correct_message: '川田、正解です！',
+                kawada_wrong_message: '川田、もう一度考えてみましょう',
+                trigger_position: 900
+            }
+        ];
+    }
+}
+
+// 川田のアバター変更
+function changeKawadaEmotion(emotion) {
+    const avatar = document.getElementById('kawada-avatar');
+    avatar.src = `/static/img/kawada-${emotion}.png`;
+}
+
+// 川田のセリフ表示
+function showKawadaSpeech(message, duration = 3000) {
+    const speech = document.getElementById('kawada-speech');
+    speech.textContent = message;
+    speech.classList.add('visible');
+    
+    setTimeout(() => {
+        speech.classList.remove('visible');
+    }, duration);
+}
+
+// コンテンツポップアップ表示
+function showContentPopup(section) {
+    const container = document.getElementById('content-container');
+    
+    const popup = document.createElement('div');
+    popup.className = `content-popup ${section.side}`;
+    popup.id = `popup-${section.id}`;
+    
+    let content = '';
+    if (section.type === 'code') {
+        content = `<div class="popup-code">${section.content}</div>`;
+    } else {
+        content = `<div class="popup-text">${section.content}</div>`;
+    }
+    
+    popup.innerHTML = content;
+    container.appendChild(popup);
+    
+    // 川田の感情変更
+    changeKawadaEmotion(section.kawada_emotion);
+    
+    // アニメーション表示
+    setTimeout(() => {
+        popup.classList.add('visible');
+    }, 100);
+    
+    // 自動非表示
+    setTimeout(() => {
+        popup.classList.remove('visible');
+        setTimeout(() => {
+            if (popup.parentNode) {
+                popup.parentNode.removeChild(popup);
+            }
+        }, 400);
+    }, 4000);
+}
+
+// Warning問題表示
+function showWarningQuiz(quiz) {
+    const warningPopup = document.getElementById('warning-popup');
+    const questionEl = document.getElementById('quiz-question');
+    const optionsEl = document.getElementById('quiz-options');
+    
+    questionEl.textContent = quiz.question;
+    optionsEl.innerHTML = '';
+    
+    quiz.options.forEach((option, index) => {
+        const li = document.createElement('li');
+        li.className = 'quiz-option';
+        li.textContent = `${index + 1}. ${option}`;
+        li.onclick = () => handleQuizAnswer(quiz.id, index, quiz);
+        optionsEl.appendChild(li);
+    });
+    
+    warningPopup.classList.add('visible');
+}
+
+// クイズ回答処理
+async function handleQuizAnswer(quizId, selectedAnswer, quiz) {
+    const warningPopup = document.getElementById('warning-popup');
+    warningPopup.classList.remove('visible');
+    
+    const isCorrect = selectedAnswer === quiz.correct_answer;
+    const message = isCorrect ? quiz.kawada_correct_message : quiz.kawada_wrong_message;
+    
+    if (isCorrect) {
+        changeKawadaEmotion('cheerful');
+        completedQuizzes.add(quizId);
+    } else {
+        changeKawadaEmotion('gentle');
+    }
+    
+    showKawadaSpeech(message, 4000);
+    
+    // 解説表示
+    setTimeout(() => {
+        showKawadaSpeech(quiz.explanation, 4000);
+    }, 4500);
+}
+
+// スクロール処理
+function handleScroll() {
+    const scrollY = window.scrollY;
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    const progress = Math.min(scrollY / maxScroll, 1);
+    
+    // プログレスバー更新
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.transform = `scaleX(${progress})`;
+    
+    // パララックス効果
+    const leftNature = document.querySelector('.nature-left');
+    const rightNature = document.querySelector('.nature-right');
+    leftNature.style.transform = `translateY(${scrollY * 0.5}px)`;
+    rightNature.style.transform = `translateY(${scrollY * 0.3}px)`;
+    
+    // レッスンセクション表示
+    lessonData.forEach(section => {
+        if (scrollY >= section.position && scrollY < section.position + 100) {
+            const existingPopup = document.getElementById(`popup-${section.id}`);
+            if (!existingPopup) {
+                showContentPopup(section);
+            }
+        }
+    });
+    
+    // Warning問題表示
+    quizData.forEach(quiz => {
+        if (scrollY >= quiz.trigger_position && 
+            scrollY < quiz.trigger_position + 100 && 
+            !completedQuizzes.has(quiz.id)) {
+            showWarningQuiz(quiz);
+        }
+    });
+}
+
+// 初期化
+async function initializeParallaxLearning() {
+    await fetchLessonData();
+    await fetchQuizData();
+    
+    // スクロールイベント
+    window.addEventListener('scroll', handleScroll);
+    
+    // 初期メッセージ
+    setTimeout(() => {
+        showKawadaSpeech('C言語の冒険が始まります！スクロールして進んでください🚀', 4000);
+    }, 1000);
+}
+
+// ページ読み込み完了後に初期化
+document.addEventListener('DOMContentLoaded', initializeParallaxLearning);
+</script>
+{% endblock %}

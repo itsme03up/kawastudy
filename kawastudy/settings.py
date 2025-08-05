@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic', # whitenoiseを追加
     'django.contrib.staticfiles',
     
+    # REST Framework
+    'rest_framework',
+    
     # allauth関連
     'allauth',
     'allauth.account',
