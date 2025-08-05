@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}プロフィール編集{% endblock %}
+
+{% block body_class %}profile-edit{% endblock %}
+
+{% block extra_css %}
+<style>
+body.profile-edit .main-content {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    min-height: 100%;
+}
+
+body.profile-edit .container-fluid {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.profile-header {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-weight: 600;
+}
+
+.profile-form {
+    background: white;
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #74b9ff;
+    box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.25);
+    outline: none;
+}
+
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: #2c3e50;
+    text-decoration: underline;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.alert {
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+/* Font Awesome Icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <h1><i class="fas fa-user-edit"></i> プロフィール編集</h1>
+    <p>あなたの情報を更新できます。</p>
+</div>
+
+<div class="profile-form">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+                <i class="fas fa-user"></i> ユーザー名
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="text-danger mt-1">
+                    {% for error in form.username.errors %}
+                        <small>{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                <i class="fas fa-signature"></i> 名前
+            </label>
+            {{ form.first_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                <i class="fas fa-signature"></i> 姓
+            </label>
+            {{ form.last_name }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}" class="form-label">
+                <i class="fas fa-envelope"></i> メールアドレス
+            </label>
+            {{ form.email }}
+            {% if form.email.help_text %}
+                <div class="help-text">{{ form.email.help_text }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fas fa-save"></i> 保存
+        </button>
+    </form>
+    
+    <a href="/" class="back-link">ホームに戻る</a>
+</div>
+{% endblock %}

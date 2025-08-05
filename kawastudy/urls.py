@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', core_views.home, name='home'),
     path('accounts/', include('allauth.urls')),  # django-allauth用
+    path('accounts/profile/', core_views.profile_edit, name='profile_edit'),  # プロフィール編集
     path('typing/', include('apps.typinggame.urls')),   
     path('chat/', include('apps.chatlesson.urls')),
     path('sqlquiz/', include('apps.sqlquiz.urls')),
