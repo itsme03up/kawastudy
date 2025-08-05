@@ -1,0 +1,102 @@
+/* パララックス背景画像使用例 */
+
+/* 実際の画像ファイルを使用する場合のCSS例 */
+
+.nature-left-with-image {
+    width: 30vw;
+    height: 100vh;
+    /* 複数の背景画像をレイヤー状に重ねる */
+    background-image: 
+        url('{% static "img/parallax/tiles/grass_tile.png" %}'),
+        url('{% static "img/parallax/tiles/rock_tile.png" %}'),
+        url('{% static "img/parallax/backgrounds/path.png" %}');
+    background-size: 
+        100px 100px,  /* 草タイル */
+        150px 150px,  /* 岩タイル */
+        cover;        /* 背景画像 */
+    background-repeat: 
+        repeat,       /* 草をタイル表示 */
+        repeat,       /* 岩をタイル表示 */
+        no-repeat;    /* 背景は1回のみ */
+    background-position: 
+        0 0,          /* 草の位置 */
+        25px 25px,    /* 岩の位置（オフセット） */
+        center;       /* 背景画像の位置 */
+    filter: grayscale(60%) brightness(0.8);
+}
+
+.nature-right-with-image {
+    width: 30vw;
+    height: 100vh;
+    background-image: 
+        url('{% static "img/parallax/tiles/mud_tile.png" %}'),
+        url('{% static "img/parallax/backgrounds/nature_right.png" %}');
+    background-size: 
+        80px 80px,
+        cover;
+    background-repeat: 
+        repeat,
+        no-repeat;
+    background-position: 
+        0 0,
+        center;
+    filter: grayscale(40%) brightness(0.9);
+}
+
+.path-with-texture {
+    width: 40vw;
+    height: 100vh;
+    background-image: 
+        url('{% static "img/parallax/tiles/gravel_tile.png" %}'),
+        url('{% static "img/parallax/backgrounds/path_texture.png" %}');
+    background-size: 
+        50px 50px,    /* 砂利タイル */
+        cover;        /* 道のテクスチャ */
+    background-repeat: 
+        repeat,
+        no-repeat;
+    background-blend-mode: multiply; /* ブレンドモード */
+}
+
+/* パララックス効果付きの背景 */
+.parallax-layer-1 {
+    background-image: url('{% static "img/parallax/backgrounds/nature_left.png" %}');
+    transform: translateY(calc(var(--scroll-y) * 0.5)); /* 50%の速度でスクロール */
+}
+
+.parallax-layer-2 {
+    background-image: url('{% static "img/parallax/backgrounds/nature_right.png" %}');
+    transform: translateY(calc(var(--scroll-y) * 0.3)); /* 30%の速度でスクロール */
+}
+
+/* エフェクトレイヤー */
+.fog-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('{% static "img/parallax/effects/fog.png" %}');
+    background-size: cover;
+    opacity: 0.3;
+    z-index: 3;
+    animation: fogMove 20s linear infinite;
+}
+
+@keyframes fogMove {
+    0% { transform: translateX(-10%); }
+    100% { transform: translateX(10%); }
+}
+
+/* 川田キャラクターの上から見た画像 */
+.kawada-topdown {
+    width: 80px;
+    height: 80px;
+    background-image: url('{% static "img/parallax/characters/kawada_topdown.svg" %}');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}

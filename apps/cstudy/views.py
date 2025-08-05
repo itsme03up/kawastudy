@@ -1,8 +1,7 @@
 # views.py
 from django.shortcuts import render
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 from .models import CLessonSection, CQuizQuestion
 import subprocess, tempfile, os
 import json
@@ -11,9 +10,11 @@ def index(request):
     """新しいパララックス学習ページ"""
     return render(request, "cstudy/parallax.html")
 
-@api_view(['GET'])
 def lesson_data(request):
     """学習セクションデータAPI"""
+    if request.method != 'GET':
+        return JsonResponse({'error': 'GET method required'}, status=405)
+    
     sections = CLessonSection.objects.filter(is_active=True)
     data = []
     for section in sections:
@@ -26,11 +27,13 @@ def lesson_data(request):
             'kawada_emotion': section.kawada_emotion,
             'order': section.order
         })
-    return Response(data)
+    return JsonResponse(data, safe=False)
 
-@api_view(['GET'])
 def quiz_data(request):
     """Warning問題データAPI"""
+    if request.method != 'GET':
+        return JsonResponse({'error': 'GET method required'}, status=405)
+    
     quizzes = CQuizQuestion.objects.filter(is_active=True)
     data = []
     for quiz in quizzes:
@@ -45,26 +48,38 @@ def quiz_data(request):
             'trigger_position': quiz.trigger_position,
             'order': quiz.order
         })
-    return Response(data)
+    return JsonResponse(data, safe=False)
 
-@api_view(['POST'])
+@csrf_exempt
 def submit_quiz_answer(request):
     """Warning問題の回答処理"""
-    quiz_id = request.data.get('quiz_id')
-    answer = request.data.get('answer')
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
+    
+    try:
+        payload = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    
+    quiz_id = payload.get('quiz_id')
+    answer = payload.get('answer')
+    
+    if quiz_id is None or answer is None:
+        return JsonResponse({'error': 'quiz_id and answer are required'}, status=400)
     
     try:
         quiz = CQuizQuestion.objects.get(id=quiz_id)
         is_correct = answer == quiz.correct_answer
         
-        return Response({
+        return JsonResponse({
             'correct': is_correct,
             'explanation': quiz.explanation,
             'kawada_message': quiz.kawada_correct_message if is_correct else quiz.kawada_wrong_message
         })
     except CQuizQuestion.DoesNotExist:
-        return Response({'error': 'Quiz not found'}, status=404)
+        return JsonResponse({'error': 'Quiz not found'}, status=404)
 
+@csrf_exempt
 def run_code(request):
     """C言語コード実行（既存機能維持）"""
     if request.method != 'POST':
