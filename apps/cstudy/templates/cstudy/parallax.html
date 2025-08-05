@@ -28,34 +28,46 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-    display: flex;
     z-index: 1;
+    overflow: hidden;
 }
 
-.nature-left, .nature-right {
-    width: 30vw;
+.nature-left, .nature-right, .path {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
-    background-color: #5f7c33;
     filter: grayscale(30%) brightness(0.9);
     transform: translateZ(0);
-    position: relative;
-    overflow: hidden;
     will-change: transform;
-    z-index: 1;
 }
 
 .nature-left {
     background: #5f7c33 url('{% static "img/parallax/tiles/grasstile.png" %}') repeat;
-    background-size: 120px 120px;
+    background-size: 150px 150px;
+    z-index: 1;
     animation: sway 8s ease-in-out infinite alternate;
 }
 
 .nature-right {
     background: #4a5d23 url('{% static "img/parallax/tiles/mudtile.png" %}') repeat;
-    background-size: 100px 100px;
+    background-size: 120px 120px;
+    z-index: 2;
+    opacity: 0.7;
     animation: sway 10s ease-in-out infinite alternate-reverse;
+}
+
+.path {
+    background-color: rgba(212, 199, 161, 0.8);
+    background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 3;
+    opacity: 0.9;
 }
 
 @keyframes sway {
@@ -69,35 +81,24 @@ body {
     }
 }
 
-.path {
-    width: 40vw;
-    height: 100vh;
-    background-color: #d4c7a1;
-    background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    position: relative;
-    z-index: 2;
-}
-
 .character-sticky {
     position: fixed;
-    top: 50%;
+    top: 10%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
+    transform: translateX(-50%);
+    z-index: 10;
     transition: all 0.3s ease;
 }
 
 .kawada-avatar {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     border: 3px solid #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     background: white;
     transition: all 0.3s ease;
+    object-fit: cover;
 }
 
 .content-popup {
@@ -287,16 +288,17 @@ body {
 {% block content %}
 <div class="parallax-container">
     <div class="background-container">
-        <div class="nature-left" style="background: #5f7c33 url('{% static "img/parallax/tiles/grasstile.png" %}') repeat; background-size: 120px 120px;"></div>
-        <div class="path" style="background: #d4c7a1 url('{% static "img/parallax/backgrounds/path.png" %}') center/cover no-repeat;">
-            <div class="character-sticky">
-                <img src="{% static 'img/parallax/characters/kawada-sam.png' %}" 
-                     alt="川田先生" 
-                     class="kawada-avatar" 
-                     id="kawada-avatar">
-            </div>
-        </div>
-        <div class="nature-right" style="background: #4a5d23 url('{% static "img/parallax/tiles/mudtile.png" %}') repeat; background-size: 100px 100px;"></div>
+        <div class="nature-left"></div>
+        <div class="nature-right"></div>
+        <div class="path"></div>
+    </div>
+
+    <!-- キャラクターを別の場所に配置 -->
+    <div class="character-sticky">
+        <img src="{% static 'img/parallax/characters/kawada-sam.png' %}" 
+             alt="川田先生" 
+             class="kawada-avatar" 
+             id="kawada-avatar">
     </div>
 
     <div class="progress-bar" id="progress-bar"></div>
@@ -514,11 +516,14 @@ function handleScroll() {
     const progressBar = document.getElementById('progress-bar');
     progressBar.style.transform = `scaleX(${progress})`;
     
-    // パララックス効果
+    // パララックス効果 - 背景レイヤーを異なる速度で動かす
     const leftNature = document.querySelector('.nature-left');
     const rightNature = document.querySelector('.nature-right');
-    leftNature.style.transform = `translateY(${scrollY * 0.5}px)`;
-    rightNature.style.transform = `translateY(${scrollY * 0.3}px)`;
+    const pathLayer = document.querySelector('.path');
+    
+    leftNature.style.transform = `translateY(${scrollY * 0.2}px)`;
+    rightNature.style.transform = `translateY(${scrollY * 0.4}px)`;
+    pathLayer.style.transform = `translateY(${scrollY * 0.6}px)`;
     
     // 特殊効果の表示制御
     const specialEffect = document.getElementById('special-effect');
