@@ -682,18 +682,3 @@ function setupScrollSpy() {
         }
     });
 }
-
-// ===== メイン初期化 =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('ページが読み込まれました');
-    console.log('body classes:', document.body.className);
-    
-    // C言語学習ページの初期化
-    if (document.body.classList.contains('cstudy-page')) {
-        console.log('C言語学習ページを初期化します');
-        console.log('lessonData:', lessonData);
-        initCStudyPage();
-        initNavigation();
-        initCodeRunButtons();
-    }
-});

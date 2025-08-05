@@ -15,7 +15,7 @@
 
 body {
     overflow-x: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:        <div class="path" style="background: #d4c7a1 url('{% static "img/parallax/backgrounds/path.png" %}') center/cover no-repeat;"></div>'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .parallax-container {
@@ -47,20 +47,14 @@ body {
 }
 
 .nature-left {
-    background-color: #5f7c33;
-    background-image: url('{% static "img/parallax/tiles/grasstile.png" %}');
+    background: #5f7c33 url('{% static "img/parallax/tiles/grasstile.png" %}') repeat;
     background-size: 120px 120px;
-    background-repeat: repeat;
-    background-position: 0 0;
     animation: sway 8s ease-in-out infinite alternate;
 }
 
 .nature-right {
-    background-color: #4a5d23;
-    background-image: url('{% static "img/parallax/tiles/mudtile.png" %}');
+    background: #4a5d23 url('{% static "img/parallax/tiles/mudtile.png" %}') repeat;
     background-size: 100px 100px;
-    background-repeat: repeat;
-    background-position: 25px 25px;
     animation: sway 10s ease-in-out infinite alternate-reverse;
 }
 
@@ -293,8 +287,8 @@ body {
 {% block content %}
 <div class="parallax-container">
     <div class="background-container">
-        <div class="nature-left"></div>
-        <div class="path">
+        <div class="nature-left" style="background: #5f7c33 url('{% static "img/parallax/tiles/grasstile.png" %}') repeat; background-size: 120px 120px;"></div>
+        <div class="path" style="background: #d4c7a1 url('{% static "img/parallax/backgrounds/path.png" %}') center / cover no-repeat;">
             <div class="character-sticky">
                 <img src="{% static 'img/parallax/characters/kawada-sam.png' %}" 
                      alt="川田先生" 
@@ -302,7 +296,7 @@ body {
                      id="kawada-avatar">
             </div>
         </div>
-        <div class="nature-right"></div>
+        <div class="nature-right" style="background: #4a5d23 url('{% static "img/parallax/tiles/mudtile.png" %}') repeat; background-size: 100px 100px;"></div>
     </div>
 
     <div class="progress-bar" id="progress-bar"></div>
@@ -332,14 +326,14 @@ body {
 
 <script>
 // 学習データとクイズデータを格納する変数
-let lessonData = [];
-let quizData = [];
+let parallaxLessonData = [];
+let parallaxQuizData = [];
 let currentQuizIndex = 0;
 let completedQuizzes = new Set();
 
 // API呼び出し関数
 async function fetchLessonData() {
-    if (lessonData.length > 0) {
+    if (parallaxLessonData.length > 0) {
         console.log('Lesson data already loaded, skipping...');
         return;
     }
@@ -347,13 +341,13 @@ async function fetchLessonData() {
     try {
         const response = await fetch('/cstudy/api/lessons/');
         if (response.ok) {
-            lessonData = await response.json();
-            console.log('Lesson data loaded:', lessonData.length, 'sections');
+            parallaxLessonData = await response.json();
+            console.log('Lesson data loaded:', parallaxLessonData.length, 'sections');
         }
     } catch (error) {
         console.error('Failed to fetch lesson data:', error);
         // フォールバックデータ
-        lessonData = [
+        parallaxLessonData = [
             {
                 id: 1, position: 300, side: 'left', type: 'text',
                 content: 'C言語へようこそ！川田と一緒に学んでいきましょう🌟',
@@ -374,7 +368,7 @@ async function fetchLessonData() {
 }
 
 async function fetchQuizData() {
-    if (quizData.length > 0) {
+    if (parallaxQuizData.length > 0) {
         console.log('Quiz data already loaded, skipping...');
         return;
     }
@@ -382,13 +376,13 @@ async function fetchQuizData() {
     try {
         const response = await fetch('/cstudy/api/quizzes/');
         if (response.ok) {
-            quizData = await response.json();
-            console.log('Quiz data loaded:', quizData.length, 'quizzes');
+            parallaxQuizData = await response.json();
+            console.log('Quiz data loaded:', parallaxQuizData.length, 'quizzes');
         }
     } catch (error) {
         console.error('Failed to fetch quiz data:', error);
         // フォールバックデータ
-        quizData = [
+        parallaxQuizData = [
             {
                 id: 1,
                 question: 'セミコロンが必要なのはどれ？',
@@ -535,7 +529,7 @@ function handleScroll() {
     }
     
     // レッスンセクション表示
-    lessonData.forEach(section => {
+    parallaxLessonData.forEach(section => {
         if (scrollY >= section.position && scrollY < section.position + 100) {
             const existingPopup = document.getElementById(`popup-${section.id}`);
             if (!existingPopup) {
@@ -546,7 +540,7 @@ function handleScroll() {
     });
     
     // Warning問題表示
-    quizData.forEach(quiz => {
+    parallaxQuizData.forEach(quiz => {
         if (scrollY >= quiz.trigger_position && 
             scrollY < quiz.trigger_position + 100 && 
             !completedQuizzes.has(quiz.id)) {
@@ -562,8 +556,8 @@ async function initializeParallaxLearning() {
     await fetchLessonData();
     await fetchQuizData();
     
-    console.log('Lesson data loaded:', lessonData.length, 'sections');
-    console.log('Quiz data loaded:', quizData.length, 'quizzes');
+    console.log('Lesson data loaded:', parallaxLessonData.length, 'sections');
+    console.log('Quiz data loaded:', parallaxQuizData.length, 'quizzes');
     
     // スクロールイベント
     window.addEventListener('scroll', handleScroll);

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}パララックステスト{% endblock %}
+
+{% block body_class %}parallax-test{% endblock %}
+
+{% block head %}
+<style>
+body {
+    margin: 0;
+    height: 300vh; /* 長いページ */
+    font-family: Arial, sans-serif;
+}
+
+.parallax-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.bg-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.bg-1 {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+}
+
+.bg-2 {
+    background: linear-gradient(45deg, #48dbfb, #0abde3);
+}
+
+.bg-3 {
+    background: linear-gradient(45deg, #1dd1a1, #10ac84);
+}
+
+.content-box {
+    background: rgba(255,255,255,0.9);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+
+.kawada-floating {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.kawada-floating img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-layer bg-1" id="bg1"></div>
+<div class="bg-layer bg-2" id="bg2"></div>
+<div class="bg-layer bg-3" id="bg3"></div>
+
+<div class="kawada-floating">
+    <img src="{% static 'img/kawada-default.png' %}" alt="川田先生">
+</div>
+
+<div class="parallax-section">
+    <div class="content-box">
+        <h1>🎨 パララックステスト</h1>
+        <p>スクロールしてください</p>
+    </div>
+</div>
+
+<div class="parallax-section">
+    <div class="content-box">
+        <h2>📚 セクション2</h2>
+        <p>背景が動いていますか？</p>
+    </div>
+</div>
+
+<div class="parallax-section">
+    <div class="content-box">
+        <h2>🚀 セクション3</h2>
+        <p>川田先生は表示されていますか？</p>
+    </div>
+</div>
+
+<script>
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const rate = scrolled * -0.5;
+    const rate2 = scrolled * -0.3;
+    const rate3 = scrolled * -0.1;
+    
+    document.getElementById('bg1').style.transform = `translateY(${rate}px)`;
+    document.getElementById('bg2').style.transform = `translateY(${rate2}px)`;
+    document.getElementById('bg3').style.transform = `translateY(${rate3}px)`;
+    
+    console.log('Scroll position:', scrolled);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Parallax test page loaded');
+});
+</script>
+{% endblock %}

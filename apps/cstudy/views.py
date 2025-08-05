@@ -10,6 +10,10 @@ def index(request):
     """新しいパララックス学習ページ"""
     return render(request, "cstudy/parallax.html")
 
+def test_parallax(request):
+    """パララックステストページ"""
+    return render(request, "cstudy/test_parallax.html")
+
 def lesson_data(request):
     """学習セクションデータAPI"""
     if request.method != 'GET':
