@@ -12,17 +12,17 @@ from .models import CLessonSection, CQuizQuestion
 
 def index(request):
     """統合されたC言語学習ページ"""
-    return render(request, "cstudy/unified.html")
+    return render(request, "cstudy/index.html")
 
 
 def test_parallax(request):
     """パララックステストページ（後方互換性のため残存）"""
-    return render(request, "cstudy/unified.html")
+    return render(request, "cstudy/index.html")
 
 
 def simple_parallax(request):
     """シンプルなパララックス学習ページ（後方互換性のため残存）"""
-    return render(request, 'cstudy/unified.html')
+    return render(request, 'cstudy/index.html')
 
 
 def lesson_data(request):
