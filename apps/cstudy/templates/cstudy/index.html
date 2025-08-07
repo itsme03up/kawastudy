@@ -19,69 +19,9 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* モード切替ボタン */
-.mode-selector {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    gap: 10px;
-}
-
-.mode-btn {
-    padding: 8px 16px;
-    border: 2px solid #007bff;
-    background: rgba(255, 255, 255, 0.9);
-    color: #007bff;
-    cursor: pointer;
-    border-radius: 20px;
-    font-size: 12px;
-    transition: all 0.3s ease;
-}
-
-.mode-btn.active {
-    background: #007bff;
-    color: white;
-}
-
-.mode-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
-}
-
-/* 標準モードスタイル */
-.standard-mode {
-    display: block;
-}
-
-.standard-mode .cstudy-layout {
-    display: flex;
-    min-height: 100vh;
-    padding: 20px;
-    gap: 20px;
-}
-
-.standard-mode .lesson-menu {
-    flex: 1;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.standard-mode .compiler-area {
-    flex: 2;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
 /* パララックスモードスタイル */
 .parallax-mode {
-    display: none;
+    display: block;
     position: relative;
     height: 400vh;
     width: 100%;
@@ -353,16 +293,6 @@ body {
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
-    .standard-mode .cstudy-layout {
-        flex-direction: column;
-        padding: 10px;
-    }
-    
-    .standard-mode .lesson-menu,
-    .standard-mode .compiler-area {
-        max-width: none;
-    }
-    
     .lesson-section {
         padding: 20px;
     }
@@ -371,12 +301,6 @@ body {
     .lesson-content-box.right {
         margin-left: 5%;
         margin-right: 5%;
-    }
-    
-    .mode-selector {
-        top: 10px;
-        right: 10px;
-        flex-direction: column;
     }
     
     .kawada-character {
@@ -390,105 +314,6 @@ body {
 {% endblock %}
 
 {% block content %}
-<!-- モード切替ボタン -->
-<div class="mode-selector">
-    <button class="mode-btn active" data-mode="standard">📚 標準モード</button>
-    <button class="mode-btn" data-mode="parallax">🌄 パララックス</button>
-</div>
-
-<!-- 標準モード -->
-<div id="standard-mode" class="standard-mode">
-    <header class="page-header">
-        <h1>C言語入門</h1>
-        <p>川田と一緒にC言語の基本を学びましょう！</p>
-    </header>
-
-    <main class="main-content">
-        <div class="cstudy-layout">
-            <!-- 左側：学習メニュー -->
-            <div class="lesson-menu">
-                <div class="progress-section">
-                    <h3>📊 学習進捗</h3>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="learning-progress-bar"></div>
-                    </div>
-                    <span class="progress-text" id="progress-text">進捗: 0%</span>
-                </div>
-
-                <div class="menu-section">
-                    <h3>📚 学習メニュー</h3>
-                    <ul class="lesson-list">
-                        <li>
-                            <button class="lesson-btn active" data-lesson="intro">
-                                <span class="lesson-icon">📖</span>
-                                <span class="lesson-title">はじめに</span>
-                                <span class="completion-status">○</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="lesson-btn" data-lesson="hello">
-                                <span class="lesson-icon">1️⃣</span>
-                                <span class="lesson-title">Hello World</span>
-                                <span class="completion-status">○</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="lesson-btn" data-lesson="variables">
-                                <span class="lesson-icon">2️⃣</span>
-                                <span class="lesson-title">変数と計算</span>
-                                <span class="completion-status">○</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="lesson-btn" data-lesson="input">
-                                <span class="lesson-icon">3️⃣</span>
-                                <span class="lesson-title">入力と出力</span>
-                                <span class="completion-status">○</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button class="lesson-btn" data-lesson="strings">
-                                <span class="lesson-icon">4️⃣</span>
-                                <span class="lesson-title">文字列と配列</span>
-                                <span class="completion-status">○</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="kawada-section">
-                    <h3>💬 川田からのコメント</h3>
-                    <div class="kawada-comment" id="kawada-comment">
-                        <p>学習したい項目をクリックしてください！</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 右側：コンパイラーエリア -->
-            <div class="compiler-area">
-                <div class="lesson-content" id="lesson-content">
-                    <h2>C言語学習へようこそ！</h2>
-                    <p>左側のメニューから学習したい項目を選択してください。</p>
-                    
-                    <div class="code-editor" id="code-editor" contenteditable="true">
-#include &lt;stdio.h&gt;
-
-int main() {
-    printf("Hello, World!\n");
-    return 0;
-}
-                    </div>
-                    
-                    <button class="run-btn" onclick="runCode()">▶️ 実行</button>
-                    
-                    <div class="code-output" id="code-output">
-                        実行結果がここに表示されます...
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
 
 <!-- パララックスモード -->
 <div id="parallax-mode" class="parallax-mode">
@@ -516,7 +341,7 @@ int main() {
 // 統合されたC言語学習システム
 class UnifiedCStudy {
     constructor() {
-        this.currentMode = 'standard';
+        this.currentMode = 'parallax';
         this.currentLesson = null;
         this.lessonData = [];
         this.quizData = [];
@@ -526,41 +351,10 @@ class UnifiedCStudy {
     }
     
     async init() {
-        this.setupModeToggle();
-        this.setupLessonButtons();
         await this.loadLessonData();
         await this.loadQuizData();
         this.initKawadaScheduler();
-    }
-    
-    setupModeToggle() {
-        const modeButtons = document.querySelectorAll('.mode-btn');
-        modeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                this.switchMode(mode);
-                
-                // ボタンの状態更新
-                modeButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-    }
-    
-    switchMode(mode) {
-        const standardMode = document.getElementById('standard-mode');
-        const parallaxMode = document.getElementById('parallax-mode');
-        
-        if (mode === 'parallax') {
-            standardMode.style.display = 'none';
-            parallaxMode.style.display = 'block';
-            this.currentMode = 'parallax';
-            this.initParallax();
-        } else {
-            standardMode.style.display = 'block';
-            parallaxMode.style.display = 'none';
-            this.currentMode = 'standard';
-        }
+        this.initParallax(); // パララックスを自動で初期化
     }
     
     initParallax() {
@@ -597,10 +391,36 @@ class UnifiedCStudy {
         container.innerHTML = '';
         
         const lessons = [
-            { title: 'C言語とは', content: 'C言語は1972年にデニス・リッチーによって開発されたプログラミング言語です。', side: 'left' },
-            { title: 'Hello World', content: 'まずは定番の「Hello World」プログラムから始めましょう！', side: 'right' },
-            { title: '変数と型', content: 'C言語では様々なデータ型を使って変数を宣言できます。', side: 'center' },
-            { title: '関数の基本', content: '関数を使ってコードを整理し、再利用可能にしましょう。', side: 'left' }
+            { 
+                title: 'C言語入門', 
+                content: 'C言語は1972年にデニス・リッチーによって開発されたプログラミング言語です。システムプログラミングに適しており、現在でも多くの場面で使用されています。', 
+                side: 'center',
+                code: '#include <stdio.h>\n\nint main() {\n    printf("C言語の世界へようこそ!\\n");\n    return 0;\n}'
+            },
+            { 
+                title: 'Hello World', 
+                content: 'プログラミングの第一歩！まずは定番の「Hello World」プログラムから始めましょう。', 
+                side: 'left',
+                code: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
+            },
+            { 
+                title: '変数と型', 
+                content: 'C言語では様々なデータ型を使って変数を宣言できます。int、float、charなどの基本型を学びましょう。', 
+                side: 'right',
+                code: '#include <stdio.h>\n\nint main() {\n    int age = 20;\n    float height = 175.5;\n    char grade = \'A\';\n    \n    printf("年齢: %d歳\\n", age);\n    printf("身長: %.1fcm\\n", height);\n    printf("成績: %c\\n", grade);\n    return 0;\n}'
+            },
+            { 
+                title: '計算と演算', 
+                content: '四則演算やその他の演算子を使って計算を行いましょう。プログラミングの基本です！', 
+                side: 'center',
+                code: '#include <stdio.h>\n\nint main() {\n    int a = 10, b = 3;\n    \n    printf("a + b = %d\\n", a + b);\n    printf("a - b = %d\\n", a - b);\n    printf("a * b = %d\\n", a * b);\n    printf("a / b = %d\\n", a / b);\n    printf("a %% b = %d\\n", a % b);\n    return 0;\n}'
+            },
+            { 
+                title: '入力と出力', 
+                content: 'ユーザーからの入力を受け取って処理する方法を学びましょう。scanfとprintfは重要な関数です。', 
+                side: 'left',
+                code: '#include <stdio.h>\n\nint main() {\n    char name[50];\n    int age;\n    \n    printf("お名前を入力してください: ");\n    scanf("%s", name);\n    printf("年齢を入力してください: ");\n    scanf("%d", &age);\n    \n    printf("こんにちは、%sさん！\\n", name);\n    printf("あなたは%d歳ですね。\\n", age);\n    return 0;\n}'
+            }
         ];
         
         lessons.forEach((lesson, index) => {
@@ -608,10 +428,15 @@ class UnifiedCStudy {
             section.className = 'lesson-section';
             section.innerHTML = `
                 <div class="lesson-content-box ${lesson.side}">
-                    <h2>${lesson.title}</h2>
+                    <h2>📖 ${lesson.title}</h2>
                     <p>${lesson.content}</p>
                     <div class="code-editor">
-                        <code>// ここにサンプルコードが表示されます</code>
+                        <pre><code>${lesson.code}</code></pre>
+                    </div>
+                    <button class="run-btn" onclick="runParallaxCode(this)">▶️ 実行してみる</button>
+                    <div class="code-output" style="display: none;">
+                        <strong>実行結果:</strong>
+                        <pre id="output-${index}">// 実行ボタンを押してください</pre>
                     </div>
                 </div>
             `;
@@ -799,6 +624,53 @@ async function runCode() {
         }
     } catch (error) {
         output.innerHTML = `<strong>エラー:</strong><br><pre style="color: red;">${error.message}</pre>`;
+    }
+}
+
+// パララックス用のコード実行機能
+async function runParallaxCode(button) {
+    const codeBlock = button.parentElement.querySelector('pre code');
+    const outputDiv = button.parentElement.querySelector('.code-output');
+    const outputPre = outputDiv.querySelector('pre');
+    
+    if (!codeBlock || !outputDiv || !outputPre) return;
+    
+    const code = codeBlock.textContent;
+    outputDiv.style.display = 'block';
+    outputPre.textContent = '実行中...';
+    
+    try {
+        const response = await fetch('/cstudy/api/run-code/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            },
+            body: JSON.stringify({ source: code })
+        });
+        
+        const result = await response.json();
+        
+        if (result.stdout) {
+            outputPre.textContent = result.stdout;
+        } else if (result.stderr) {
+            outputPre.textContent = `エラー:\n${result.stderr}`;
+            outputPre.style.color = 'red';
+        } else {
+            outputPre.textContent = '出力なし';
+        }
+        
+        // 川田のリアクション
+        if (window.kawadaScheduler) {
+            kawadaScheduler.showKawadaMessage(
+                "実行完了！", 
+                "コードが実行されました！いかがでしたか？💻", 
+                'cheerful'
+            );
+        }
+    } catch (error) {
+        outputPre.textContent = `エラー: ${error.message}`;
+        outputPre.style.color = 'red';
     }
 }
 
