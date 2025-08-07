@@ -3,138 +3,790 @@
 
 {% block title %}C言語入門{% endblock %}
 
-{% block body_class %}cstudy-page{% endblock %}
+{% block body_class %}cstudy-unified-page{% endblock %}
+
+{% block head %}
+<style>
+/* 基本スタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* モード切替ボタン */
+.mode-selector {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+.mode-btn {
+    padding: 8px 16px;
+    border: 2px solid #007bff;
+    background: rgba(255, 255, 255, 0.9);
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.mode-btn.active {
+    background: #007bff;
+    color: white;
+}
+
+.mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+/* 標準モードスタイル */
+.standard-mode {
+    display: block;
+}
+
+.standard-mode .cstudy-layout {
+    display: flex;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+.standard-mode .lesson-menu {
+    flex: 1;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.standard-mode .compiler-area {
+    flex: 2;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* パララックスモードスタイル */
+.parallax-mode {
+    display: none;
+    position: relative;
+    height: 400vh;
+    width: 100%;
+}
+
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.path {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #4a5d23;
+    background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: translateZ(0);
+    will-change: transform;
+    z-index: 1;
+}
+
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('{% static "img/parallax/backgrounds/clouds.png" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: translateZ(0);
+    will-change: transform;
+    z-index: 2;
+}
+
+.kawada-character {
+    position: absolute;
+    bottom: 20%;
+    left: 10%;
+    width: 150px;
+    height: 150px;
+    z-index: 10;
+    transition: all 0.5s ease;
+}
+
+.kawada-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 学習コンテンツエリア */
+.lesson-sections {
+    position: relative;
+    z-index: 5;
+    padding: 100vh 0 50px;
+}
+
+.lesson-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 50px;
+}
+
+.lesson-content-box {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 800px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+}
+
+.lesson-content-box.left {
+    margin-left: 10%;
+}
+
+.lesson-content-box.right {
+    margin-left: auto;
+    margin-right: 10%;
+}
+
+.lesson-content-box.center {
+    margin: 0 auto;
+}
+
+/* 共通スタイル */
+.progress-section h3 {
+    color: #007bff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-container {
+    background: #e9ecef;
+    border-radius: 10px;
+    height: 20px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.lesson-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lesson-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 16px;
+}
+
+.lesson-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+    border-color: #007bff;
+}
+
+.lesson-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.lesson-btn.completed {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.lesson-icon {
+    font-size: 24px;
+    min-width: 30px;
+}
+
+.lesson-title {
+    flex: 1;
+    text-align: left;
+}
+
+.completion-status {
+    font-size: 20px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.kawada-comment {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+.code-editor {
+    background: #1e1e1e;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    min-height: 300px;
+    margin: 20px 0;
+}
+
+.code-output {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    min-height: 100px;
+    margin: 20px 0;
+}
+
+.run-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.run-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+/* クイズスタイル */
+.quiz-container {
+    background: rgba(255, 243, 205, 0.95);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+}
+
+.quiz-options {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+}
+
+.quiz-option {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quiz-option:hover {
+    border-color: #007bff;
+    transform: translateX(5px);
+}
+
+.quiz-option.selected {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.quiz-option.correct {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.quiz-option.incorrect {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .standard-mode .cstudy-layout {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .standard-mode .lesson-menu,
+    .standard-mode .compiler-area {
+        max-width: none;
+    }
+    
+    .lesson-section {
+        padding: 20px;
+    }
+    
+    .lesson-content-box.left,
+    .lesson-content-box.right {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+    
+    .mode-selector {
+        top: 10px;
+        right: 10px;
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<header class="page-header">
-    <h1>C言語入門</h1>
-    <p>川田と一緒にC言語の基本を学びましょう！</p>
-</header>
+<!-- モード切替ボタン -->
+<div class="mode-selector">
+    <button class="mode-btn active" data-mode="standard">📚 標準モード</button>
+    <button class="mode-btn" data-mode="parallax">🌄 パララックス</button>
+</div>
 
-<main class="main-content">
-    <div class="cstudy-layout">
-        <!-- 左側：学習メニュー -->
-        <div class="lesson-menu">
-            <div class="progress-section">
-                <h3>📊 学習進捗</h3>
-                <div class="progress-container">
-                    <div class="progress-bar" id="learning-progress-bar"></div>
+<!-- 標準モード -->
+<div id="standard-mode" class="standard-mode">
+    <header class="page-header">
+        <h1>C言語入門</h1>
+        <p>川田と一緒にC言語の基本を学びましょう！</p>
+    </header>
+
+    <main class="main-content">
+        <div class="cstudy-layout">
+            <!-- 左側：学習メニュー -->
+            <div class="lesson-menu">
+                <div class="progress-section">
+                    <h3>📊 学習進捗</h3>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="learning-progress-bar"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">進捗: 0%</span>
                 </div>
-                <span class="progress-text" id="progress-text">進捗: 0%</span>
+
+                <div class="menu-section">
+                    <h3>📚 学習メニュー</h3>
+                    <ul class="lesson-list">
+                        <li>
+                            <button class="lesson-btn active" data-lesson="intro">
+                                <span class="lesson-icon">📖</span>
+                                <span class="lesson-title">はじめに</span>
+                                <span class="completion-status">○</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="lesson-btn" data-lesson="hello">
+                                <span class="lesson-icon">1️⃣</span>
+                                <span class="lesson-title">Hello World</span>
+                                <span class="completion-status">○</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="lesson-btn" data-lesson="variables">
+                                <span class="lesson-icon">2️⃣</span>
+                                <span class="lesson-title">変数と計算</span>
+                                <span class="completion-status">○</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="lesson-btn" data-lesson="input">
+                                <span class="lesson-icon">3️⃣</span>
+                                <span class="lesson-title">入力と出力</span>
+                                <span class="completion-status">○</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="lesson-btn" data-lesson="strings">
+                                <span class="lesson-icon">4️⃣</span>
+                                <span class="lesson-title">文字列と配列</span>
+                                <span class="completion-status">○</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="kawada-section">
+                    <h3>💬 川田からのコメント</h3>
+                    <div class="kawada-comment" id="kawada-comment">
+                        <p>学習したい項目をクリックしてください！</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="menu-section">
-                <h3>📚 学習メニュー</h3>
-                <ul class="lesson-list">
-                    <li>
-                        <button class="lesson-btn active" data-lesson="intro">
-                            <span class="lesson-icon">📖</span>
-                            <span class="lesson-title">はじめに</span>
-                            <span class="completion-status">○</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="lesson-btn" data-lesson="hello">
-                            <span class="lesson-icon">1️⃣</span>
-                            <span class="lesson-title">Hello World</span>
-                            <span class="completion-status">○</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="lesson-btn" data-lesson="variables">
-                            <span class="lesson-icon">2️⃣</span>
-                            <span class="lesson-title">変数と計算</span>
-                            <span class="completion-status">○</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="lesson-btn" data-lesson="input">
-                            <span class="lesson-icon">3️⃣</span>
-                            <span class="lesson-title">入力と出力</span>
-                            <span class="completion-status">○</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="lesson-btn" data-lesson="strings">
-                            <span class="lesson-icon">4️⃣</span>
-                            <span class="lesson-title">文字列と配列</span>
-                            <span class="completion-status">○</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+            <!-- 右側：コンパイラーエリア -->
+            <div class="compiler-area">
+                <div class="lesson-content" id="lesson-content">
+                    <h2>C言語学習へようこそ！</h2>
+                    <p>左側のメニューから学習したい項目を選択してください。</p>
+                    
+                    <div class="code-editor" id="code-editor" contenteditable="true">
+#include &lt;stdio.h&gt;
 
-            <div class="kawada-section">
-                <h3>💬 川田からのコメント</h3>
-                <div class="kawada-comment" id="kawada-comment">
-                    <p>学習したい項目をクリックしてください！</p>
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+                    </div>
+                    
+                    <button class="run-btn" onclick="runCode()">▶️ 実行</button>
+                    
+                    <div class="code-output" id="code-output">
+                        実行結果がここに表示されます...
+                    </div>
                 </div>
             </div>
         </div>
+    </main>
+</div>
 
-        <!-- 右側：コンパイラーエリア -->
-        <div class="compiler-area">
-            <div class="lesson-content" id="lesson-content">
-                <!-- 動的にコンテンツが挿入される -->
-            </div>
+<!-- パララックスモード -->
+<div id="parallax-mode" class="parallax-mode">
+    <div class="background-container">
+        <div class="path" id="path-bg"></div>
+        <div class="clouds" id="clouds-bg"></div>
+        
+        <div class="kawada-character" id="kawada-char">
+            <img src="{% static 'img/kawada-default.png' %}" alt="川田" id="kawada-img">
         </div>
     </div>
-</main>
+
+    <div class="lesson-sections" id="lesson-sections">
+        <!-- 動的にコンテンツが生成される -->
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// C言語学習セッションの開始
-document.addEventListener('DOMContentLoaded', function() {
-    // スケジューラーが利用可能な場合のみ実行
-    if (window.kawadaScheduler) {
-        kawadaScheduler.startSession('cstudy', 'C言語入門');
+// 統合されたC言語学習システム
+class UnifiedCStudy {
+    constructor() {
+        this.currentMode = 'standard';
+        this.currentLesson = null;
+        this.lessonData = [];
+        this.quizData = [];
+        this.progress = 0;
+        
+        this.init();
     }
     
-    // レッスンボタンのクリック時にレッスン情報を更新
-    document.querySelectorAll('.lesson-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const lessonName = this.querySelector('.lesson-title').textContent;
-            if (window.kawadaScheduler) {
-                kawadaScheduler.currentLesson = `C言語 - ${lessonName}`;
+    async init() {
+        this.setupModeToggle();
+        this.setupLessonButtons();
+        await this.loadLessonData();
+        await this.loadQuizData();
+        this.initKawadaScheduler();
+    }
+    
+    setupModeToggle() {
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                this.switchMode(mode);
+                
+                // ボタンの状態更新
+                modeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    }
+    
+    switchMode(mode) {
+        const standardMode = document.getElementById('standard-mode');
+        const parallaxMode = document.getElementById('parallax-mode');
+        
+        if (mode === 'parallax') {
+            standardMode.style.display = 'none';
+            parallaxMode.style.display = 'block';
+            this.currentMode = 'parallax';
+            this.initParallax();
+        } else {
+            standardMode.style.display = 'block';
+            parallaxMode.style.display = 'none';
+            this.currentMode = 'standard';
+        }
+    }
+    
+    initParallax() {
+        // パララックスエフェクト
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const pathBg = document.getElementById('path-bg');
+            const cloudsBg = document.getElementById('clouds-bg');
+            const kawadaChar = document.getElementById('kawada-char');
+            
+            if (pathBg) pathBg.style.transform = `translateY(${scrollY * 0.5}px)`;
+            if (cloudsBg) cloudsBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+            if (kawadaChar) {
+                kawadaChar.style.transform = `translateY(${scrollY * 0.1}px)`;
+            }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        this.generateParallaxContent();
+    }
+    
+    async generateParallaxContent() {
+        const container = document.getElementById('lesson-sections');
+        container.innerHTML = '';
+        
+        const lessons = [
+            { title: 'C言語とは', content: 'C言語は1972年にデニス・リッチーによって開発されたプログラミング言語です。', side: 'left' },
+            { title: 'Hello World', content: 'まずは定番の「Hello World」プログラムから始めましょう！', side: 'right' },
+            { title: '変数と型', content: 'C言語では様々なデータ型を使って変数を宣言できます。', side: 'center' },
+            { title: '関数の基本', content: '関数を使ってコードを整理し、再利用可能にしましょう。', side: 'left' }
+        ];
+        
+        lessons.forEach((lesson, index) => {
+            const section = document.createElement('div');
+            section.className = 'lesson-section';
+            section.innerHTML = `
+                <div class="lesson-content-box ${lesson.side}">
+                    <h2>${lesson.title}</h2>
+                    <p>${lesson.content}</p>
+                    <div class="code-editor">
+                        <code>// ここにサンプルコードが表示されます</code>
+                    </div>
+                </div>
+            `;
+            container.appendChild(section);
+        });
+    }
+    
+    setupLessonButtons() {
+        const buttons = document.querySelectorAll('.lesson-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lesson = btn.dataset.lesson;
+                this.selectLesson(lesson);
+                
+                // ボタンの状態更新
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    }
+    
+    selectLesson(lessonId) {
+        this.currentLesson = lessonId;
+        this.updateLessonContent(lessonId);
+        this.updateKawadaComment(lessonId);
+        
+        // スケジューラーに通知
+        if (window.kawadaScheduler) {
+            kawadaScheduler.currentLesson = `C言語 - ${lessonId}`;
+        }
+    }
+    
+    updateLessonContent(lessonId) {
+        const content = document.getElementById('lesson-content');
+        const lessons = {
+            intro: {
+                title: 'C言語入門',
+                description: 'C言語の基本概念を学びましょう',
+                code: '#include <stdio.h>\n\nint main() {\n    printf("C言語学習開始！\\n");\n    return 0;\n}'
+            },
+            hello: {
+                title: 'Hello World',
+                description: '最初のC言語プログラムを書いてみましょう',
+                code: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}'
+            },
+            variables: {
+                title: '変数と計算',
+                description: '変数を使って計算をしてみましょう',
+                code: '#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    int sum = a + b;\n    printf("合計: %d\\n", sum);\n    return 0;\n}'
+            },
+            input: {
+                title: '入力と出力',
+                description: 'ユーザーからの入力を受け取ってみましょう',
+                code: '#include <stdio.h>\n\nint main() {\n    int number;\n    printf("数字を入力してください: ");\n    scanf("%d", &number);\n    printf("入力された数字: %d\\n", number);\n    return 0;\n}'
+            },
+            strings: {
+                title: '文字列と配列',
+                description: '文字列と配列の基本操作を学びましょう',
+                code: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char name[50];\n    printf("お名前を入力してください: ");\n    scanf("%s", name);\n    printf("こんにちは、%sさん！\\n", name);\n    return 0;\n}'
+            }
+        };
+        
+        const lesson = lessons[lessonId] || lessons.intro;
+        
+        content.innerHTML = `
+            <h2>${lesson.title}</h2>
+            <p>${lesson.description}</p>
+            <div class="code-editor" id="code-editor" contenteditable="true">${lesson.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+            <button class="run-btn" onclick="runCode()">▶️ 実行</button>
+            <div class="code-output" id="code-output">実行結果がここに表示されます...</div>
+        `;
+    }
+    
+    updateKawadaComment(lessonId) {
+        const comment = document.getElementById('kawada-comment');
+        const comments = {
+            intro: 'C言語学習の始まりですね！一緒に頑張りましょう💪',
+            hello: 'Hello Worldは全ての始まり！まずはここから慣れていきましょう😊',
+            variables: '変数は プログラムの基本中の基本です。しっかり理解しましょう📝',
+            input: 'ユーザーとの対話ができるようになりますよ！楽しくなってきました✨',
+            strings: '文字列操作はとても重要です。慎重に学習していきましょう🔤'
+        };
+        
+        comment.innerHTML = `<p>${comments[lessonId] || 'がんばって学習しましょう！'}</p>`;
+    }
+    
+    async loadLessonData() {
+        try {
+            const response = await fetch('/cstudy/api/lessons/');
+            if (response.ok) {
+                this.lessonData = await response.json();
+            }
+        } catch (error) {
+            console.log('レッスンデータの読み込みに失敗しました:', error);
+        }
+    }
+    
+    async loadQuizData() {
+        try {
+            const response = await fetch('/cstudy/api/quizzes/');
+            if (response.ok) {
+                this.quizData = await response.json();
+            }
+        } catch (error) {
+            console.log('クイズデータの読み込みに失敗しました:', error);
+        }
+    }
+    
+    initKawadaScheduler() {
+        // スケジューラーが利用可能な場合のみ実行
+        if (window.kawadaScheduler) {
+            kawadaScheduler.startSession('cstudy', 'C言語入門');
+        }
+        
+        // セッション終了時の処理
+        window.addEventListener('beforeunload', () => {
+            if (window.kawadaScheduler && kawadaScheduler.isRecording) {
+                const isCompleted = this.progress >= 100;
+                kawadaScheduler.endSession(isCompleted);
             }
         });
-    });
+    }
     
-    // 学習完了時のイベント
-    window.addEventListener('beforeunload', function() {
-        if (window.kawadaScheduler && kawadaScheduler.isRecording) {
-            // 進捗に応じて完了判定
-            const progressElement = document.getElementById('progress-text');
-            const progressText = progressElement ? progressElement.textContent : '';
-            const isCompleted = progressText.includes('100%') || 
-                               document.querySelectorAll('.lesson-btn.completed').length > 0;
-            
-            kawadaScheduler.endSession(isCompleted);
+    updateProgress(percentage) {
+        this.progress = percentage;
+        const progressBar = document.getElementById('learning-progress-bar');
+        const progressText = document.getElementById('progress-text');
+        
+        if (progressBar) progressBar.style.width = `${percentage}%`;
+        if (progressText) progressText.textContent = `進捗: ${percentage}%`;
+    }
+    
+    markLessonCompleted(lessonId) {
+        const button = document.querySelector(`[data-lesson="${lessonId}"]`);
+        if (button) {
+            button.classList.add('completed');
+            button.querySelector('.completion-status').textContent = '✓';
         }
-    });
-});
+        
+        // 進捗更新
+        const completedLessons = document.querySelectorAll('.lesson-btn.completed').length;
+        const totalLessons = document.querySelectorAll('.lesson-btn').length;
+        const progress = Math.round((completedLessons / totalLessons) * 100);
+        this.updateProgress(progress);
+        
+        // 川田のリアクション
+        if (window.kawadaScheduler) {
+            kawadaScheduler.showKawadaMessage(
+                "お疲れさまでした！", 
+                "レッスンを完了しましたね！川田もとても嬉しいです💕", 
+                'cheerful'
+            );
+        }
+    }
+}
 
-// 既存のC言語学習スクリプトを拡張
-// lesson completion時にスケジューラーに通知
-function markLessonCompleted(lessonId) {
-    // 既存の完了処理...
+// コード実行機能
+async function runCode() {
+    const codeEditor = document.getElementById('code-editor');
+    const output = document.getElementById('code-output');
     
-    // スケジューラーに完了を通知
-    if (window.kawadaScheduler) {
-        kawadaScheduler.showKawadaMessage(
-            "お疲れさまでした！", 
-            "レッスンを完了しましたね！川田もとても嬉しいです💕", 
-            'cheerful'
-        );
+    if (!codeEditor || !output) return;
+    
+    const code = codeEditor.textContent || codeEditor.innerText;
+    output.textContent = '実行中...';
+    
+    try {
+        const response = await fetch('/cstudy/api/run-code/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+            },
+            body: JSON.stringify({ source: code })
+        });
+        
+        const result = await response.json();
+        
+        if (result.stdout) {
+            output.innerHTML = `<strong>実行結果:</strong><br><pre>${result.stdout}</pre>`;
+        } else if (result.stderr) {
+            output.innerHTML = `<strong>エラー:</strong><br><pre style="color: red;">${result.stderr}</pre>`;
+        } else {
+            output.textContent = '出力なし';
+        }
+    } catch (error) {
+        output.innerHTML = `<strong>エラー:</strong><br><pre style="color: red;">${error.message}</pre>`;
     }
 }
 
-// 川田のリアクション表示関数
-function showKawadaReaction(type, message) {
-    if (window.kawadaScheduler) {
-        kawadaScheduler.showKawadaMessage("川田より", message, type);
-    }
-}
+// 初期化
+document.addEventListener('DOMContentLoaded', () => {
+    new UnifiedCStudy();
+});
 </script>
 {% endblock %}

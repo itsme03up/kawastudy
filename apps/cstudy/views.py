@@ -11,18 +11,18 @@ from .models import CLessonSection, CQuizQuestion
 
 
 def index(request):
-    """新しいパララックス学習ページ"""
-    return render(request, "cstudy/parallax.html")
+    """統合されたC言語学習ページ"""
+    return render(request, "cstudy/unified.html")
 
 
 def test_parallax(request):
-    """パララックステストページ"""
-    return render(request, "cstudy/test_parallax.html")
+    """パララックステストページ（後方互換性のため残存）"""
+    return render(request, "cstudy/unified.html")
 
 
 def simple_parallax(request):
-    """シンプルなパララックス学習ページ"""
-    return render(request, 'cstudy/simple_parallax.html')
+    """シンプルなパララックス学習ページ（後方互換性のため残存）"""
+    return render(request, 'cstudy/unified.html')
 
 
 def lesson_data(request):
