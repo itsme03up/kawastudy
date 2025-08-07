@@ -47,12 +47,3 @@ class CQuizQuestion(models.Model):
 
     def __str__(self):
         return f"Quiz {self.order}: {self.question[:50]}..."
-
-.path, .clouds {
-    position: fixed;
-    z-index: -2; /* pathは背景の最後ろ */
-}
-.clouds {
-    z-index: -1; /* cloudsはpathより前面 */
-    opacity: 0.7; /* 立体感のための透明度 */
-}
