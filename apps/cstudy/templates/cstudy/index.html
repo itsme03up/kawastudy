@@ -1,12 +1,11 @@
-{% extends 'base.html' %}
 {% load static %}
-
-{% block title %}C言語入門{% endblock %}
-
-{% block body_class %}cstudy-unified-page{% endblock %}
-
-{% block head %}
-<style>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C言語入門 - パララックス学習</title>
+    <style>
 /* 基本スタイル */
 * {
     margin: 0;
@@ -14,18 +13,24 @@
     box-sizing: border-box;
 }
 
-body {
+body, html {
+    margin: 0;
+    padding: 0;
     overflow-x: hidden;
+    overflow-y: auto;  /* 縦スクロールを明示的に有効化 */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%;
+    height: auto;  /* heightを100%からautoに変更 */
 }
 
 /* パララックスモードスタイル */
 .parallax-mode {
     display: block;
     position: relative;
-    height: 600vh;
+    height: 1200vh;  /* 非常に長いスクロール距離 */
     width: 100%;
     scroll-behavior: smooth;
+    min-height: 10000px;  /* より大きな最小高さ */
 }
 
 .background-container {
@@ -39,23 +44,42 @@ body {
 }
 
 .path {
+    position: fixed;
+    top: -100vh;  /* 上に余裕を持たせて */
+    left: 0;
+    width: 100vw;
+    height: 1000vh;  /* 非常に大きな高さで無限感を演出 */
     background-image: url('{% static "img/parallax/backgrounds/path.png" %}');
     background-color: #4a5d23;
+    background-size: 100% 50vh;  /* より小さなサイズで頻繁に繰り返し */
+    background-position: center 0;
+    background-repeat: repeat-y;  /* 縦方向に無限繰り返し */
     z-index: 1;
+    will-change: transform;
 }
 
 .clouds {
+    position: fixed;
+    top: -100vh;  /* 上に余裕を持たせて */
+    left: 0;
+    width: 100vw;
+    height: 800vh;  /* 大きな高さで無限感を演出 */
     background-image: url('{% static "img/parallax/backgrounds/clouds.png" %}');
+    background-size: 100% 40vh;  /* 雲も小さなサイズで頻繁に繰り返し */
+    background-position: center 0;
+    background-repeat: repeat-y;  /* 縦方向に無限繰り返し */
     z-index: 2;
     opacity: 0.7;
+    will-change: transform;
 }
+
 .kawada-character {
     position: fixed;
-    bottom: 30%;
+    bottom: 20%;
     left: 50%;
     transform: translateX(-50%);
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     z-index: 3;
     transition: all 0.5s ease;
     overflow: hidden;
@@ -76,6 +100,33 @@ body {
     z-index: 4;
 }
 
+/* 左右交互配置のスタイル */
+.lesson-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.lesson-section.left {
+    justify-content: flex-start;
+}
+
+.lesson-section.right {
+    justify-content: flex-end;
+}
+
+.lesson-content {
+    background: rgba(255,255,255,0.9);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .kawada-character {
@@ -83,11 +134,21 @@ body {
         height: 100px;
         bottom: 25%;
     }
+    
+    .lesson-section.left,
+    .lesson-section.right {
+        justify-content: center;
+        padding: 0 10px;
+    }
+    
+    .lesson-content {
+        max-width: 90%;
+        padding: 30px 20px;
+    }
 }
 </style>
-{% endblock %}
-
-{% block content %}
+</head>
+<body>
 
 <!-- パララックスモード -->
 <div id="parallax-mode" class="parallax-mode">
@@ -105,53 +166,14 @@ body {
     </div>
 
     <!-- スクロール用セクション -->
-    <div class="lesson-sections" style="position: relative; z-index: 10;">
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>🌟 C言語の世界へようこそ</h2>
-                <p>スクロールしながら川田と一緒に学習の旅を始めましょう！</p>
-            </div>
-        </section>
+    <div class="lesson-sections" style="position: relative; z-index: 10;" id="lesson-container">
+        <!-- 動的に読み込まれるセクションがここに追加されます -->
         
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>📚 基本概念</h2>
-                <p>C言語は1972年に開発されたプログラミング言語です。<br>システムプログラミングの基盤となる重要な言語です。</p>
-            </div>
-        </section>
-        
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>💻 Hello World</h2>
-                <p>プログラミングの第一歩！<br>まずは定番の「Hello World」から始めてみましょう。</p>
-            </div>
-        </section>
-        
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>🔢 変数と型</h2>
-                <p>データを格納する変数の概念を学び、<br>int、float、charなどの基本型を理解しましょう。</p>
-            </div>
-        </section>
-        
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>🎯 学習完了！</h2>
-                <p>お疲れさまでした！<br>川田と一緒にC言語の基礎を学びました。</p>
-            </div>
-        </section>
-        
-        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255,255,255,0.9); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px;">
-                <h2>🚀 次のステップ</h2>
-                <p>実際のコーディングに挑戦してみましょう！<br>川田がサポートします。</p>
-            </div>
-        </section>
+        <!-- スクロール確保用のダミーエリア -->
+        <div style="height: 500vh; background: transparent;" id="scroll-spacer"></div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 // 統合されたC言語学習システム
 class UnifiedCStudy {
@@ -166,7 +188,88 @@ class UnifiedCStudy {
     }
     
     async init() {
+        await this.loadLessonSections(); // レッスンセクションを読み込み
         this.initParallax(); // パララックスを自動で初期化
+    }
+    
+    async loadLessonSections() {
+        try {
+            console.log("レッスンセクションを読み込み中...");
+            const response = await fetch('/cstudy/api/lessons/');
+            const sections = await response.json();
+            
+            console.log(`${sections.length}個のセクションを読み込みました`);
+            this.renderSections(sections);
+        } catch (error) {
+            console.error("レッスンセクション読み込みエラー:", error);
+            // エラー時はデフォルトセクションを表示
+            this.renderDefaultSections();
+        }
+    }
+    
+    renderSections(sections) {
+        const container = document.getElementById('lesson-container');
+        const scrollSpacer = document.getElementById('scroll-spacer');
+        
+        // 既存のセクションをクリア（spacerは残す）
+        const existingSections = container.querySelectorAll('.lesson-section');
+        existingSections.forEach(section => section.remove());
+        
+        sections.forEach((section, index) => {
+            const sectionElement = this.createSectionElement(section, index);
+            container.insertBefore(sectionElement, scrollSpacer);
+        });
+        
+        console.log(`${sections.length}個のセクションを表示しました`);
+    }
+    
+    createSectionElement(section, index) {
+        const sectionDiv = document.createElement('section');
+        sectionDiv.className = `lesson-section ${section.side}`;
+        sectionDiv.setAttribute('data-section-id', section.id);
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'lesson-content';
+        
+        // セクションタイプに応じたアイコンを選択
+        const icons = {
+            'text': '📚',
+            'code': '💻', 
+            'explanation': '💡',
+            'warning': '⚠️'
+        };
+        const icon = icons[section.type] || '📖';
+        
+        contentDiv.innerHTML = `
+            <h2>${icon} ${this.extractTitle(section.content)}</h2>
+            <div>${this.formatContent(section.content)}</div>
+        `;
+        
+        sectionDiv.appendChild(contentDiv);
+        return sectionDiv;
+    }
+    
+    extractTitle(content) {
+        // コンテンツから最初の行をタイトルとして抽出
+        const lines = content.split('\n');
+        return lines[0] || 'C言語学習';
+    }
+    
+    formatContent(content) {
+        // コンテンツの2行目以降を本文として整形
+        const lines = content.split('\n');
+        const bodyLines = lines.slice(1);
+        return bodyLines.join('<br>') || content;
+    }
+    
+    renderDefaultSections() {
+        // エラー時のデフォルトセクション
+        const defaultSections = [
+            { id: 1, side: 'right', type: 'text', content: 'C言語の世界へようこそ\nスクロールしながら川田と一緒に学習の旅を始めましょう！' },
+            { id: 2, side: 'left', type: 'explanation', content: '基本概念\nC言語は1972年に開発されたプログラミング言語です。' },
+            { id: 3, side: 'right', type: 'code', content: 'Hello World\nプログラミングの第一歩を踏み出しましょう！' }
+        ];
+        this.renderSections(defaultSections);
     }
     
     initParallax() {
@@ -178,18 +281,52 @@ class UnifiedCStudy {
                 requestAnimationFrame(() => {
                     const scrollY = window.scrollY;
                     console.log("ScrollY:", scrollY); // デバッグ用
+                    
                     const pathBg = document.getElementById('path-bg');
                     const cloudsBg = document.getElementById('clouds-bg');
                     const kawadaChar = document.getElementById('kawada-char');
                     
-                    // 背景のパララックス効果
-                    if (pathBg) pathBg.style.transform = `translateY(${scrollY * 0.5}px)`;
-                    if (cloudsBg) cloudsBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+                    // 要素の存在確認
+                    console.log("要素確認:", {
+                        pathBg: pathBg ? "存在" : "未発見",
+                        cloudsBg: cloudsBg ? "存在" : "未発見", 
+                        kawadaChar: kawadaChar ? "存在" : "未発見"
+                    });
+                    
+                    // 背景のパララックス効果 - 無限に上向きに流れるように
+                    if (pathBg) {
+                        const pathSpeed = scrollY * -2.0;  // 道を上向きに流れるように
+                        // 背景をループさせるため、50vhでリセット
+                        const loopedPathSpeed = pathSpeed % (window.innerHeight * 0.5);
+                        pathBg.style.transform = `translateY(${loopedPathSpeed}px)`;
+                        console.log(`道の動き - PathSpeed: ${pathSpeed}px, Looped: ${loopedPathSpeed}px`);
+                    } else {
+                        console.warn("pathBg要素が見つかりません");
+                    }
+                    if (cloudsBg) {
+                        const cloudSpeed = scrollY * -0.5;  // 雲も上向きに流れるように
+                        // 雲も40vhでループ
+                        const loopedCloudSpeed = cloudSpeed % (window.innerHeight * 0.4);
+                        cloudsBg.style.transform = `translateY(${loopedCloudSpeed}px)`;
+                    } else {
+                        console.warn("cloudsBg要素が見つかりません");
+                    }
                     
                     // 川田が道を歩いているような効果
                     if (kawadaChar) {
-                        const walkingOffset = Math.sin(scrollY * 0.02) * 5; // 歩行のような左右の動き
-                        kawadaChar.style.transform = `translateX(calc(-50% + ${walkingOffset}px)) translateY(${scrollY * 0.1}px)`;
+                        const sway   = Math.sin(scrollY * 0.1) * 12;   // 左右に揺れる（強化）
+                        const bob    = Math.abs(Math.sin(scrollY * 0.2)) * 8; // 上下にバウンス（強化）
+                        const rotate = Math.sin(scrollY * 0.05) * 5;   // ほんのり回転（強化）
+                        
+                        // デバッグ用ログ（動きの値を確認）
+                        console.log(`川田の動き - Sway: ${sway.toFixed(1)}, Bob: ${bob.toFixed(1)}, Rotate: ${rotate.toFixed(1)}`);
+                        
+                        kawadaChar.style.transform =
+                            `translateX(calc(-50% + ${sway}px)) ` +    // X=中央±sway
+                            `translateY(${bob}px) ` +                  // Y=0→bob
+                            `rotate(${rotate}deg)`;                    // 角度=±rotate
+                    } else {
+                        console.warn("kawadaChar要素が見つかりません");
                     }
                     
                     ticking = false;
@@ -199,17 +336,70 @@ class UnifiedCStudy {
         };
         
         window.addEventListener('scroll', handleScroll, { passive: true });
+        document.addEventListener('scroll', handleScroll, { passive: true }); // 追加のイベントリスナー
+        
+        console.log("スクロールイベントリスナーを設定しました");
         
         // 初期表示時に少しスクロールして動作を分かりやすく
         setTimeout(() => {
-            window.scrollTo({ top: 1 });
+            console.log("初期スクロールを実行します");
+            
+            // ページの高さとスクロール情報を確認
+            console.log("ページ情報:", {
+                documentHeight: document.documentElement.scrollHeight,
+                windowHeight: window.innerHeight,
+                scrollTop: window.scrollY,
+                bodyHeight: document.body.scrollHeight
+            });
+            
+            window.scrollTo({ top: 50 }); // より大きなスクロール値に
+            
+            // スクロール後の値を確認
+            setTimeout(() => {
+                console.log("スクロール後のScrollY:", window.scrollY);
+                handleScroll();
+            }, 100);
         }, 100);
+        
+        // さらに1秒後に追加のスクロール
+        setTimeout(() => {
+            console.log("追加スクロールを実行します");
+            window.scrollTo({ top: 100 });
+            setTimeout(() => {
+                console.log("追加スクロール後のScrollY:", window.scrollY);
+                handleScroll();
+            }, 100);
+        }, 1000);
     }
 }
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
-    new UnifiedCStudy();
+    console.log("DOMContentLoaded - ページ読み込み完了");
+    
+    // 要素の存在を確認
+    const pathBg = document.getElementById('path-bg');
+    const cloudsBg = document.getElementById('clouds-bg');
+    const kawadaChar = document.getElementById('kawada-char');
+    
+    console.log("初期化時の要素確認:", {
+        pathBg: pathBg ? "存在" : "未発見",
+        cloudsBg: cloudsBg ? "存在" : "未発見", 
+        kawadaChar: kawadaChar ? "存在" : "未発見"
+    });
+    
+    if (pathBg && cloudsBg && kawadaChar) {
+        console.log("すべての要素が見つかりました。UnifiedCStudyを開始します。");
+        new UnifiedCStudy();
+    } else {
+        console.error("一部の要素が見つかりません。");
+        // それでも初期化を試行
+        setTimeout(() => {
+            console.log("1秒後に再試行...");
+            new UnifiedCStudy();
+        }, 1000);
+    }
 });
 </script>
-{% endblock %}
+</body>
+</html>
