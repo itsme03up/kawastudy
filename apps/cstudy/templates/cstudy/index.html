@@ -10,17 +10,44 @@
 /* C言語学習ページ専用スタイル */
 .cstudy-page {
     background: #000000 !important;
-    padding-top: 0 !important;
+    padding-top: 40px !important; /* 短縮されたナビゲーションバーの高さを確保 */
     padding-bottom: 0 !important;
+}
+
+/* C言語学習ページ専用ナビゲーションバーの高さ調整 */
+.cstudy-page .navbar {
+    height: 40px !important;
+    min-height: 40px !important;
+}
+
+.cstudy-page .navbar .container-fluid {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.cstudy-page .navbar-brand,
+.cstudy-page .nav-link {
+    font-size: 0.9rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+/* ナビゲーションバーのラウンドを完全に削除 */
+.cstudy-page .navbar,
+.cstudy-page .navbar *,
+.cstudy-page .dropdown-menu,
+.cstudy-page .nav-link,
+.cstudy-page .btn {
+    border-radius: 0 !important;
 }
 
 /* C言語学習システムの完全独立オーバーレイ */
 .cstudy-fullscreen-overlay {
     position: fixed;
-    top: 0;
+    top: 40px; /* 短縮されたナビゲーションバーの下から開始 */
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 40px); /* 短縮されたナビゲーションバーの高さを引く */
     z-index: 1000;
     background: #000000;
 }

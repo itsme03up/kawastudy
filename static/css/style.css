@@ -12,11 +12,15 @@
     justify-content: center;
 }
 
-/* ナビゲーションバーの高さ設定 */
+/* ナビゲーションバーの高さ設定とラウンド削除 */
 .navbar {
     height: 56px;
     border-bottom: 1px solid #dee2e6;
     border-radius: 0 !important;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1031; /* サイドバーより手前に */
 }
 
 /* ナビゲーションバー内の要素のラウンドを削除 */
@@ -40,13 +44,6 @@ html, body {
 body {
     padding-top: 56px; /* ナビゲーションバーの高さ */
     padding-bottom: 56px; /* フッターの高さ */
-}
-
-.navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1031; /* サイドバーより手前に */
 }
 
 /* メインレイアウト */
@@ -1005,4 +1002,19 @@ body.cstudy-page .character-area {
         width: 100%;
         justify-content: center;
     }
+}
+
+/* Bootstrap navbarの丸角を完全に削除 */
+.navbar,
+.navbar-nav,
+.navbar-brand,
+.nav-link,
+.dropdown-menu,
+.dropdown-item {
+    border-radius: 0 !important;
+}
+
+/* BootstrapのNavbarの丸角をすべて削除 */
+.navbar * {
+    border-radius: 0 !important;
 }
