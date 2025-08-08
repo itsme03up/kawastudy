@@ -26,7 +26,7 @@ def create_complete_data():
     CLessonSection.objects.all().delete()  # pylint: disable=no-member
     CQuizQuestion.objects.all().delete()  # pylint: disable=no-member
     print("📋 既存データをクリアしました")
-    
+
     # 学習セクションデータ（詳細版）
     lesson_sections = [
         {
@@ -164,7 +164,7 @@ def create_complete_data():
             'order': 14
         }
     ]
-    
+
     # 学習セクションを作成
     created_sections = 0
     for section_data in lesson_sections:
@@ -172,7 +172,7 @@ def create_complete_data():
         created_sections += 1
 
     print(f"📚 学習セクション: {created_sections}個を作成しました")
-    
+
     # クイズデータ
     quiz_questions = [
         {
@@ -233,7 +233,7 @@ def create_complete_data():
             'order': 5
         }
     ]
-    
+
     # クイズを作成
     created_quizzes = 0
     for quiz_data in quiz_questions:
@@ -242,7 +242,7 @@ def create_complete_data():
         created_quizzes += 1
 
     print(f"❓ クイズ問題: {created_quizzes}個を作成しました")
-    
+
     print("\n✅ C言語学習データの作成が完了しました！")
     print("🚀 ブラウザで /cstudy/ にアクセスして新しい学習システムを体験してください！")
     print("\n📋 作成されたデータ:")

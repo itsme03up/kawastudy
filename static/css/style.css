@@ -16,6 +16,17 @@
 .navbar {
     height: 56px;
     border-bottom: 1px solid #dee2e6;
+    border-radius: 0 !important;
+}
+
+/* ナビゲーションバー内の要素のラウンドを削除 */
+.navbar .dropdown-menu {
+    border-radius: 0 !important;
+}
+
+.navbar .btn,
+.navbar .nav-link {
+    border-radius: 0 !important;
 }
 
 html, body {
@@ -772,6 +783,46 @@ body.cstudy-page .character-area {
 .tip-box p {
     margin: 0;
     color: #856404;
+}
+
+/* ボックススタイル - タイトル付きボーダーボックス */
+.box27 {
+    position: relative;
+    margin: 2em 0;
+    padding: 1.5em 2em;
+    border: solid 3px #62c1ce;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.box27 .box-title {
+    position: absolute;
+    display: inline-block;
+    top: -27px;
+    left: -3px;
+    padding: 0 9px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 17px;
+    background: #62c1ce;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+}
+
+.box27 p {
+    margin: 0; 
+    padding: 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
 }
 
 /* レスポンシブ対応 */
