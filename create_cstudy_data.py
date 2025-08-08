@@ -41,127 +41,219 @@ def create_complete_data():
         {
             'position': 500,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('基本概念\nC言語は1972年に開発されたプログラミング言語です。\n'
-                       'システムプログラミングの基盤となる重要な言語で、'
-                       '多くの現代的言語に影響を与えています。'),
-            'kawada_emotion': 'thinking',
+            'type': 'code',
+            'content': ('printf と scanf\n基本的な入出力\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int num;\n    printf("整数を入力してください: ");\n'
+                       '    scanf("%d", &num);\n    printf("入力された値は %d です。\\n", num);\n'
+                       '    return 0;\n}'),
+            'kawada_emotion': 'default',
             'order': 2
         },
         {
             'position': 800,
             'side': 'right',
-            'type': 'code',
-            'content': ('Hello World\n最初のプログラム\n\n#include <stdio.h>\n\n'
-                       'int main() {\n    printf("Hello, World!");\n    return 0;\n}'),
-            'kawada_emotion': 'smile',
+            'type': 'explanation',
+            'content': ('printf は画面に文字列や変数の値を表示する関数でした。\n'
+                       'scanf はキーボードからの入力を受け取り、指定した変数に格納しますね。\n'
+                       '書式指定子 %d は整数用、%f は小数、%s は文字列用でした。'),
+            'kawada_emotion': 'gentle',
             'order': 3
         },
         {
             'position': 1200,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('プログラムの構造\n#include <stdio.h> は標準入出力ライブラリを読み込んでいます。\n'
-                       'main関数はプログラムの実行開始点です。\n\n川田、これとても大事なんです！'),
-            'kawada_emotion': 'gentle',
+            'type': 'code',
+            'content': ('int 型\n整数型の特徴\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int a = 10;\n    int b = 3;\n'
+                       '    int c = a / b;   // 整数同士の割り算 → 商だけが残る\n'
+                       '    printf("c = %d\\n", c);\n    return 0;\n}'),
+            'kawada_emotion': 'thinking',
             'order': 4
         },
         {
             'position': 1600,
             'side': 'right',
-            'type': 'code',
-            'content': ('変数と型\nデータを格納する変数\n\nint age = 25;\nchar name[] = "Kawada";\n'
-                       'float height = 175.5;\n\nprintf("名前: %s\\n", name);\n'
-                       'printf("年齢: %d歳\\n", age);\nprintf("身長: %.1fcm\\n", height);'),
-            'kawada_emotion': 'default',
+            'type': 'explanation',
+            'content': ('int は整数型です。\n'
+                       '小数点以下は切り捨てられるので、割り算の結果に注意が必要でした……。\n'
+                       '整数を扱うときにまずは int を思い出してくださいね。'),
+            'kawada_emotion': 'gentle',
             'order': 5
         },
         {
             'position': 2000,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('変数の種類\n変数を使ってデータを格納できます。\n'
-                       'int（整数）、char（文字）、float（小数）など様々な型があります。\n\n'
-                       '川田、プログラミングって面白いですね！'),
-            'kawada_emotion': 'cheerful',
+            'type': 'code',
+            'content': ('sum += と i++\n便利な演算子\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int sum = 0;\n    for (int i = 1; i <= 5; i++) {\n'
+                       '        sum += i;   // sum = sum + i と同じ\n'
+                       '        // i++ は i = i + 1 と同じ意味\n    }\n'
+                       '    printf("1～5 の合計は %d です。\\n", sum);\n    return 0;\n}'),
+            'kawada_emotion': 'smile',
             'order': 6
         },
         {
             'position': 2400,
             'side': 'right',
-            'type': 'code',
-            'content': ('条件分岐\nif文による条件処理\n\nif (age >= 20) {\n'
-                       '    printf("成人です\\n");\n} else {\n    printf("未成年です\\n");\n}'),
-            'kawada_emotion': 'thinking',
+            'type': 'explanation',
+            'content': ('sum += i は「現在の sum に i を足して sum に戻す」演算子でした。\n'
+                       'i++ は「後置インクリメント」で、ループのカウントアップに便利ですね😊'),
+            'kawada_emotion': 'cheerful',
             'order': 7
         },
         {
             'position': 2800,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('if文の使い方\nif文を使って条件分岐ができます。\n'
-                       '条件が真（true）の場合は{}内の処理が実行されます。\n\n'
-                       '川田、ちょっと恥ずかしいですが、これ大事なんです……'),
-            'kawada_emotion': 'gentle',
+            'type': 'code',
+            'content': ('for 文\n繰り返し処理の基本\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    for (int i = 0; i < 3; i++) {\n'
+                       '        printf("for ループ %d 回目\\n", i + 1);\n    }\n'
+                       '    return 0;\n}'),
+            'kawada_emotion': 'default',
             'order': 8
         },
         {
             'position': 3200,
             'side': 'right',
-            'type': 'code',
-            'content': ('ループ処理\n繰り返し処理の基本\n\nfor (int i = 1; i <= 5; i++) {\n'
-                       '    printf("%d回目のループ\\n", i);\n}\n\nint count = 0;\n'
-                       'while (count < 3) {\n    printf("while: %d\\n", count);\n    count++;\n}'),
-            'kawada_emotion': 'smile',
+            'type': 'explanation',
+            'content': ('for 文は繰り返し回数がはっきりしているときに使います。\n'
+                       '初期化・条件・更新を一行で書けるので、コードがすっきりしましたね。'),
+            'kawada_emotion': 'thinking',
             'order': 9
         },
         {
             'position': 3600,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('ループの種類\nループ処理でプログラムを繰り返し実行できます。\n'
-                       'for文とwhile文が代表的なループです。\n\n'
-                       '焦らなくて大丈夫です。川田、ここにいますから✨'),
-            'kawada_emotion': 'gentle',
+            'type': 'code',
+            'content': ('while 文\n条件付き繰り返し\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int count = 0;\n    while (count < 3) {\n'
+                       '        printf("while ループ %d 回目\\n", count + 1);\n'
+                       '        count++;\n    }\n    return 0;\n}'),
+            'kawada_emotion': 'default',
             'order': 10
         },
         {
             'position': 4000,
             'side': 'right',
-            'type': 'code',
-            'content': ('配列の基礎\n複数のデータを管理\n\nint numbers[5] = {1, 2, 3, 4, 5};\n\n'
-                       'for (int i = 0; i < 5; i++) {\n'
-                       '    printf("numbers[%d] = %d\\n", i, numbers[i]);\n}'),
-            'kawada_emotion': 'default',
+            'type': 'explanation',
+            'content': ('while 文は「条件を見てから繰り返す」ので、ループ回数が未知の場合に適しています。\n'
+                       '条件が先に評価されることを忘れずに……ここ大事でした。'),
+            'kawada_emotion': 'gentle',
             'order': 11
         },
         {
             'position': 4400,
             'side': 'right',
-            'type': 'explanation',
-            'content': ('関数の作成\n機能をまとめて再利用可能な関数を作成しましょう。\n'
-                       'コードの構造化と保守性が向上します。'),
-            'kawada_emotion': 'thinking',
+            'type': 'code',
+            'content': ('do…while 文\n実行してから判定\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int num;\n    do {\n'
+                       '        printf("正の整数を入力してください: ");\n'
+                       '        scanf("%d", &num);\n    } while (num <= 0);\n'
+                       '    printf("入力された正の整数は %d です。\\n", num);\n    return 0;\n}'),
+            'kawada_emotion': 'default',
             'order': 12
         },
         {
             'position': 4800,
             'side': 'right',
-            'type': 'warning',
-            'content': ('ポインタの基礎\nC言語の重要な概念であるポインタについて学びます。\n'
-                       'メモリアドレスを直接操作する強力な機能です。\n\n'
-                       '川田、これは少し難しいですが、がんばりましょう！'),
+            'type': 'explanation',
+            'content': ('do…while は「必ず一度は処理を実行してから、条件をチェック」します。\n'
+                       'ユーザー入力など、一度は動かしたいときに便利でしたね。'),
             'kawada_emotion': 'thinking',
             'order': 13
         },
         {
             'position': 5200,
             'side': 'right',
+            'type': 'code',
+            'content': ('if 文\n条件分岐\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int x = 7;\n    if (x % 2 == 0) {\n'
+                       '        printf("x は偶数です。\\n");\n    } else {\n'
+                       '        printf("x は奇数です。\\n");\n    }\n    return 0;\n}'),
+            'kawada_emotion': 'default',
+            'order': 14
+        },
+        {
+            'position': 5600,
+            'side': 'right',
+            'type': 'explanation',
+            'content': ('if 文は条件に応じて処理を分岐します。\n'
+                       'else if を使えば、多岐にわたる分岐もスッキリ書けましたね。'),
+            'kawada_emotion': 'smile',
+            'order': 15
+        },
+        {
+            'position': 6000,
+            'side': 'right',
+            'type': 'code',
+            'content': ('switch 文\n多分岐処理\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int day = 3;\n    switch (day) {\n'
+                       '        case 1:\n            printf("月曜日\\n");\n            break;\n'
+                       '        case 2:\n            printf("火曜日\\n");\n            break;\n'
+                       '        case 3:\n            printf("水曜日\\n");\n            break;\n'
+                       '        default:\n            printf("その他の日\\n");\n    }\n    return 0;\n}'),
+            'kawada_emotion': 'default',
+            'order': 16
+        },
+        {
+            'position': 6400,
+            'side': 'right',
+            'type': 'explanation',
+            'content': ('switch は複数の値による分岐を簡潔に書けます。\n'
+                       'break を忘れると次のケースまで実行されるので要注意でした……。'),
+            'kawada_emotion': 'gentle',
+            'order': 17
+        },
+        {
+            'position': 6800,
+            'side': 'right',
+            'type': 'code',
+            'content': ('ネスト（入れ子構造）\n二重ループ\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    for (int i = 1; i <= 3; i++) {\n'
+                       '        for (int j = 1; j <= 2; j++) {\n'
+                       '            printf("i=%d, j=%d\\n", i, j);\n        }\n    }\n'
+                       '    return 0;\n}'),
+            'kawada_emotion': 'thinking',
+            'order': 18
+        },
+        {
+            'position': 7200,
+            'side': 'right',
+            'type': 'explanation',
+            'content': ('ループの中にループを入れると、二重ループ（ネスト）になります。\n'
+                       '条件分岐やループは入れ子にして複雑な処理も表現できましたね。'),
+            'kawada_emotion': 'cheerful',
+            'order': 19
+        },
+        {
+            'position': 7600,
+            'side': 'right',
+            'type': 'code',
+            'content': ('配列\n複数のデータ管理\n\n#include <stdio.h>\n\n'
+                       'int main() {\n    int a[4] = {10, 20, 30, 40};\n'
+                       '    for (int i = 0; i < 4; i++) {\n'
+                       '        printf("a[%d] = %d\\n", i, a[i]);\n    }\n'
+                       '    return 0;\n}'),
+            'kawada_emotion': 'default',
+            'order': 20
+        },
+        {
+            'position': 8000,
+            'side': 'right',
+            'type': 'explanation',
+            'content': ('配列は同じ型のデータをまとめて管理します。\n'
+                       '添字は 0 から始まるので、範囲外アクセスに注意でした。'),
+            'kawada_emotion': 'gentle',
+            'order': 21
+        },
+        {
+            'position': 8400,
+            'side': 'right',
             'type': 'text',
             'content': ('学習完了！\nお疲れさまでした！\n川田と一緒にC言語の基礎を学びました。\n\n'
                        '次は実際のコーディングに挑戦してみましょう！'),
             'kawada_emotion': 'cheerful',
-            'order': 14
+            'order': 22
         }
     ]
 
@@ -203,7 +295,7 @@ def create_complete_data():
             'correct_answer': 1,
             'explanation': ('>= は「以上」を表します。> は「より大きい」、'
                            '== は「等しい」です。'),
-            'kawada_correct_message': '川田、照れてます……正解です！>= が「以上」ですね',
+            'kawada_correct_message': '正解です！>= が「以上」ですね',
             'kawada_wrong_message': ('ヒントです。「以上」は「等しいか、'
                                      'それより大きい」という意味です。'),
             'trigger_position': 2600,
