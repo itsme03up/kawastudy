@@ -7,9 +7,9 @@
 <!-- React SQLクイズ用コンテナ -->
 <div id="react-sql-quiz">
     <!-- フォールバック：React が読み込まれない場合の従来版 -->
-    <div class="container mb-4">
+    <div class="container-fluid mb-4 px-4">
         <div class="row justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-12">
                 <!-- ステージヘッダー -->
                 <div class="card shadow-lg mb-4">
                     <div class="card-header bg-primary text-white text-center py-3">
@@ -31,9 +31,9 @@
 
 <script>
     // Django からのデータを React に渡す
-    window.sqlStageNumber = {{ stage.stage_number }};
+    window.sqlStageNumber = parseInt('{{ stage.stage_number|default:1 }}');
     window.sqlStageData = {}; // React コンポーネント内で API から取得
-    window.totalStages = {{ total_stages }};
+    window.totalStages = parseInt('{{ total_stages|default:0 }}');
 </script>
 
 {% block react_scripts %}

@@ -3,9 +3,9 @@
 {% block title %}Kawada SQLクイズ - ステージ選択{% endblock %}
 
 {% block content %}
-<div class="container my-5">
+<div class="container-fluid my-5 px-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-14 col-xl-12">
             <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white text-center py-4">
                     <h1 class="mb-0">🎮 Kawada SQLクイズ - ステージ選択画面</h1>
@@ -15,36 +15,44 @@
                     
                     {% if stages %}
                         <div class="stage-list">
+                            <div class="row g-4">
                             {% for stage in stages %}
-                                <div class="stage-item mb-3 p-3 border rounded-3 hover-shadow">
-                                    <div class="d-flex align-items-center">
-                                        <div class="stage-icon me-3">
-                                            {% if forloop.counter0|divisibleby:2 %}
-                                                🔹
-                                            {% else %}
-                                                🔸
-                                            {% endif %}
-                                        </div>
-                                        <div class="stage-content flex-grow-1">
-                                            <h5 class="mb-1">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="stage-item h-100 p-3 border rounded-3 hover-shadow">
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="stage-icon me-3">
+                                                    {% if forloop.counter0|divisibleby:2 %}
+                                                        🔹
+                                                    {% else %}
+                                                        🔸
+                                                    {% endif %}
+                                                </div>
+                                                <div class="stage-content flex-grow-1">
+                                                    <h5 class="mb-1">
+                                                        <a href="{% url 'sqlquiz:quiz_play' stage.stage_number %}" 
+                                                           class="text-decoration-none fw-bold">
+                                                            Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》
+                                                        </a>
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <p class="text-muted mb-0 small">
+                                                    {{ stage.description|truncatechars:80 }}
+                                                </p>
+                                            </div>
+                                            <div class="mt-auto text-center">
                                                 <a href="{% url 'sqlquiz:quiz_play' stage.stage_number %}" 
-                                                   class="text-decoration-none fw-bold">
-                                                    Stage{{ stage.stage_number|stringformat:"02d" }}《{{ stage.title }}》
+                                                   class="btn btn-outline-primary btn-sm w-100">
+                                                    挑戦する →
                                                 </a>
-                                            </h5>
-                                            <p class="text-muted mb-0 small">
-                                                {{ stage.description|truncatechars:60 }}
-                                            </p>
-                                        </div>
-                                        <div class="stage-action">
-                                            <a href="{% url 'sqlquiz:quiz_play' stage.stage_number %}" 
-                                               class="btn btn-outline-primary btn-sm">
-                                                挑戦する →
-                                            </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             {% endfor %}
+                            </div>
                         </div>
                     {% else %}
                         <div class="text-center py-5">
@@ -83,6 +91,7 @@
 .stage-item {
     background-color: #fafafa;
     transition: all 0.3s ease;
+    min-height: 180px;
 }
 
 .stage-item:hover {
@@ -91,7 +100,23 @@
 }
 
 .stage-icon {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.stage-list .row {
+    margin-bottom: 2rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .stage-item {
+        min-height: 150px;
+    }
 }
 </style>
 {% endblock %}

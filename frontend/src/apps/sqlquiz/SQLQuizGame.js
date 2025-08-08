@@ -176,9 +176,9 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
   };
 
   return (
-    <div className="container mb-4">
+    <div className="container-fluid mb-4 px-4">
       <div className="row justify-content-center">
-        <div className="col-lg-10">
+        <div className="col-12">
           {/* ストーリーセクション */}
           <div className="card shadow mb-4">
             <div className="card-header bg-info text-white">
@@ -211,7 +211,7 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
             </div>
             <div className="card-body">
               <div className="row">
-                <div className="col-lg-8">
+                <div className="col-lg-9 col-xl-10">
                   <label htmlFor="sql-input" className="form-label fw-bold">SQLを入力：</label>
                   <textarea 
                     id="sql-input"
@@ -237,14 +237,14 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
                       )}
                     </button>
                     <button 
-                      className="btn btn-secondary"
+                      className="btn btn-secondary btn-lg"
                       onClick={clearSQL}
                     >
                       🗑️ クリア
                     </button>
                   </div>
                 </div>
-                <div className="col-lg-4">
+                <div className="col-lg-3 col-xl-2">
                   <div className="card bg-info text-white mt-3 mt-lg-0">
                     <div className="card-body text-center">
                       <h6>🤖 川田のヒント</h6>
@@ -355,6 +355,29 @@ const SQLQuizGame = ({ stageNumber, stageData: initialStageData = {} }) => {
 
         .card:hover {
           transform: translateY(-2px);
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+          .container-fluid {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+          
+          #sql-input {
+            font-size: 14px !important;
+          }
+          
+          .card-body {
+            padding: 1rem !important;
+          }
+        }
+
+        @media (min-width: 1400px) {
+          .container-fluid {
+            max-width: 1320px;
+            margin: 0 auto;
+          }
         }
       `}</style>
     </div>

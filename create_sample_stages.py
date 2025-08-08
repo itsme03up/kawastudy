@@ -5,38 +5,52 @@ SQLクイズのサンプルデータを作成するスクリプト
 import os
 import sys
 import django
+from apps.sqlquiz.models import QuizStage
 
 # Django設定
 sys.path.append('/Users/annayanchuk/kawastudy')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kawastudy.settings')
 django.setup()
 
-from apps.sqlquiz.models import QuizStage
-
 def create_sample_stages():
     """サンプルステージを作成"""
-    
+
     stages_data = [
         {
             'stage_number': 1,
             'title': '給料日ランチ',
-            'description': '今日は給料日！1000円〜2000円の予算で美味しいランチを探そう！',
-            'question': '「1000円以上2000円以下」のメニューを取得してください',
-            'correct_sql': 'SELECT name FROM lunch_menu WHERE price >= 1000 AND price <= 2000;',
-            'hint': 'WHERE句でprice >= 1000 AND price <= 2000 を使いましょう！',
-            'story_text': '……川田、今日は給料日でした。\n少し贅沢したいですが、高すぎるのも気が引けます。\n1000円以上、でも2000円以下のメニューが食いたいですね……',
+            'description': ('今日は給料日！1000円〜2000円の予算で'
+                            '美味しいランチを探そう！'),
+            'question': ('「1000円以上2000円以下」のメニューを'
+                         '取得してください'),
+            'correct_sql': ('SELECT name FROM lunch_menu WHERE price >= 1000 '
+                            'AND price <= 2000;'),
+            'hint': ('WHERE句でprice >= 1000 AND price <= 2000 を'
+                     '使いましょう！'),
+            'story_text': ('……川田、今日は給料日でした。\n'
+                           '少し贅沢したいですが、高すぎるのも気が引けます。\n'
+                           '1000円以上、でも2000円以下のメニューが食いたいですね……'),
             'table_name': 'lunch_menu',
             'sample_data_json': """
 [
-  {"id": 1, "name": "ハンバーグ定食", "category": "洋食", "price": 980, "available": true},
-  {"id": 2, "name": "鰻重", "category": "和食", "price": 1980, "available": true},
-  {"id": 3, "name": "牛丼", "category": "和食", "price": 590, "available": false},
-  {"id": 4, "name": "天ぷらそば", "category": "和食", "price": 1050, "available": true},
-  {"id": 5, "name": "カレーライス", "category": "洋食", "price": 850, "available": true}
+  {"id": 1, "name": "ハンバーグ定食", "category": "洋食", 
+   "price": 980, "available": true},
+  {"id": 2, "name": "鰻重", "category": "和食", 
+   "price": 1980, "available": true},
+  {"id": 3, "name": "牛丼", "category": "和食", 
+   "price": 590, "available": false},
+  {"id": 4, "name": "天ぷらそば", "category": "和食", 
+   "price": 1050, "available": true},
+  {"id": 5, "name": "カレーライス", "category": "洋食", 
+   "price": 850, "available": true}
 ]
             """,
-            'success_reaction': 'それ……まさに理想的な昼食でした。\n鰻重も、天ぷらそばも……ちょっと贅沢で、でもちゃんと現実的で。\n川田、こういうの、大事にしたいと思ってました。',
-            'failure_reaction': 'それは惜しかったです……もう一度一緒にやってみましょうか？',
+            'success_reaction': ('それ……まさに理想的な昼食でした。\n'
+                                 '鰻重も、天ぷらそばも……ちょっと贅沢で、でも'
+                                 'ちゃんと現実的で。\n'
+                                 '川田、こういうの、大事にしたいと思ってました。'),
+            'failure_reaction': ('それは惜しかったです……もう一度一緒に'
+                                 'やってみましょうか？'),
             'mock_result_json': """
 [
     {"name": "鰻重"},
@@ -47,42 +61,99 @@ def create_sample_stages():
         {
             'stage_number': 2,
             'title': '夜カフェを探して',
-            'description': '夜遅くでも安心！名前に"カフェ"が入り、22時以降も営業しているお店を探そう！',
-            'question': '「名前に"カフェ"を含み」、かつ「22時以降も営業している」お店を表示してください。',
-            'correct_sql': 'SELECT name FROM shop WHERE name LIKE \'%カフェ%\' AND close_hour >= \'22:00\';',
-            'alternative_solutions_json': '["SELECT name FROM shop WHERE category = \'カフェ\' AND close_hour >= \'22:00\'"]',
-            'hint': 'LIKE句で名前に「カフェ」を含むか、categoryを使っても良いかもしれません。',
-            'story_text': '……川田、ちょっと夜にカフェで過ごしたいと思ってました。\n喧騒じゃなくて、静かな場所で、温かい飲み物と本を。\n22時くらいまで開いてるところ……あると嬉しいです。',
+            'description': ('夜遅くでも安心！名前に"カフェ"が入り、'
+                            '22時以降も営業しているお店を探そう！'),
+            'question': ('「名前に"カフェ"を含み」、かつ「22時以降も'
+                         '営業している」お店を表示してください。'),
+            'correct_sql': ('SELECT name FROM shop WHERE name LIKE '
+                            '\'%カフェ%\' AND close_hour >= \'22:00\';'),
+            'alternative_solutions_json': (
+                '["SELECT name FROM shop WHERE category = \'カフェ\' '
+                'AND close_hour >= \'22:00\'"]'),
+            'hint': ('LIKE句で名前に「カフェ」を含むか、categoryを'
+                     '使っても良いかもしれません。'),
+            'story_text': ('……川田、ちょっと夜にカフェで過ごしたいと'
+                           '思ってました。\n'
+                           '喧騒じゃなくて、静かな場所で、温かい飲み物と本を。\n'
+                           '22時くらいまで開いてるところ……あると嬉しいです。'),
             'table_name': 'shop',
-            'sample_data_json': '[{"id": 1, "name": "星空カフェ", "category": "カフェ", "open_hour": "10:00", "close_hour": "22:00"}, {"id": 2, "name": "スナックあけぼの", "category": "スナック", "open_hour": "19:00", "close_hour": "01:00"}, {"id": 3, "name": "居酒屋まるしん", "category": "居酒屋", "open_hour": "17:00", "close_hour": "23:00"}, {"id": 4, "name": "カフェド・モナリザ", "category": "カフェ", "open_hour": "08:00", "close_hour": "21:00"}, {"id": 5, "name": "深夜カフェロワ", "category": "カフェ", "open_hour": "18:00", "close_hour": "23:30"}]',
-            'success_reaction': '川田、こういう場所が欲しかったんです。\n夜の静けさに溶けるように、灯りがあって、温かくて……\nちゃんと見つけられて、良かったです。',
-            'failure_reaction': 'それ、惜しかったです。時間か、「名前の中に"カフェ"」の条件、どちらかが漏れていたかもしれません。',
-            'mock_result_json': '[{"name": "星空カフェ"}, {"name": "深夜カフェロワ"}]'
+            'sample_data_json': (
+                '[{"id": 1, "name": "星空カフェ", "category": "カフェ", '
+                '"open_hour": "10:00", "close_hour": "22:00"}, '
+                '{"id": 2, "name": "スナックあけぼの", "category": "スナック", '
+                '"open_hour": "19:00", "close_hour": "01:00"}, '
+                '{"id": 3, "name": "居酒屋まるしん", "category": "居酒屋", '
+                '"open_hour": "17:00", "close_hour": "23:00"}, '
+                '{"id": 4, "name": "カフェド・モナリザ", "category": "カフェ", '
+                '"open_hour": "08:00", "close_hour": "21:00"}, '
+                '{"id": 5, "name": "深夜カフェロワ", "category": "カフェ", '
+                '"open_hour": "18:00", "close_hour": "23:30"}]'),
+            'success_reaction': ('川田、こういう場所が欲しかったんです。\n'
+                                 '夜の静けさに溶けるように、灯りがあって、'
+                                 '温かくて……\n'
+                                 'ちゃんと見つけられて、良かったです。'),
+            'failure_reaction': ('それ、惜しかったです。時間か、「名前の中に"カフェ"」'
+                                 'の条件、どちらかが漏れていたかもしれません。'),
+            'mock_result_json': ('[{"name": "星空カフェ"}, '
+                                 '{"name": "深夜カフェロワ"}]')
         },
         {
             'stage_number': 3,
             'title': 'カロリー控えめがいい日',
-            'description': '健康を気にして、300kcal以下のヘルシーなスイーツを見つけよう！',
-            'question': '健康を意識して、300kcal以下の低カロリーなスイーツを選んでください。',
+            'description': ('健康を気にして、300kcal以下のヘルシーな'
+                            'スイーツを見つけよう！'),
+            'question': ('健康を意識して、300kcal以下の低カロリーな'
+                         'スイーツを選んでください。'),
             'correct_sql': 'SELECT name FROM sweets WHERE calories <= 300;',
             'alternative_solutions_json': '[]',
-            'hint': 'WHERE句で数値の上限を指定してみましょう。300kcal以下という条件を忘れずに。',
-            'story_text': '川田、今日はちょっとだけ控えめにしたいと思ってました。\n甘いものが好きなのは変わらないんですが……\n胃が重くならないくらいの、優しい甘さを探してました。カロリーが300kcal以下のスイーツを抽出しましょう。',
+            'hint': ('WHERE句で数値の上限を指定してみましょう。'
+                     '300kcal以下という条件を忘れずに。'),
+            'story_text': ('川田、今日はちょっとだけ控えめにしたいと'
+                           '思ってました。\n'
+                           '甘いものが好きなのは変わらないんですが……\n'
+                           '胃が重くならないくらいの、優しい甘さを探してました。'
+                           'カロリーが300kcal以下のスイーツを抽出しましょう。'),
             'table_name': 'sweets',
-            'sample_data_json': '[{"id": 1, "name": "濃厚チョコケーキ", "calories": 420}, {"id": 2, "name": "いちごゼリー", "calories": 180}, {"id": 3, "name": "ミルフィーユ", "calories": 350}, {"id": 4, "name": "杏仁豆腐", "calories": 240}, {"id": 5, "name": "フルーツ寒天", "calories": 160}]',
-            'success_reaction': '川田、それくらいがちょうど良いと思ってました。\n胃も心も、軽やかでいられる甘さですね。',
-            'failure_reaction': '川田、それ……ちょっと重たかったかもしれません。\n300kcalを超えていないか、もう一度確認してみてください。',
-            'mock_result_json': '[{"name": "いちごゼリー"}, {"name": "杏仁豆腐"}, {"name": "フルーツ寒天"}]'
+            'sample_data_json': (
+                '[{"id": 1, "name": "濃厚チョコケーキ", "calories": 420}, '
+                '{"id": 2, "name": "いちごゼリー", "calories": 180}, '
+                '{"id": 3, "name": "ミルフィーユ", "calories": 350}, '
+                '{"id": 4, "name": "杏仁豆腐", "calories": 240}, '
+                '{"id": 5, "name": "フルーツ寒天", "calories": 160}]'),
+            'success_reaction': ('川田、それくらいがちょうど良いと'
+                                 '思ってました。\n'
+                                 '胃も心も、軽やかでいられる甘さですね。'),
+            'failure_reaction': ('川田、それ……ちょっと重たかったかも'
+                                 'しれません。\n'
+                                 '300kcalを超えていないか、もう一度確認して'
+                                 'みてください。'),
+            'mock_result_json': ('[{"name": "いちごゼリー"}, '
+                                 '{"name": "杏仁豆腐"}, '
+                                 '{"name": "フルーツ寒天"}]')
         },
         {
             'stage_number': 4,
             'title': '本棚の整理をしよう',
-            'description': 'GROUP BY句を使って、ジャンル別に本の冊数を集計する問題です。カテゴリごとのデータをまとめて把握しましょう。',
-            'question': '川田の本棚にある本を、ジャンル別に冊数を集計してください。各ジャンルに何冊ずつあるかを表示してください。',
-            'correct_sql': 'SELECT genre, COUNT(*) as book_count FROM books GROUP BY genre;',
-            'alternative_solutions_json': '["SELECT genre, COUNT(id) as book_count FROM books GROUP BY genre", "SELECT genre, COUNT(*) FROM books GROUP BY genre", "SELECT genre, COUNT(id) FROM books GROUP BY genre"]',
-            'hint': 'GROUP BY句でジャンルごとにグループ化し、COUNT(*)で各グループの件数を数えましょう。',
-            'story_text': '川田、部屋の本棚がごちゃごちゃになってました。\n技術書、小説、漫画……色々混ざっていて、何がどれくらいあるのか分からなくて。\n整理する前に、まずはジャンル別の冊数（book_count）を把握したいと思ってました。',
+            'description': ('GROUP BY句を使って、ジャンル別に本の冊数を'
+                            '集計する問題です。カテゴリごとのデータを'
+                            'まとめて把握しましょう。'),
+            'question': ('川田の本棚にある本を、ジャンル別に冊数を'
+                         '集計してください。各ジャンルに何冊ずつあるかを'
+                         '表示してください。'),
+            'correct_sql': ('SELECT genre, COUNT(*) as book_count FROM books '
+                            'GROUP BY genre;'),
+            'alternative_solutions_json': (
+                '["SELECT genre, COUNT(id) as book_count FROM books '
+                'GROUP BY genre", '
+                '"SELECT genre, COUNT(*) FROM books GROUP BY genre", '
+                '"SELECT genre, COUNT(id) FROM books GROUP BY genre"]'),
+            'hint': ('GROUP BY句でジャンルごとにグループ化し、'
+                     'COUNT(*)で各グループの件数を数えましょう。'),
+            'story_text': ('川田、部屋の本棚がごちゃごちゃになってました。\n'
+                           '技術書、小説、漫画……色々混ざっていて、'
+                           '何がどれくらいあるのか分からなくて。\n'
+                           '整理する前に、まずはジャンル別の冊数（book_count）を'
+                           '把握したいと思ってました。'),
             'table_name': 'books',
             'sample_data_json': '[{"id": 1, "title": "Python入門", "genre": "技術書", "author": "山田太郎"}, {"id": 2, "title": "ノルウェイの森", "genre": "小説", "author": "村上春樹"}, {"id": 3, "title": "ワンピース 1巻", "genre": "漫画", "author": "尾田栄一郎"}, {"id": 4, "title": "Django実践ガイド", "genre": "技術書", "author": "田中花子"}, {"id": 5, "title": "吾輩は猫である", "genre": "小説", "author": "夏目漱石"}, {"id": 6, "title": "進撃の巨人 1巻", "genre": "漫画", "author": "諫山創"}, {"id": 7, "title": "JavaScript完全ガイド", "genre": "技術書", "author": "佐藤次郎"}]',
             'success_reaction': '川田、これで分かりました。\n技術書が多いのは予想通りでしたが、小説も意外と持ってたんですね。\nこうやって数字で見ると、整理の方針も立てやすくなります。',
@@ -180,15 +251,14 @@ def create_sample_stages():
             'mock_result_json': '[{"SUM(price)": 5400}]'
         }
     ]
-    
     # 既存のデータを削除
-    QuizStage.objects.all().delete()
-    
+    QuizStage.objects.all().delete()  # pylint: disable=no-member
+
     # 新しいデータを作成
     for stage_data in stages_data:
-        stage = QuizStage.objects.create(**stage_data)
+        stage = QuizStage.objects.create(**stage_data)  # pylint: disable=no-member
         print(f"作成: {stage}")
-    
+
     print(f"\n✅ {len(stages_data)}個のステージを作成しました！")
 
 if __name__ == '__main__':

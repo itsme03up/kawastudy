@@ -1,11 +1,19 @@
+"""
+C言語学習アプリケーションのモデル定義
+
+このモジュールには、C言語学習セクションとクイズ問題のモデルが含まれています。
+"""
 from django.db import models
-import json
 
 class CLessonSection(models.Model):
     """C言語学習セクション"""
     id = models.AutoField(primary_key=True)
     position = models.IntegerField(help_text="スクロール位置 (px)")
-    side = models.CharField(max_length=10, choices=[('left', 'Left'), ('right', 'Right')], default='left')
+    side = models.CharField(
+        max_length=10, 
+        choices=[('left', 'Left'), ('right', 'Right')], 
+        default='left'
+    )
     type = models.CharField(max_length=20, choices=[
         ('text', 'Text'),
         ('code', 'Code'),
@@ -36,8 +44,14 @@ class CQuizQuestion(models.Model):
     options = models.JSONField(help_text="選択肢（JSON配列）")
     correct_answer = models.IntegerField(help_text="正解番号（0から開始）")
     explanation = models.TextField(help_text="解説")
-    kawada_correct_message = models.CharField(max_length=200, default="川田、正解です！")
-    kawada_wrong_message = models.CharField(max_length=200, default="川田、もう一度考えてみましょう")
+    kawada_correct_message = models.CharField(
+        max_length=200, 
+        default="川田、正解です！"
+    )
+    kawada_wrong_message = models.CharField(
+        max_length=200, 
+        default="川田、もう一度考えてみましょう"
+    )
     trigger_position = models.IntegerField(help_text="問題表示位置 (px)")
     is_active = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
@@ -46,4 +60,4 @@ class CQuizQuestion(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return f"Quiz {self.order}: {self.question[:50]}..."
+        return f"Quiz {self.order}: {str(self.question)[:50]}..."
