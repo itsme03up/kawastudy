@@ -199,12 +199,12 @@ body, html {
     background: rgba(255,255,255,0.95);
     padding: 40px;
     border-radius: 20px;
-    text-align: center;
+    text-align: left;
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     box-shadow: 0 12px 40px rgba(0,0,0,0.15);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255,255,255,0.3);
@@ -227,6 +227,7 @@ body, html {
     margin-bottom: 20px;
     color: #333;
     line-height: 1.4;
+    text-align: left;
 }
 
 .lesson-content div {
@@ -235,9 +236,9 @@ body, html {
     color: #555;
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
 }
 
 /* ナビゲーション */
@@ -310,6 +311,103 @@ body, html {
     to {
         opacity: 1;
     }
+}
+
+/* C言語学習ページ専用のテキスト左寄せスタイル */
+.cstudy-page .box27,
+.cstudy-page .lesson-content {
+    text-align: left !important;
+}
+
+.cstudy-page .box27 p,
+.cstudy-page .lesson-content div,
+.cstudy-page .box27 div {
+    text-align: left !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
+/* コードブロック用スタイル */
+.cstudy-page pre,
+.cstudy-page code,
+.cstudy-page .box27 pre {
+    text-align: left !important;
+    white-space: pre-wrap !important;
+    font-family: 'Courier New', monospace, 'Source Code Pro', 'Consolas' !important;
+    background-color: #f8f8f8 !important;
+    padding: 1rem !important;
+    border-radius: 4px !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    border-left: 3px solid #62c1ce !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+    color: #333 !important;
+    margin: 0.5rem 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* コードセクション専用スタイル */
+.code-container {
+    background: transparent !important;
+    border: none !important;
+    padding: 20px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.code-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255,255,255,0.9);
+    border-radius: 8px;
+    border-left: 4px solid #62c1ce;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.code-icon {
+    margin-right: 0.5rem;
+}
+
+.code-block {
+    background: #f8f8f8 !important;
+    border: 1px solid #ddd !important;
+    border-left: 4px solid #62c1ce !important;
+    padding: 1.5rem !important;
+    margin: 1rem 0 !important;
+    border-radius: 6px !important;
+    font-family: 'Courier New', monospace !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+    color: #333 !important;
+    white-space: pre-wrap !important;
+    overflow-x: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.code-explanation {
+    background: rgba(255,255,255,0.95);
+    padding: 1.2rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #764ba2;
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
 }
 
 /* レスポンシブデザイン */
@@ -562,25 +660,75 @@ class ClickNavigationCStudy {
         this.lessonContainer.innerHTML = '';
         this.sections = [];
         
-        // 動的セクションを追加
-        apiSections.forEach((section, index) => {
-            try {
-                const sectionElement = this.createSectionElement(section, index);
+        // コードとその後の解説をペアにして処理
+        this.processedSections = [];
+        
+        for (let i = 0; i < apiSections.length; i++) {
+            const section = apiSections[i];
+            
+            // コードセクションの場合、次のセクションが解説なら組み合わせる
+            if (section.type === 'code' && i + 1 < apiSections.length && apiSections[i + 1].type === 'explanation') {
+                const nextSection = apiSections[i + 1];
+                const combinedSection = this.createCombinedCodeSection(section, nextSection, i);
+                this.lessonContainer.appendChild(combinedSection);
+                this.sections.push(combinedSection);
+                i++; // 次の解説セクションをスキップ
+            } else {
+                // 通常のセクション処理
+                const sectionElement = this.createSectionElement(section, i);
                 this.lessonContainer.appendChild(sectionElement);
                 this.sections.push(sectionElement);
-            } catch (createError) {
-                console.error(`セクション${index + 1}の作成でエラー:`, createError);
             }
-        });
+        }
         
         // 最初のセクションを表示
         this.currentIndex = 0;
         this.showSection(0);
         
-        console.log(`${apiSections.length}個の動的セクションに置き換えました`);
+        console.log(`${this.sections.length}個の動的セクションに置き換えました`);
+    }
+    
+    createCombinedCodeSection(codeSection, explanationSection, index) {
+        console.log(`組み合わせセクション${index + 1}作成開始:`, codeSection, explanationSection);
+        
+        const sectionDiv = document.createElement('section');
+        sectionDiv.className = `lesson-section right code-section`; // コード専用クラス追加
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'code-container'; // 透明背景用のクラス
+        
+        // コードタイトル部分
+        const codeLines = (codeSection.content || '').split('\n');
+        const codeTitle = codeLines[0] || 'C言語学習';
+        const codeBody = codeLines.slice(1).join('\n') || codeSection.content || '';
+        
+        // コードタイトル
+        const titleElement = document.createElement('div');
+        titleElement.className = 'code-title';
+        titleElement.innerHTML = `<span class="code-icon">💻</span> ${codeTitle}`;
+        
+        // コードブロック
+        const codeElement = document.createElement('pre');
+        codeElement.className = 'code-block';
+        codeElement.textContent = codeBody;
+        
+        // 解説部分
+        const explanationElement = document.createElement('div');
+        explanationElement.className = 'code-explanation';
+        explanationElement.innerHTML = explanationSection.content.replace(/\n/g, '<br>');
+        
+        contentDiv.appendChild(titleElement);
+        contentDiv.appendChild(codeElement);
+        contentDiv.appendChild(explanationElement);
+        sectionDiv.appendChild(contentDiv);
+        
+        console.log(`組み合わせセクション${index + 1}作成完了`);
+        return sectionDiv;
     }
     
     createSectionElement(section, index) {
+        console.log(`セクション${index + 1}作成開始:`, section); // デバッグ用
+        
         const sectionDiv = document.createElement('section');
         sectionDiv.className = `lesson-section right`; // 全て右側に統一
         
@@ -599,20 +747,45 @@ class ClickNavigationCStudy {
         // コンテンツから最初の行をタイトルとして抽出
         const lines = (section.content || '').split('\n');
         const title = lines[0] || 'C言語学習';
-        const body = lines.slice(1).join('<br>') || section.content || '';
+        const body = lines.slice(1).join('\n') || section.content || '';
+        
+        console.log(`セクション${index + 1} - タイプ: ${section.type}, タイトル: ${title}`); // デバッグ用
         
         // HTML要素を作成
         const titleElement = document.createElement('span');
         titleElement.className = 'box-title';
         titleElement.textContent = `${icon} ${title}`;
         
-        const bodyElement = document.createElement('p');
-        bodyElement.innerHTML = body;
+        // コード型の場合はpreタグを使用、その他はpタグ
+        const bodyElement = section.type === 'code' ? 
+            document.createElement('pre') : 
+            document.createElement('p');
+        
+        if (section.type === 'code') {
+            console.log('コードセクション処理:', section.type, body); // デバッグ用
+            bodyElement.textContent = body; // コードはエスケープして表示
+            bodyElement.style.textAlign = 'left';
+            bodyElement.style.whiteSpace = 'pre-wrap';
+            bodyElement.style.fontFamily = 'Courier New, monospace';
+            bodyElement.style.backgroundColor = '#f8f8f8';
+            bodyElement.style.padding = '1rem';
+            bodyElement.style.borderRadius = '4px';
+            bodyElement.style.borderLeft = '3px solid #62c1ce';
+            bodyElement.style.fontSize = '0.9rem';
+            bodyElement.style.lineHeight = '1.4';
+            bodyElement.style.overflow = 'auto';
+            bodyElement.style.display = 'block';
+            bodyElement.style.width = '100%';
+            console.log('作成されたpreタグ:', bodyElement); // デバッグ用
+        } else {
+            bodyElement.innerHTML = body.replace(/\n/g, '<br>'); // 説明文は改行をbrタグに
+        }
         
         contentDiv.appendChild(titleElement);
         contentDiv.appendChild(bodyElement);
         sectionDiv.appendChild(contentDiv);
         
+        console.log(`セクション${index + 1}作成完了`); // デバッグ用
         return sectionDiv;
     }
     

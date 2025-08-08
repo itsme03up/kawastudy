@@ -33,7 +33,7 @@ def create_complete_data():
             'position': 200,
             'side': 'right',
             'type': 'text',
-            'content': ('C言語の世界へようこそ\n川田と一緒に学習の旅を始めましょう！🌟\n\n'
+            'content': ('C言語の世界へようこそ\n川田と一緒に学習の旅を始めましょう！\n\n'
                        'C言語は多くのプログラミング言語の基礎となる重要な言語です。'),
             'kawada_emotion': 'cheerful',
             'order': 1
@@ -209,7 +209,7 @@ def create_complete_data():
             'side': 'right',
             'type': 'code',
             'content': ('ネスト（入れ子構造）\n二重ループ\n\n#include <stdio.h>\n\n'
-                       'int main() {\n    for (int i = 1; i <= 3; i++) {\n'
+                       'int main(void) {\n    for (int i = 1; i <= 3; i++) {\n'
                        '        for (int j = 1; j <= 2; j++) {\n'
                        '            printf("i=%d, j=%d\\n", i, j);\n        }\n    }\n'
                        '    return 0;\n}'),
