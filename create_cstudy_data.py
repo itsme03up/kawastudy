@@ -5,6 +5,7 @@ C言語学習用のサンプルデータを作成するスクリプト
 
 import os
 import sys
+import json
 import django
 
 # Djangoの設定を読み込む
@@ -152,9 +153,10 @@ def create_sample_data():
             'order': 4
         }
     ]
-    
     # クイズを作成
     for quiz_data in quiz_questions:
+        quiz_data['options'] = json.dumps(quiz_data['options'], ensure_ascii=False)
+        CQuizQuestion.objects.create(**quiz_data)
         CQuizQuestion.objects.create(**quiz_data)
     
     print("✅ サンプルデータの作成が完了しました！")

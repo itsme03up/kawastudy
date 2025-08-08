@@ -9,6 +9,11 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 django.setup()
 
 from apps.cstudy.models import CLessonSection
+from django.db import models
+
+# Pylintのエラーを回避するために、objectsマネージャーを明示的に追加
+if not hasattr(CLessonSection, 'objects'):
+    CLessonSection.objects = models.Manager()
 
 def create_lesson_sections():
     """パララックス学習用のサンプルセクションを作成"""
