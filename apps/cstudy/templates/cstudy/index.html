@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C言語入門 - 川田と歩く</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
     <style>
 /* 基本スタイル */
@@ -22,104 +23,7 @@ body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-/* メインレイアウト */
-.main-layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-/* ヘッダー */
-.header {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    text-align: center;
-    color: white;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    z-index: 200;
-    position: relative;
-}
-
-.header h1 {
-    font-size: 2.2rem;
-    margin-bottom: 8px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-.header p {
-    font-size: 1rem;
-    opacity: 0.9;
-    margin: 0;
-}
-
-/* メインコンテンツエリア */
-.main-content {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 40px 20px;
-}
-
-.content-center {
-    text-align: center;
-    color: white;
-    max-width: 500px;
-}
-
-.content-center h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-.content-center p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    opacity: 0.9;
-    margin-bottom: 30px;
-}
-
-.start-button {
-    background: rgba(255,255,255,0.2);
-    border: 2px solid rgba(255,255,255,0.3);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.start-button:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-}
-
-/* フッター */
-.footer {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    padding: 15px 20px;
-    text-align: center;
-    color: white;
-    border-top: 1px solid rgba(255,255,255,0.2);
-    z-index: 200;
-    position: relative;
-}
-
-.footer p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
+    background: #f8f9fa;
 }
 
 /* 静的モードスタイル */
@@ -130,37 +34,13 @@ body, html {
     min-height: 100vh;
 }
 
-.background-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.clouds {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url("{% static 'img/parallax/backgrounds/clouds.png' %}");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 3;
-    opacity: 0.7;
-}
-
 /* Lottieアニメーション - 背景左〜中央 */
 .lottie-animation {
     position: fixed;
     top: 0;
     left: 0;
-    width: 60vw;
-    height: 100vh;
+    width: 50vw;
+    height: 90vh;
     z-index: 2;
 }
 
@@ -331,22 +211,6 @@ body, html {
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
-    .header h1 {
-        font-size: 1.8rem;
-    }
-    
-    .header p {
-        font-size: 0.9rem;
-    }
-    
-    .content-center h2 {
-        font-size: 2rem;
-    }
-    
-    .content-center p {
-        font-size: 1rem;
-    }
-    
     .lesson-sections {
         right: 50%;
         transform: translate(50%, -50%);
@@ -424,53 +288,48 @@ body, html {
 </head>
 <body>
 
-<div class="main-layout">
+<div class="cstudy-main-layout">
     <!-- ヘッダー -->
-    <header class="header">
+    <header class="cstudy-header">
         <h1>🌟 C言語学習システム</h1>
         <p>川田と一緒に学ぶプログラミングの基礎</p>
     </header>
 
     <!-- メインコンテンツ -->
-    <main class="main-content">
-        <div class="content-center">
+    <main class="cstudy-main-content">
+        <div class="cstudy-content-center">
             <h2>🚀 学習を始めよう</h2>
             <p>右側のセクションで川田と一緒にC言語の基礎を学びましょう。<br>
             各セクションは下から上がってくるアニメーションで表示されます。</p>
-            <button class="start-button" onclick="window.cStudyApp?.showSection(0)">
+            <button class="cstudy-start-button" onclick="window.cStudyApp?.showSection(0)">
                 学習開始
             </button>
         </div>
     </main>
 
     <!-- フッター -->
-    <footer class="footer">
+    <footer class="cstudy-footer">
         <p>&copy; 2025 C言語学習システム - Powered by 川田</p>
     </footer>
 </div>
 
-<!-- 背景コンテナ -->
-<div class="background-container">
-    <div class="clouds" id="clouds-bg"></div>
-    
-    <!-- Lottieアニメーション - 背景左〜中央 -->
-    <div class="lottie-animation">
-        <dotlottie-wc 
-            src="https://lottie.host/6b9d8450-0591-4ba1-8c98-5e992969107b/oRwPEwm3hJ.lottie" 
-            style="width: 100%; height: 100%;" 
-            speed="1" 
-            autoplay 
-            loop>
-        </dotlottie-wc>
-    </div>
-    
-    <div class="kawada-character" id="kawada-char">
-        <img src="{% static 'img/parallax/characters/kawada-sam.png' %}" 
-             width="150" 
-             height="150" 
-             alt="川田" 
-             id="kawada-img">
-    </div>
+<!-- Lottieアニメーション - 背景左〜中央 -->
+<div class="lottie-animation">
+    <dotlottie-wc 
+        src="https://lottie.host/6b9d8450-0591-4ba1-8c98-5e992969107b/oRwPEwm3hJ.lottie" 
+        style="width: 100%; height: 100%;" 
+        speed="1" 
+        autoplay 
+        loop>
+    </dotlottie-wc>
+</div>
+
+<div class="kawada-character" id="kawada-char">
+    <img src="{% static 'img/parallax/characters/kawada-sam.png' %}" 
+         width="150" 
+         height="150" 
+         alt="川田" 
+         id="kawada-img">
 </div>
 
 <!-- セクション表示エリア（右側固定） -->
