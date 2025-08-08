@@ -152,4 +152,3 @@ def run_code(request):
         if os.path.exists(exe_path):
             os.remove(exe_path)
         return JsonResponse({'error': str(e)}, status=500)
-
