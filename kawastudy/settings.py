@@ -68,7 +68,7 @@ INSTALLED_APPS = [
     'apps.aws',
     'apps.cstudy',  # C言語学習アプリを追加
     'apps.scheduler',  # 川田スケジューラーアプリを追加
-    'apps.teacherstudy',  # 教師向け研究アプリを追加
+    'apps.teacherstudy',  # 研究コンテンツを追加
 ]
 
 MIDDLEWARE = [
