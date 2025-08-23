@@ -30,4 +30,5 @@ urlpatterns = [
     path('aws/', include('apps.aws.urls')),
     path('cstudy/', include('apps.cstudy.urls')),
     path('schedule/', include('apps.scheduler.urls')),  # 川田スケジューラー
+    path('teacherstudy/', include('apps.teacherstudy.urls')),
 ]
