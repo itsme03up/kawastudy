@@ -6,7 +6,8 @@ import "react-vertical-timeline-component/style.min.css";
 const TimelineWithMatrix = () => (
   <div style={{ position: "relative", minHeight: "100vh", width: "100vw" }}>
     <BackgroundMatrix />
-    <div style={{ position: "relative", zIndex: 1, paddingTop: 40, maxWidth: 800, margin: "0 auto 0 40px" }}>
+    <div style={{ position: "relative", zIndex: 1, paddingTop: 40, maxWidth: 800, margin: "0 auto 0 120px" }}>
+      <h2 style={{ marginBottom: 32, marginLeft: 8, fontWeight: 'bold', color: '#2196f3' }}>教師向け研究タイムライン</h2>
       <VerticalTimeline>
         <VerticalTimelineElement
           className="vertical-timeline-element--work"
