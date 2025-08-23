@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}教師向け研究コンテンツ{% endblock %}
 {% block content %}
-
+<div id="teacherstudy-react"></div>
 <div class="container py-5">
     <h1 class="mb-4">教師向け研究コンテンツ</h1>
     <p>このページは教師向けの研究・学習コンテンツです。</p>
     <!-- ここに詳細コンテンツを追加してください -->
 </div>
+{% endblock %}
+{% block react_scripts %}
+<script src="{% static 'js/react/teacherstudy.bundle.js' %}"></script>
 {% endblock %}

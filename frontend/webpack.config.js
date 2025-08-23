@@ -5,7 +5,8 @@ module.exports = {
   entry: {
     typing: './src/apps/typing/index.js',
     sqlquiz: './src/apps/sqlquiz/index.js',
-    chatlesson: './src/apps/chatlesson/index.js'
+    chatlesson: './src/apps/chatlesson/index.js',
+    teacherstudy: './src/apps/teacherstudy/matrix_mount.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/react/'),
