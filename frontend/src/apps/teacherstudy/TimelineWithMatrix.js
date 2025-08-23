@@ -11,24 +11,36 @@ const TimelineWithMatrix = () => (
       <VerticalTimeline>
         <VerticalTimelineElement
           className="vertical-timeline-element--work"
-          contentStyle={{ background: '#e3f2fd', color: '#333' }}
-          contentArrowStyle={{ borderRight: '7px solid #2196f3' }}
-          date="2025年8月"
           iconStyle={{ background: '#2196f3', color: '#fff' }}
+          contentStyle={{ background: 'rgba(227,242,253,0.9)', color: '#333' }}
+          contentArrowStyle={{ borderRight: '7px solid #2196f3' }}
         >
-          <h3 className="vertical-timeline-element-title">研究開始</h3>
-          <h4 className="vertical-timeline-element-subtitle">プロジェクト発足</h4>
-          <p>なぜ今回このような事を行なったか、背景や目的を記載。</p>
+          <h3 className="vertical-timeline-element-title">タイポ・漢字ミス</h3>
+          <h4 className="vertical-timeline-element-subtitle">Pratfall Effect</h4>
+          <p>有能な人の小さな失敗が、逆に親近感を生み好感度を高める。</p>
+          <button className="btn btn-outline-primary btn-sm mt-2" onClick={() => window.alert('細かいエピソード: 川田先生が「漢字ミス」をしてしまい、みんなが親近感を持った。')}>細かいエピソード・心理効果を開く</button>
         </VerticalTimelineElement>
+
         <VerticalTimelineElement
           className="vertical-timeline-element--work"
-          date="2025年9月"
           iconStyle={{ background: '#4caf50', color: '#fff' }}
         >
-          <h3 className="vertical-timeline-element-title">初期実装</h3>
-          <p>主要な機能の開発・検証。</p>
+          <h3 className="vertical-timeline-element-title">犬や日常会話</h3>
+          <h4 className="vertical-timeline-element-subtitle">Self-disclosure Effect</h4>
+          <p>自己開示によって距離が縮まり、心理的な近さを感じさせる。</p>
+          <button className="btn btn-outline-success btn-sm mt-2" onClick={() => window.alert('細かいエピソード: 川田先生が犬の話や日常会話をして、心理的距離が縮まった。')}>細かいエピソード・心理効果を開く</button>
         </VerticalTimelineElement>
-        {/* 追加のタイムライン要素をここに記載 */}
+
+        <VerticalTimelineElement
+          className="vertical-timeline-element--work"
+          iconStyle={{ background: '#ff9800', color: '#fff' }}
+        >
+          <h3 className="vertical-timeline-element-title">白湯→梅干し焼酎事件</h3>
+          <h4 className="vertical-timeline-element-subtitle">Humor Effect</h4>
+          <p>ユーモラスな失敗は、記憶に残りやすく共有されやすい。</p>
+          <button className="btn btn-outline-warning btn-sm mt-2" onClick={() => window.alert('細かいエピソード: 白湯を頼んだら梅干し焼酎が出てきて、みんなで大笑いした。')}>細かいエピソード・心理効果を開く</button>
+        </VerticalTimelineElement>
+        {/* 既存のタイムライン要素をここに記載 */}
       </VerticalTimeline>
     </div>
   </div>
