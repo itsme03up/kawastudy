@@ -62,7 +62,7 @@ const TimelineWithMatrix = () => {
   return (
     <div style={{ position: "relative", minHeight: "100vh", width: "100vw" }}>
       <BackgroundMatrix />
-      <div style={{ position: "relative", zIndex: 1, paddingTop: 40, maxWidth: 800, margin: "0 auto 0 120px" }}>
+      <div style={{ position: "relative", zIndex: 1, paddingTop: 40, maxWidth: 1100, margin: "0 auto 0 40px" }}>
         <h1 style={{ marginBottom: 32, marginLeft: 20, fontWeight: 'bold', color: '#fff' }}>エピソード分析</h1>
         <VerticalTimeline>
           {episodeData.map((ep, idx) => (
