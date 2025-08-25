@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}ログイン - Kawastudy{% endblock %}
+{% block content %}
+<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 1.5rem;">
+    <div class="text-center mb-4">
+      <img src="{% static 'img/kawada-smile.png' %}" alt="Kawada" style="width:64px; height:64px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <h2 class="mt-3 mb-1" style="color:#2196f3; font-weight:bold;">Kawastudy ログイン</h2>
+      <p class="text-muted">川田先生と一緒に学習を始めましょう</p>
+    </div>
+    <form method="post" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary w-100 mt-3">ログイン</button>
+    </form>
+    <div class="mt-3 text-center">
+      <a href="{% url 'account_reset_password' %}" class="text-decoration-none">パスワードを忘れた場合</a><br>
+      <a href="{% url 'account_signup' %}" class="text-decoration-none">新規登録はこちら</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
