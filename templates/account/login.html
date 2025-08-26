@@ -5,9 +5,14 @@
 <div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 80vh;">
   <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 1.5rem;">
     <div class="text-center mb-4">
-      <img src="{% static 'img/kawada-smile.png' %}" alt="Kawada" style="width:64px; height:64px; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div class="d-flex justify-content-center my-4">
+        <div style="width:96px; height:96px; border-radius:50%; background-color:#e3f2fd; box-shadow:0 2px 8px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+          <img src="{% static 'img/face.png' %}" alt="Kawada"
+            style="width:90px; height:90px; border-radius:50%; object-fit:cover; object-position:center 20%;">
+        </div>
+      </div>
       <h2 class="mt-3 mb-1" style="color:#2196f3; font-weight:bold;">Kawastudy ログイン</h2>
-      <p class="text-muted">川田先生と一緒に学習を始めましょう</p>
+      <p class="text-muted">一緒に学習を始めましょう</p>
     </div>
     <form method="post" action="{% url 'account_login' %}">
       {% csrf_token %}
