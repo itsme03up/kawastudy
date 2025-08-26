@@ -1,88 +1,179 @@
 {% extends 'base.html' %}
-{% block title %}AWS学習コンテンツ{% endblock %}
+{% block title %}AWS学習クイズ（ノベル風）{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <h2 class="mb-4">☁️ AWS学習ページ</h2>
-    <div id="aws-quiz-root"></div>
+  <h2 class="mb-4">☁️ AWS学習ノベルゲーム</h2>
+  <div id="aws-quiz-root"></div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- React & Babel CDN（開発用） -->
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
 {% verbatim %}
 <script type="text/babel">
-function Question({ data, onAnswer }) {
-  const [lang, setLang] = React.useState("ja");
-  const [selected, setSelected] = React.useState(null);
-
-  const handleLangChange = (l) => setLang(l);
-  const handleChoiceClick = (idx) => {
-    setSelected(idx);
-    if (onAnswer) onAnswer(idx);
-  };
-
+function DialogueBox({ speaker, text }) {
   return (
-    <div className="question-container">
-      <div className="lang-toggle">
-        <button onClick={() => handleLangChange("ja")} disabled={lang === "ja"}>日本語</button>
-        <button onClick={() => handleLangChange("en")} disabled={lang === "en"}>English</button>
-      </div>
-      <p className="question-text">{data.question[lang]}</p>
-      <ul>
-        {data.choices[lang].map((choice, idx) => (
-          <li
-            key={idx}
-            className={selected === idx ? "selected" : ""}
-            onClick={() => handleChoiceClick(idx)}
-            style={{ cursor: "pointer" }}
-          >
-            {choice}
-          </li>
-        ))}
-      </ul>
+    <div className="dialogue-box">
+      <p><strong>{speaker}</strong>「{text}」</p>
     </div>
   );
 }
 
-const quizData = {
-  question: {
-    ja: "会社の開発チームがS3バケットに保存した機密データを暗号化したい。キーの自動ローテーションを簡単に行うにはどうする？",
-    en: "Your company wants to encrypt sensitive data stored in an S3 bucket. The admin wants automatic key rotation with minimal operational overhead. What should you choose?"
-  },
-  choices: {
-    ja: [
-      "AWS KMSのマネージドキーを使用する ✅",
-      "IAMユーザーにAdministratorAccessを付与する",
-      "S3のバージョニングを有効化する",
-      "CloudFrontで暗号化する 🤣"
-    ],
-    en: [
-      "Use AWS KMS managed keys ✅",
-      "Attach AdministratorAccess to IAM users",
-      "Enable S3 versioning",
-      "Encrypt with CloudFront 🤣"
-    ]
-  }
-};
+function ChoiceBox({ choices, onSelect }) {
+  return (
+    <div className="choices">
+      {choices.map((c, i) => (
+        <button key={i} onClick={() => onSelect(i)}>{c}</button>
+      ))}
+    </div>
+  );
+}
 
-ReactDOM.render(
-  <Question data={quizData} onAnswer={idx => alert(\"選択肢: \" + idx)} />,
-  document.getElementById(\"aws-quiz-root\")
-);
+const quizData = [
+  {
+    question: {
+      ja: "会社の開発チームがS3バケットに保存した機密データを暗号化したい。キーの自動ローテーションを簡単に行うにはどうする？",
+      en: "Your company wants to encrypt sensitive data stored in an S3 bucket. The admin wants automatic key rotation with minimal operational overhead. What should you choose?"
+    },
+    choices: {
+      ja: [
+        "AWS KMSのマネージドキーを使用する ✅",
+        "IAMユーザーにAdministratorAccessを付与する",
+        "S3のバージョニングを有効化する",
+        "CloudFrontで暗号化する 🤣"
+      ],
+      en: [
+        "Use AWS KMS managed keys ✅",
+        "Attach AdministratorAccess to IAM users",
+        "Enable S3 versioning",
+        "Encrypt with CloudFront 🤣"
+      ]
+    },
+    answer: 0
+  },
+  {
+    question: {
+      ja: "EC2インスタンスのコストを最も効率的に削減する方法は？",
+      en: "What is the most efficient way to reduce EC2 instance costs?"
+    },
+    choices: {
+      ja: [
+        "リザーブドインスタンスを利用する ✅",
+        "EBSボリュームを増やす",
+        "Elastic IPを追加する",
+        "CloudWatchを無効化する"
+      ],
+      en: [
+        "Use Reserved Instances ✅",
+        "Increase EBS volumes",
+        "Add Elastic IPs",
+        "Disable CloudWatch"
+      ]
+    },
+    answer: 0
+  }
+  // 他の問題もここに追加
+];
+
+function QuizApp() {
+  const [lang, setLang] = React.useState("ja");
+  const [current, setCurrent] = React.useState(0);
+  const [score, setScore] = React.useState(0);
+  const [finished, setFinished] = React.useState(false);
+  const [phase, setPhase] = React.useState("question"); // "question" or "result"
+  const [lastResult, setLastResult] = React.useState(null);
+
+  const handleAnswer = (idx) => {
+    if (idx === quizData[current].answer) {
+      setScore(score + 1);
+      setLastResult(lang === "ja" ? "正解だ！" : "That's correct!");
+    } else {
+      setLastResult(lang === "ja" ? "それは違うね…" : "That's not correct…");
+    }
+    setPhase("result");
+  };
+
+  const handleNext = () => {
+    if (current + 1 < quizData.length) {
+      setCurrent(current + 1);
+      setPhase("question");
+    } else {
+      setFinished(true);
+    }
+  };
+
+  if (finished) {
+    return (
+      <DialogueBox
+        speaker="川田"
+        text={
+          lang === "ja"
+            ? `お疲れ様。スコアは ${score} / ${quizData.length} だ。`
+            : `Good work. Your score: ${score} / ${quizData.length}`
+        }
+      />
+    );
+  }
+
+  return (
+    <div>
+      <div className="lang-toggle">
+        <button onClick={() => setLang("ja")} disabled={lang === "ja"}>日本語</button>
+        <button onClick={() => setLang("en")} disabled={lang === "en"}>English</button>
+      </div>
+
+      {phase === "question" && (
+        <>
+          <DialogueBox speaker="川田" text={quizData[current].question[lang]} />
+          <ChoiceBox choices={quizData[current].choices[lang]} onSelect={handleAnswer} />
+        </>
+      )}
+
+      {phase === "result" && (
+        <>
+          <DialogueBox speaker="川田" text={lastResult} />
+          <div className="choice-box">
+            <button onClick={handleNext}>
+              {lang === "ja" ? "次へ" : "Next"}
+            </button>
+          </div>
+        </>
+      )}
+
+      <div style={{ marginTop: "1em", fontSize: "0.9em", opacity: 0.7 }}>
+        {lang === "ja"
+          ? `第${current + 1}問 / 全${quizData.length}問 　正解数: ${score}`
+          : `Q${current + 1} / ${quizData.length} 　Score: ${score}`}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<QuizApp />, document.getElementById("aws-quiz-root"));
 </script>
 {% endverbatim %}
 
 <style>
-.question-container { margin: 1em 0; }
-.lang-toggle button { margin-right: 0.5em; }
-.question-text { font-weight: bold; margin-bottom: 1em; }
-ul { list-style: none; padding: 0; }
-li { padding: 0.5em; border-radius: 4px; }
-li.selected { background: #ffe066; font-weight: bold; }
+.dialogue-box {
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 1em;
+  border-radius: 10px;
+  font-family: '游ゴシック', sans-serif;
+  margin-top: 1em;
+}
+.choices button {
+  display: block;
+  margin: 0.5em auto;
+  padding: 0.6em 1.2em;
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
 </style>
 {% endblock %}
