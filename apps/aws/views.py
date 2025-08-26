@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 
 # AWSコラム一覧ページ
 def column_list(request):
@@ -41,3 +42,26 @@ def quiz_list(request):
 
 def index(request):
     return render(request, "aws/index.html")
+
+def quiz_question(request):
+    data = {
+        "question": {
+            "ja": "会社の開発チームがS3バケットに保存した機密データを暗号化したい。キーの自動ローテーションを簡単に行うにはどうする？",
+            "en": "Your company wants to encrypt sensitive data stored in an S3 bucket. The admin wants automatic key rotation with minimal operational overhead. What should you choose?"
+        },
+        "choices": {
+            "ja": [
+                "AWS KMSのマネージドキーを使用する ✅",
+                "IAMユーザーにAdministratorAccessを付与する",
+                "S3のバージョニングを有効化する",
+                "CloudFrontで暗号化する 🤣"
+            ],
+            "en": [
+                "Use AWS KMS managed keys ✅",
+                "Attach AdministratorAccess to IAM users",
+                "Enable S3 versioning",
+                "Encrypt with CloudFront 🤣"
+            ]
+        }
+    }
+    return JsonResponse(data)

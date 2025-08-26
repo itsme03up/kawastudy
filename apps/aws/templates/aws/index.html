@@ -4,25 +4,85 @@
 {% block content %}
 <div class="container py-4">
     <h2 class="mb-4">☁️ AWS学習ページ</h2>
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title">AWSコラムを読む</h5>
-                    <p class="card-text">AWSの基礎やサービスについて分かりやすく解説したコラムを読むことができます。</p>
-                    <a href="{% url 'aws:column_list' %}" class="btn btn-outline-primary">コラム一覧へ</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <h5 class="card-title">AWSクイズに挑戦</h5>
-                    <p class="card-text">4択問題でAWSの知識を楽しくチェック！初心者から上級者まで対応。</p>
-                    <a href="{% url 'aws:quiz_list' %}" class="btn btn-outline-success">クイズ一覧へ</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="aws-quiz-root"></div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- React & Babel CDN（開発用） -->
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+{% verbatim %}
+<script type="text/babel">
+function Question({ data, onAnswer }) {
+  const [lang, setLang] = React.useState("ja");
+  const [selected, setSelected] = React.useState(null);
+
+  const handleLangChange = (l) => setLang(l);
+  const handleChoiceClick = (idx) => {
+    setSelected(idx);
+    if (onAnswer) onAnswer(idx);
+  };
+
+  return (
+    <div className="question-container">
+      <div className="lang-toggle">
+        <button onClick={() => handleLangChange("ja")} disabled={lang === "ja"}>日本語</button>
+        <button onClick={() => handleLangChange("en")} disabled={lang === "en"}>English</button>
+      </div>
+      <p className="question-text">{data.question[lang]}</p>
+      <ul>
+        {data.choices[lang].map((choice, idx) => (
+          <li
+            key={idx}
+            className={selected === idx ? "selected" : ""}
+            onClick={() => handleChoiceClick(idx)}
+            style={{ cursor: "pointer" }}
+          >
+            {choice}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const quizData = {
+  question: {
+    ja: "会社の開発チームがS3バケットに保存した機密データを暗号化したい。キーの自動ローテーションを簡単に行うにはどうする？",
+    en: "Your company wants to encrypt sensitive data stored in an S3 bucket. The admin wants automatic key rotation with minimal operational overhead. What should you choose?"
+  },
+  choices: {
+    ja: [
+      "AWS KMSのマネージドキーを使用する ✅",
+      "IAMユーザーにAdministratorAccessを付与する",
+      "S3のバージョニングを有効化する",
+      "CloudFrontで暗号化する 🤣"
+    ],
+    en: [
+      "Use AWS KMS managed keys ✅",
+      "Attach AdministratorAccess to IAM users",
+      "Enable S3 versioning",
+      "Encrypt with CloudFront 🤣"
+    ]
+  }
+};
+
+ReactDOM.render(
+  <Question data={quizData} onAnswer={idx => alert(\"選択肢: \" + idx)} />,
+  document.getElementById(\"aws-quiz-root\")
+);
+</script>
+{% endverbatim %}
+
+<style>
+.question-container { margin: 1em 0; }
+.lang-toggle button { margin-right: 0.5em; }
+.question-text { font-weight: bold; margin-bottom: 1em; }
+ul { list-style: none; padding: 0; }
+li { padding: 0.5em; border-radius: 4px; }
+li.selected { background: #ffe066; font-weight: bold; }
+</style>
 {% endblock %}
